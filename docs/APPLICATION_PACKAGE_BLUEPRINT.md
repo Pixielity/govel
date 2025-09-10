@@ -169,7 +169,7 @@ types/
 
 ### **5. Template Method Pattern**
 
-- **BaseServiceProvider**: Default implementations
+- **ServiceProvider**: Default implementations
 - Concrete providers override only necessary methods
 
 ### **6. Observer Pattern**
@@ -224,7 +224,7 @@ types/
    - Boot state tracking
 
 2. **Base provider classes** in `providers/`
-   - `BaseServiceProvider` with default implementations
+   - `ServiceProvider` with default implementations
    - Template method pattern for `Register()` and `Boot()`
    - Priority system (0-99: core, 100-199: framework, 200+: app)
 
@@ -386,7 +386,7 @@ func main() {
 
 ```go
 type DatabaseServiceProvider struct {
-    service_providers.BaseServiceProvider
+    service_providers.ServiceProvider
 }
 
 func (p *DatabaseServiceProvider) Register(application interfaces.ApplicationInterface) error {

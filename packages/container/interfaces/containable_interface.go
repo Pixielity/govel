@@ -17,7 +17,7 @@ type ContainableInterface interface {
 	 *
 	 * @return ContainerInterface The container instance
 	 */
-	GetContainer() ContainerInterface
+	Container() ContainerInterface
 
 	/**
 	 * SetContainer sets the container instance.

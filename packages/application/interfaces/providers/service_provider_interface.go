@@ -1,56 +1,45 @@
 package interfaces
 
-import (
-	applicationInterfaces "govel/packages/application/interfaces/application"
-)
+import applicationInterfaces "govel/packages/application/interfaces/application"
 
 // ServiceProviderInterface defines the contract that all service providers must implement.
-// This interface follows Laravel's service provider pattern, providing methods for
-// service registration and bootstrapping.
+// This interface follows Laravel's ServiceProvider pattern, providing methods for
+// registration and booting of services within the application.
 //
-// Service providers should implement this interface to participate in the application
-// bootstrap process. The Register method is called first for all providers, followed
-// by the Boot method after all providers have been registered.
+// Service providers are the central place for all application bootstrapping.
+// Your own application, as well as all core framework services, are bootstrapped
+// via service providers.
 type ServiceProviderInterface interface {
-	// Register is called during the service registration phase.
-	// Within this method, you should only bind things into the service container.
-	// You should never attempt to register event listeners, routes, or any other
-	// piece of functionality within the register method.
+	// Register any application services.
+	// This method is called during the service registration phase and should be used
+	// to bind services into the service container. You should never attempt to use
+	// any services in the register method since the service you are trying to use
+	// may not have been registered yet.
 	//
 	// Parameters:
-	//   application: The application instance for service container access
+	//   app: The application instance for service registration
 	//
 	// Returns:
-	//   error: Any error that occurred during registration, nil if successful
-	Register(application applicationInterfaces.ApplicationInterface) error
+	//   error: Any error that occurred during registration
+	Register(app applicationInterfaces.ApplicationInterface) error
 
-	// Boot is called after all service providers have been registered.
-	// This method is called with all other services registered by the framework,
+	// Boot any application services.
+	// This method is called after all other service providers have been registered,
 	// meaning you have access to all other services that have been registered.
-	//
-	// Use this method to:
-	// - Register event listeners
-	// - Register routes
-	// - Register view composers
-	// - Configure other services that depend on registered services
+	// This is where you should place bootstrap logic that depends on other services.
 	//
 	// Parameters:
-	//   application: The application instance
+	//   app: The application instance for service booting
 	//
 	// Returns:
-	//   error: Any error that occurred during boot, nil if successful
-	Boot(application applicationInterfaces.ApplicationInterface) error
+	//   error: Any error that occurred during booting
+	Boot(app applicationInterfaces.ApplicationInterface) error
 
-	// Priority returns the registration priority for this service provider.
-	// Lower values are registered first. This allows for proper dependency ordering.
-	//
-	// Priority levels (suggested convention):
-	// - 0-99: Core infrastructure providers
-	// - 100-199: Framework service providers
-	// - 200-299: Application service providers
-	// - 300+: Optional/plugin providers
+	// GetProvides returns the services provided by the provider.
+	// This method is used to determine which services this provider offers,
+	// particularly useful for deferred service providers.
 	//
 	// Returns:
-	//   int: Priority level for registration ordering
-	Priority() int
+	//   []string: A slice of service identifiers provided by this provider
+	GetProvides() []string
 }

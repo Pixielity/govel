@@ -14,20 +14,28 @@ import (
 	"sync"
 )
 
-// Container represents a service container for dependency injection.
+// ServiceContainer represents a service container for dependency injection.
 // It manages service bindings, singleton instances, and provides
-// thread-safe service resolution.
+// thread-safe service resolution with statistics tracking.
 //
 // The container follows Laravel's container patterns:
 // - Bind: Register a service binding
 // - Singleton: Register a singleton service
 // - Make: Resolve a service from the container
-type Container struct {
+// - GetBindings: Introspect container bindings
+// - GetStatistics: Monitor container usage
+type ServiceContainer struct {
 	// bindings holds service bindings and singletons
 	bindings map[string]interface{}
 
 	// singletonInstances caches singleton instances
 	singletonInstances map[string]interface{}
+
+	// resolutionCount tracks how many times each service has been resolved
+	resolutionCount map[string]int
+
+	// totalResolutions tracks the total number of service resolutions
+	totalResolutions int
 
 	// mutex provides thread-safe access to container state
 	mutex sync.RWMutex
@@ -37,7 +45,7 @@ type Container struct {
 //
 // Returns:
 //
-//	*Container: A new container ready for service registration
+//	*ServiceContainer: A new container ready for service registration
 //
 // Example:
 //
@@ -45,10 +53,12 @@ type Container struct {
 //	container.Bind("logger", func() interface{} {
 //	    return &Logger{}
 //	})
-func New() *Container {
-	return &Container{
+func New() *ServiceContainer {
+	return &ServiceContainer{
 		bindings:           make(map[string]interface{}),
 		singletonInstances: make(map[string]interface{}),
+		resolutionCount:    make(map[string]int),
+		totalResolutions:   0,
 	}
 }
 
@@ -72,7 +82,7 @@ func New() *Container {
 //	})
 //
 //	container.Bind("config", &ConfigStruct{})
-func (c *Container) Bind(abstract string, concrete interface{}) error {
+func (c *ServiceContainer) Bind(abstract string, concrete interface{}) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -102,7 +112,7 @@ func (c *Container) Bind(abstract string, concrete interface{}) error {
 //	container.Singleton("logger", func() interface{} {
 //	    return &Logger{level: "info"}
 //	})
-func (c *Container) Singleton(abstract string, concrete interface{}) error {
+func (c *ServiceContainer) Singleton(abstract string, concrete interface{}) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -135,7 +145,7 @@ func (c *Container) Singleton(abstract string, concrete interface{}) error {
 //	    return err
 //	}
 //	log := logger.(*Logger)
-func (c *Container) Make(abstract string) (interface{}, error) {
+func (c *ServiceContainer) Make(abstract string) (interface{}, error) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -148,6 +158,9 @@ func (c *Container) Make(abstract string) (interface{}, error) {
 	if concrete, exists := c.bindings[singletonKey]; exists {
 		// Check if instance is cached
 		if instance, cached := c.singletonInstances[abstract]; cached {
+			// Track resolution
+			c.resolutionCount[abstract]++
+			c.totalResolutions++
 			return instance, nil
 		}
 
@@ -158,12 +171,22 @@ func (c *Container) Make(abstract string) (interface{}, error) {
 		}
 
 		c.singletonInstances[abstract] = instance
+		// Track resolution
+		c.resolutionCount[abstract]++
+		c.totalResolutions++
 		return instance, nil
 	}
 
 	// Check for regular binding
 	if concrete, exists := c.bindings[abstract]; exists {
-		return c.resolveService(concrete)
+		instance, err := c.resolveService(concrete)
+		if err != nil {
+			return nil, err
+		}
+		// Track resolution
+		c.resolutionCount[abstract]++
+		c.totalResolutions++
+		return instance, nil
 	}
 
 	return nil, fmt.Errorf("service '%s' not found in container", abstract)
@@ -184,7 +207,7 @@ func (c *Container) Make(abstract string) (interface{}, error) {
 //	if container.IsBound("logger") {
 //	    logger, _ := container.Make("logger")
 //	}
-func (c *Container) IsBound(abstract string) bool {
+func (c *ServiceContainer) IsBound(abstract string) bool {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
@@ -217,7 +240,7 @@ func (c *Container) IsBound(abstract string) bool {
 //	if container.IsSingleton("logger") {
 //	    // Logger will be reused across requests
 //	}
-func (c *Container) IsSingleton(abstract string) bool {
+func (c *ServiceContainer) IsSingleton(abstract string) bool {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
@@ -240,7 +263,7 @@ func (c *Container) IsSingleton(abstract string) bool {
 //
 //	container.Forget("logger")
 //	// Logger service is no longer available
-func (c *Container) Forget(abstract string) {
+func (c *ServiceContainer) Forget(abstract string) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -263,12 +286,14 @@ func (c *Container) Forget(abstract string) {
 //
 //	// In test cleanup
 //	defer container.Flush()
-func (c *Container) FlushContainer() {
+func (c *ServiceContainer) FlushContainer() {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
 	c.bindings = make(map[string]interface{})
 	c.singletonInstances = make(map[string]interface{})
+	c.resolutionCount = make(map[string]int)
+	c.totalResolutions = 0
 }
 
 // Count returns the total number of registered services.
@@ -281,7 +306,7 @@ func (c *Container) FlushContainer() {
 // Example:
 //
 //	fmt.Printf("Container has %d registered services\n", container.Count())
-func (c *Container) Count() int {
+func (c *ServiceContainer) Count() int {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
@@ -310,7 +335,7 @@ func (c *Container) Count() int {
 //	for _, service := range services {
 //	    fmt.Println("Registered service:", service)
 //	}
-func (c *Container) RegisteredServices() []string {
+func (c *ServiceContainer) RegisteredServices() []string {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
@@ -331,9 +356,179 @@ func (c *Container) RegisteredServices() []string {
 	return result
 }
 
+// GetBindings returns detailed information about all service bindings in the container.
+// This method provides introspection capabilities for debugging and monitoring purposes.
+//
+// Returns:
+//
+//	map[string]interface{}: Map of service names to their binding information
+//
+// Example:
+//
+//	bindings := container.GetBindings()
+//	for serviceName, info := range bindings {
+//	    fmt.Printf("Service '%s': %+v\n", serviceName, info)
+//	}
+func (c *ServiceContainer) GetBindings() map[string]interface{} {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	bindings := make(map[string]interface{})
+	services := make(map[string]bool) // Track unique service names
+
+	// Process all bindings
+	for key, concrete := range c.bindings {
+		var serviceName string
+		var bindingType string
+
+		if len(key) > 10 && key[:10] == "singleton:" {
+			serviceName = key[10:]
+			bindingType = "singleton"
+		} else {
+			serviceName = key
+			bindingType = "regular"
+		}
+
+		// Skip if we've already processed this service
+		if services[serviceName] {
+			continue
+		}
+		services[serviceName] = true
+
+		// Determine concrete type
+		concreteType := "unknown"
+		if concrete != nil {
+			switch concrete.(type) {
+			case func() interface{}:
+				concreteType = "function"
+			default:
+				concreteType = fmt.Sprintf("%T", concrete)
+			}
+		}
+
+		// Check if singleton is cached
+		cached := false
+		if bindingType == "singleton" {
+			_, cached = c.singletonInstances[serviceName]
+		}
+
+		// Get resolution count
+		resolvedCount := c.resolutionCount[serviceName]
+
+		bindings[serviceName] = map[string]interface{}{
+			"type":           bindingType,
+			"concrete":       concreteType,
+			"cached":         cached,
+			"resolved_count": resolvedCount,
+		}
+	}
+
+	return bindings
+}
+
+// GetStatistics returns container usage statistics and performance metrics.
+// This method provides monitoring data about container performance and usage patterns.
+//
+// Returns:
+//
+//	map[string]interface{}: Container statistics and metrics
+//
+// Example:
+//
+//	stats := container.GetStatistics()
+//	fmt.Printf("Total bindings: %d\n", stats["total_bindings"])
+//	fmt.Printf("Cached singletons: %d\n", stats["cached_singletons"])
+func (c *ServiceContainer) GetStatistics() map[string]interface{} {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	// Count different types of bindings
+	var singletonBindings, regularBindings int
+	services := make(map[string]bool)
+
+	for key := range c.bindings {
+		if len(key) > 10 && key[:10] == "singleton:" {
+			serviceName := key[10:]
+			if !services[serviceName] {
+				singletonBindings++
+				services[serviceName] = true
+			}
+		} else {
+			if !services[key] {
+				regularBindings++
+				services[key] = true
+			}
+		}
+	}
+
+	// Count cached singletons
+	cachedSingletons := len(c.singletonInstances)
+
+	// Find most resolved services
+	mostResolved := c.getMostResolvedServices(5) // Top 5
+
+	return map[string]interface{}{
+		"total_bindings":     singletonBindings + regularBindings,
+		"singleton_bindings": singletonBindings,
+		"regular_bindings":   regularBindings,
+		"cached_singletons":  cachedSingletons,
+		"total_resolutions":  c.totalResolutions,
+		"most_resolved":      mostResolved,
+		"memory_usage":       "tracking not implemented", // Could be implemented with runtime.ReadMemStats
+	}
+}
+
+// getMostResolvedServices returns the most frequently resolved services.
+// This is a helper method for GetStatistics.
+//
+// Parameters:
+//
+//	limit: Maximum number of services to return
+//
+// Returns:
+//
+//	[]map[string]interface{}: List of services with their resolution counts
+func (c *ServiceContainer) getMostResolvedServices(limit int) []map[string]interface{} {
+	type serviceCount struct {
+		name  string
+		count int
+	}
+
+	// Convert resolution count map to slice for sorting
+	var services []serviceCount
+	for name, count := range c.resolutionCount {
+		services = append(services, serviceCount{name: name, count: count})
+	}
+
+	// Simple bubble sort (could use sort.Slice for better performance)
+	for i := 0; i < len(services)-1; i++ {
+		for j := 0; j < len(services)-i-1; j++ {
+			if services[j].count < services[j+1].count {
+				services[j], services[j+1] = services[j+1], services[j]
+			}
+		}
+	}
+
+	// Limit results
+	if len(services) > limit {
+		services = services[:limit]
+	}
+
+	// Convert to map format
+	result := make([]map[string]interface{}, len(services))
+	for i, service := range services {
+		result[i] = map[string]interface{}{
+			"name":  service.name,
+			"count": service.count,
+		}
+	}
+
+	return result
+}
+
 // resolveService resolves a concrete service implementation.
 // Handles both function-based and direct instance bindings.
-func (c *Container) resolveService(concrete interface{}) (interface{}, error) {
+func (c *ServiceContainer) resolveService(concrete interface{}) (interface{}, error) {
 	// If it's a function, call it to get the instance
 	if fn, ok := concrete.(func() interface{}); ok {
 		instance := fn()

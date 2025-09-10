@@ -3,7 +3,7 @@ package mocks
 import (
 	"time"
 
-	configInterfaces "govel/packages/config/interfaces"
+	"govel/packages/config/interfaces"
 )
 
 /**
@@ -51,16 +51,26 @@ func NewMockConfigWithData(data map[string]interface{}) *MockConfig {
 
 // ConfigInterface Implementation
 
-func (m *MockConfig) GetString(key, defaultValue string) string {
+func (m *MockConfig) GetString(key string, defaultValue ...string) string {
+	default_ := ""
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
 	if val, ok := m.Data[key]; ok {
 		if str, ok := val.(string); ok {
 			return str
 		}
 	}
-	return defaultValue
+	return default_
 }
 
-func (m *MockConfig) GetInt(key string, defaultValue int) int {
+func (m *MockConfig) GetInt(key string, defaultValue ...int) int {
+	default_ := 0
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
 	if val, ok := m.Data[key]; ok {
 		if i, ok := val.(int); ok {
 			return i
@@ -74,10 +84,15 @@ func (m *MockConfig) GetInt(key string, defaultValue int) int {
 			return int(f)
 		}
 	}
-	return defaultValue
+	return default_
 }
 
-func (m *MockConfig) GetInt64(key string, defaultValue int64) int64 {
+func (m *MockConfig) GetInt64(key string, defaultValue ...int64) int64 {
+	default_ := int64(0)
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
 	if val, ok := m.Data[key]; ok {
 		if i, ok := val.(int64); ok {
 			return i
@@ -91,10 +106,15 @@ func (m *MockConfig) GetInt64(key string, defaultValue int64) int64 {
 			return int64(f)
 		}
 	}
-	return defaultValue
+	return default_
 }
 
-func (m *MockConfig) GetFloat64(key string, defaultValue float64) float64 {
+func (m *MockConfig) GetFloat64(key string, defaultValue ...float64) float64 {
+	default_ := 0.0
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
 	if val, ok := m.Data[key]; ok {
 		if f, ok := val.(float64); ok {
 			return f
@@ -108,10 +128,15 @@ func (m *MockConfig) GetFloat64(key string, defaultValue float64) float64 {
 			return float64(i64)
 		}
 	}
-	return defaultValue
+	return default_
 }
 
-func (m *MockConfig) GetBool(key string, defaultValue bool) bool {
+func (m *MockConfig) GetBool(key string, defaultValue ...bool) bool {
+	default_ := false
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
 	if val, ok := m.Data[key]; ok {
 		if b, ok := val.(bool); ok {
 			return b
@@ -126,10 +151,15 @@ func (m *MockConfig) GetBool(key string, defaultValue bool) bool {
 			}
 		}
 	}
-	return defaultValue
+	return default_
 }
 
-func (m *MockConfig) GetDuration(key string, defaultValue time.Duration) time.Duration {
+func (m *MockConfig) GetDuration(key string, defaultValue ...time.Duration) time.Duration {
+	default_ := time.Duration(0)
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
 	if val, ok := m.Data[key]; ok {
 		if d, ok := val.(time.Duration); ok {
 			return d
@@ -148,10 +178,15 @@ func (m *MockConfig) GetDuration(key string, defaultValue time.Duration) time.Du
 			return time.Duration(i64) * time.Second
 		}
 	}
-	return defaultValue
+	return default_
 }
 
-func (m *MockConfig) GetStringSlice(key string, defaultValue []string) []string {
+func (m *MockConfig) GetStringSlice(key string, defaultValue ...[]string) []string {
+	default_ := []string{}
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
 	if val, ok := m.Data[key]; ok {
 		if slice, ok := val.([]string); ok {
 			return slice
@@ -169,7 +204,7 @@ func (m *MockConfig) GetStringSlice(key string, defaultValue []string) []string 
 			return stringSlice
 		}
 	}
-	return defaultValue
+	return default_
 }
 
 func (m *MockConfig) Get(key string) (interface{}, bool) {
@@ -343,7 +378,7 @@ func (e *MockConfigError) Error() string {
 }
 
 // Compile-time interface compliance check
-var _ configInterfaces.ConfigInterface = (*MockConfig)(nil)
+var _ interfaces.ConfigInterface = (*MockConfig)(nil)
 
 /**
  * MockConfigurable provides a mock implementation of ConfigurableInterface for testing.
@@ -351,7 +386,7 @@ var _ configInterfaces.ConfigInterface = (*MockConfig)(nil)
 type MockConfigurable struct {
 	*MockConfig
 
-	ConfigInstance configInterfaces.ConfigInterface
+	ConfigInstance interfaces.ConfigInterface
 	HasConfigValue bool
 }
 
@@ -369,12 +404,12 @@ func NewMockConfigurable() *MockConfigurable {
 
 // ConfigurableInterface Implementation
 
-func (m *MockConfigurable) GetConfig() configInterfaces.ConfigInterface {
+func (m *MockConfigurable) GetConfig() interfaces.ConfigInterface {
 	return m.ConfigInstance
 }
 
 func (m *MockConfigurable) SetConfig(config interface{}) {
-	if cfg, ok := config.(configInterfaces.ConfigInterface); ok {
+	if cfg, ok := config.(interfaces.ConfigInterface); ok {
 		m.ConfigInstance = cfg
 		m.HasConfigValue = true
 	} else if cfg, ok := config.(*MockConfig); ok {
@@ -425,4 +460,4 @@ func (m *MockConfigurable) GetMockConfig() *MockConfig {
 }
 
 // Compile-time interface compliance check
-var _ configInterfaces.ConfigurableInterface = (*MockConfigurable)(nil)
+var _ interfaces.ConfigurableInterface = (*MockConfigurable)(nil)

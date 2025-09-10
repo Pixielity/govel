@@ -6,7 +6,6 @@ import (
 	"time"
 
 	applicationInterfaces "govel/packages/application/interfaces/application"
-	providerInterfaces "govel/packages/application/interfaces/providers"
 	"govel/packages/application/types"
 	configMocks "govel/packages/config/mocks"
 	containerMocks "govel/packages/container/mocks"
@@ -32,9 +31,6 @@ type MockApplication struct {
 	*containerMocks.MockContainable
 	*loggerMocks.MockLoggable
 
-	// Service Providers
-	ServiceProviders []providerInterfaces.ServiceProviderInterface
-
 	// Mock Control Flags
 	ShouldFailRegister bool
 	ShouldFailBoot     bool
@@ -53,7 +49,6 @@ func NewMockApplication() *MockApplication {
 		MockConfigurable:      configMocks.NewMockConfigurable(),
 		MockContainable:       containerMocks.NewMockContainable(),
 		MockLoggable:          loggerMocks.NewMockLoggable(),
-		ServiceProviders:      make([]providerInterfaces.ServiceProviderInterface, 0),
 	}
 }
 
@@ -88,7 +83,6 @@ func (m *MockApplication) GetApplicationInfo() map[string]interface{} {
 		"start_time":         m.StartTimeValue,
 		"uptime":             m.GetUptime(),
 		"type":               "mock",
-		"service_providers":  len(m.ServiceProviders),
 	}
 
 	// Add info from embedded mocks
@@ -273,26 +267,6 @@ func (m *MockApplication) GetShutdownInfo() map[string]interface{} {
 	}
 }
 
-// Service Provider Methods
-func (m *MockApplication) RegisterProvider(provider providerInterfaces.ServiceProviderInterface) error {
-	if m.ShouldFailRegister {
-		return &MockError{Message: "mock register failure"}
-	}
-	m.ServiceProviders = append(m.ServiceProviders, provider)
-	return nil
-}
-
-func (m *MockApplication) BootProviders(ctx context.Context) error {
-	if m.ShouldFailBoot {
-		return &MockError{Message: "mock boot failure"}
-	}
-	return nil
-}
-
-func (m *MockApplication) AllServiceProviders() []providerInterfaces.ServiceProviderInterface {
-	return m.ServiceProviders
-}
-
 // Trait capability methods
 func (m *MockApplication) Directable() bool      { return true }
 func (m *MockApplication) Environmentable() bool { return true }
@@ -332,6 +306,52 @@ func (m *MockApplication) GetMockLogger() *loggerMocks.MockLogger {
 		return m.MockLoggable.GetMockLogger()
 	}
 	return nil
+}
+
+// ApplicationProviderInterface Methods
+func (m *MockApplication) RegisterProvider(provider interface{}) error {
+	if m.ShouldFailRegister {
+		return &MockError{Message: "register provider failed"}
+	}
+	return nil
+}
+
+func (m *MockApplication) RegisterProviders(providers []interface{}) error {
+	if m.ShouldFailRegister {
+		return &MockError{Message: "register providers failed"}
+	}
+	return nil
+}
+
+func (m *MockApplication) BootProviders(ctx context.Context) error {
+	if m.ShouldFailBoot {
+		return &MockError{Message: "boot providers failed"}
+	}
+	return nil
+}
+
+func (m *MockApplication) TerminateProviders(ctx context.Context) []error {
+	return []error{}
+}
+
+func (m *MockApplication) LoadDeferredProvider(service string) error {
+	return nil
+}
+
+func (m *MockApplication) GetProviderRepository() interface{} {
+	return nil // Mock repository could be implemented if needed
+}
+
+func (m *MockApplication) GetRegisteredProviders() []interface{} {
+	return []interface{}{}
+}
+
+func (m *MockApplication) GetLoadedProviders() []string {
+	return []string{}
+}
+
+func (m *MockApplication) GetBootedProviders() []string {
+	return []string{}
 }
 
 /**

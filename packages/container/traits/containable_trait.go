@@ -23,23 +23,35 @@ type Containable struct {
 	/**
 	 * container holds the container instance and is embedded to promote its methods
 	 */
-	*container.Container
+	*container.ServiceContainer
 }
 
 /**
  * NewContainable creates a new Containable instance with a container.
  *
- * @param containerInstance *container.Container The container instance to use
+ * @param containerInstance *container.ServiceContainer The container instance to use
  * @return *Containable The newly created trait instance
  */
-func NewContainable(containerInstance *container.Container) *Containable {
+func NewContainable(containerInstance *container.ServiceContainer) *Containable {
 	if containerInstance == nil {
 		containerInstance = container.New()
 	}
 
 	return &Containable{
-		Container: containerInstance,
+		ServiceContainer: containerInstance,
 	}
+}
+
+/**
+ * GetContainer returns the container instance.
+ *
+ * @return interfaces.ContainerInterface The container instance
+ */
+func (t *Containable) Container() interfaces.ContainerInterface {
+	t.mutex.RLock()
+	defer t.mutex.RUnlock()
+
+	return t.ServiceContainer
 }
 
 /**
@@ -51,7 +63,7 @@ func (t *Containable) GetContainer() interfaces.ContainerInterface {
 	t.mutex.RLock()
 	defer t.mutex.RUnlock()
 
-	return t.Container
+	return t.ServiceContainer
 }
 
 /**
@@ -64,10 +76,10 @@ func (t *Containable) SetContainer(containerInterface interface{}) {
 	defer t.mutex.Unlock()
 
 	// Type assertion to ensure it's a container
-	if containerInstance, ok := containerInterface.(*container.Container); ok {
-		t.Container = containerInstance
+	if containerInstance, ok := containerInterface.(*container.ServiceContainer); ok {
+		t.ServiceContainer = containerInstance
 	} else if containerInterface == nil {
-		t.Container = container.New()
+		t.ServiceContainer = container.New()
 	}
 }
 
@@ -80,7 +92,7 @@ func (t *Containable) HasContainer() bool {
 	t.mutex.RLock()
 	defer t.mutex.RUnlock()
 
-	return t.Container != nil
+	return t.ServiceContainer != nil
 }
 
 /**
@@ -93,13 +105,13 @@ func (t *Containable) GetContainerInfo() map[string]interface{} {
 	defer t.mutex.RUnlock()
 
 	info := map[string]interface{}{
-		"has_container": t.Container != nil,
+		"has_container": t.ServiceContainer != nil,
 	}
 
-	if t.Container != nil {
+	if t.ServiceContainer != nil {
 		info["container_type"] = "default"
-		info["service_count"] = t.Container.Count()
-		info["registered_services"] = t.Container.RegisteredServices()
+		info["service_count"] = t.ServiceContainer.Count()
+		info["registered_services"] = t.ServiceContainer.RegisteredServices()
 	}
 
 	return info

@@ -145,4 +145,55 @@ type ContainerInterface interface {
 	//   container.Flush()
 	//   // Container is now empty and ready for new bindings
 	FlushContainer()
+
+	// GetBindings returns detailed information about all service bindings in the container.
+	// This method provides introspection capabilities for debugging and monitoring purposes.
+	//
+	// The returned map contains service names as keys and binding information as values.
+	// Each binding entry includes:
+	// - type: "regular" or "singleton"
+	// - concrete: type information about the concrete implementation
+	// - cached: for singletons, whether an instance is currently cached
+	// - resolved_count: number of times the service has been resolved (if tracking is enabled)
+	//
+	// Returns:
+	//   map[string]interface{}: Map of service names to their binding information
+	//
+	// Example:
+	//   bindings := container.GetBindings()
+	//   for serviceName, info := range bindings {
+	//       fmt.Printf("Service '%s': %+v\n", serviceName, info)
+	//   }
+	//
+	//   // Example output:
+	//   // Service 'logger': map[type:singleton concrete:func cached:true resolved_count:5]
+	//   // Service 'mailer': map[type:regular concrete:func cached:false resolved_count:3]
+	GetBindings() map[string]interface{}
+
+	// GetStatistics returns container usage statistics and performance metrics.
+	// This method provides monitoring data about container performance and usage patterns.
+	//
+	// The returned statistics include:
+	// - total_bindings: total number of registered services
+	// - singleton_bindings: number of singleton services
+	// - regular_bindings: number of regular (non-singleton) services
+	// - cached_singletons: number of singleton instances currently cached
+	// - total_resolutions: total number of service resolutions performed
+	// - memory_usage: approximate memory usage by cached instances (if available)
+	// - most_resolved: list of most frequently resolved services
+	//
+	// Returns:
+	//   map[string]interface{}: Container statistics and metrics
+	//
+	// Example:
+	//   stats := container.GetStatistics()
+	//   fmt.Printf("Total bindings: %d\n", stats["total_bindings"])
+	//   fmt.Printf("Cached singletons: %d\n", stats["cached_singletons"])
+	//   fmt.Printf("Total resolutions: %d\n", stats["total_resolutions"])
+	//
+	//   // Use for monitoring and performance analysis
+	//   if stats["total_resolutions"].(int) > 1000 {
+	//       log.Warn("High container usage detected")
+	//   }
+	GetStatistics() map[string]interface{}
 }

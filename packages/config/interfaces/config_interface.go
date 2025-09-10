@@ -36,104 +36,105 @@ type ConfigInterface interface {
 	//
 	// Parameters:
 	//   key: The configuration key using dot notation (e.g., "database.host")
-	//   defaultValue: The default value to return if key is not found
+	//   defaultValue: Optional default value to return if key is not found (empty string if not provided)
 	//
 	// Returns:
 	//   string: The configuration value or default if not found
 	//
 	// Example:
-	//   host := config.GetString("database.host", "localhost")
-	//   appName := config.GetString("application.name", "Default Application")
-	GetString(key, defaultValue string) string
+	//   host := config.GetString("database.host", "localhost") // With default
+	//   appName := config.GetString("application.name")         // Without default (returns "" if not found)
+	GetString(key string, defaultValue ...string) string
 
 	// GetInt retrieves an integer configuration value.
 	// Automatically converts string values to integers when possible.
 	//
 	// Parameters:
 	//   key: The configuration key using dot notation
-	//   defaultValue: The default value to return if key is not found or invalid
+	//   defaultValue: Optional default value to return if key is not found or invalid (0 if not provided)
 	//
 	// Returns:
 	//   int: The configuration value or default if not found/invalid
 	//
 	// Example:
-	//   port := config.GetInt("database.port", 3306)
-	//   workers := config.GetInt("server.workers", 4)
-	GetInt(key string, defaultValue int) int
+	//   port := config.GetInt("database.port", 3306) // With default
+	//   workers := config.GetInt("server.workers")   // Without default (returns 0 if not found)
+	GetInt(key string, defaultValue ...int) int
 
 	// GetInt64 retrieves a 64-bit integer configuration value.
 	// Useful for large numbers, timestamps, or IDs.
 	//
 	// Parameters:
 	//   key: The configuration key using dot notation
-	//   defaultValue: The default value to return if key is not found or invalid
+	//   defaultValue: Optional default value to return if key is not found or invalid (0 if not provided)
 	//
 	// Returns:
 	//   int64: The configuration value or default if not found/invalid
 	//
 	// Example:
-	//   maxSize := config.GetInt64("upload.max_size", 10485760) // 10MB default
-	GetInt64(key string, defaultValue int64) int64
+	//   maxSize := config.GetInt64("upload.max_size", 10485760) // With default
+	//   timestamp := config.GetInt64("last_update")             // Without default (returns 0 if not found)
+	GetInt64(key string, defaultValue ...int64) int64
 
 	// GetFloat64 retrieves a floating-point configuration value.
 	// Useful for percentages, ratios, or decimal values.
 	//
 	// Parameters:
 	//   key: The configuration key using dot notation
-	//   defaultValue: The default value to return if key is not found or invalid
+	//   defaultValue: Optional default value to return if key is not found or invalid (0.0 if not provided)
 	//
 	// Returns:
 	//   float64: The configuration value or default if not found/invalid
 	//
 	// Example:
-	//   rate := config.GetFloat64("cache.hit_rate", 0.95)
-	//   timeout := config.GetFloat64("request.timeout_seconds", 30.0)
-	GetFloat64(key string, defaultValue float64) float64
+	//   rate := config.GetFloat64("cache.hit_rate", 0.95) // With default
+	//   timeout := config.GetFloat64("request.timeout")   // Without default (returns 0.0 if not found)
+	GetFloat64(key string, defaultValue ...float64) float64
 
 	// GetBool retrieves a boolean configuration value.
 	// Recognizes common boolean representations: true/false, yes/no, 1/0.
 	//
 	// Parameters:
 	//   key: The configuration key using dot notation
-	//   defaultValue: The default value to return if key is not found or invalid
+	//   defaultValue: Optional default value to return if key is not found or invalid (false if not provided)
 	//
 	// Returns:
 	//   bool: The configuration value or default if not found/invalid
 	//
 	// Example:
-	//   debug := config.GetBool("application.debug", false)
-	//   enabled := config.GetBool("feature.new_ui", true)
-	GetBool(key string, defaultValue bool) bool
+	//   debug := config.GetBool("application.debug", false) // With default
+	//   enabled := config.GetBool("feature.new_ui")       // Without default (returns false if not found)
+	GetBool(key string, defaultValue ...bool) bool
 
 	// GetDuration retrieves a duration configuration value.
 	// Supports various duration formats: "30s", "5m", "2h", "24h".
 	//
 	// Parameters:
 	//   key: The configuration key using dot notation
-	//   defaultValue: The default duration to return if key is not found or invalid
+	//   defaultValue: Optional default duration to return if key is not found or invalid (0 if not provided)
 	//
 	// Returns:
 	//   time.Duration: The configuration duration or default if not found/invalid
 	//
 	// Example:
-	//   timeout := config.GetDuration("server.timeout", 30*time.Second)
-	//   interval := config.GetDuration("cleanup.interval", 24*time.Hour)
-	GetDuration(key string, defaultValue time.Duration) time.Duration
+	//   timeout := config.GetDuration("server.timeout", 30*time.Second) // With default
+	//   interval := config.GetDuration("cleanup.interval")             // Without default (returns 0 if not found)
+	GetDuration(key string, defaultValue ...time.Duration) time.Duration
 
 	// GetStringSlice retrieves a string slice configuration value.
 	// Supports comma-separated values or array formats depending on source.
 	//
 	// Parameters:
 	//   key: The configuration key using dot notation
-	//   defaultValue: The default slice to return if key is not found
+	//   defaultValue: Optional default slice to return if key is not found (empty slice if not provided)
 	//
 	// Returns:
 	//   []string: The configuration slice or default if not found
 	//
 	// Example:
-	//   hosts := config.GetStringSlice("database.hosts", []string{"localhost"})
-	//   features := config.GetStringSlice("application.enabled_features", []string{})
-	GetStringSlice(key string, defaultValue []string) []string
+	//   hosts := config.GetStringSlice("database.hosts", []string{"localhost"}) // With default
+	//   features := config.GetStringSlice("application.enabled_features")      // Without default (returns [] if not found)
+	GetStringSlice(key string, defaultValue ...[]string) []string
 
 	// Get retrieves a raw configuration value as interface{}.
 	// Useful when the exact type is unknown or for custom type handling.

@@ -270,14 +270,20 @@ func (sm *ShutdownManager) GracefulShutdown(ctx context.Context) error {
 		drainCancel()
 	}
 
-	// Shutdown terminatable service providers
-	if err := sm.terminateProviders(shutdownCtx); err != nil {
-		sm.application.GetLogger().Error("Error during provider termination: %v", err)
-	}
+	// Terminate all terminatable service providers
+	sm.application.GetLogger().Info("Terminating service providers")
+	terminationErrors := sm.application.TerminateProviders(shutdownCtx)
+	if len(terminationErrors) > 0 {
+		sm.mutex.Lock()
+		sm.terminationErrors = append(sm.terminationErrors, terminationErrors...)
+		sm.mutex.Unlock()
 
-	// Shutdown other application components
-	if err := sm.shutdownComponents(shutdownCtx); err != nil {
-		sm.application.GetLogger().Error("Error during component shutdown: %v", err)
+		for i, err := range terminationErrors {
+			sm.application.GetLogger().Error("Provider termination error %d: %v", i+1, err)
+		}
+		sm.application.GetLogger().Warn("Some service providers failed to terminate gracefully")
+	} else {
+		sm.application.GetLogger().Info("All service providers terminated successfully")
 	}
 
 	sm.mutex.Lock()
@@ -346,51 +352,6 @@ func (sm *ShutdownManager) waitForDrain(ctx context.Context) {
 	case <-time.After(sm.drainTimeout):
 		sm.application.GetLogger().Info("Drain completed successfully")
 	}
-}
-
-// terminateProviders shuts down all terminatable service providers.
-func (sm *ShutdownManager) terminateProviders(_ context.Context) error {
-	sm.application.GetLogger().Info("Terminating service providers")
-
-	// Use the termination manager to handle provider shutdown
-	// Note: This would need to be implemented through the interface
-	// For now, we'll skip this until the interface is properly defined
-	// errors := sm.application.TerminationManager().Terminate(ctx)
-	errors := make([]error, 0)
-
-	if len(errors) > 0 {
-		sm.terminationErrors = append(sm.terminationErrors, errors...)
-		sm.application.GetLogger().Error("Termination completed with %d errors", len(errors))
-		for i, err := range errors {
-			sm.application.GetLogger().Error("Termination error %d: %v", i+1, err)
-		}
-		return fmt.Errorf("provider termination failed with %d errors", len(errors))
-	}
-
-	sm.application.GetLogger().Info("All service providers terminated successfully")
-	return nil
-}
-
-// shutdownComponents shuts down other application components.
-func (sm *ShutdownManager) shutdownComponents(_ context.Context) error {
-	sm.application.GetLogger().Info("Shutting down application components")
-
-	// Shutdown logger (flush any pending logs)
-	// Note: This would need to be implemented through the interface
-	// For now, we'll skip this until the interface is properly defined
-	// if err := sm.application.GetLogger().Flush(); err != nil {
-	// 	// Log the error, but don't fail the shutdown
-	// 	fmt.Printf("Warning: failed to flush logger during shutdown: %v\n", err)
-	// }
-
-	// Additional component shutdown logic would go here
-	// For example:
-	// - Close database connections
-	// - Stop background workers
-	// - Clean up temporary resources
-
-	sm.application.GetLogger().Info("Application components shutdown completed")
-	return nil
 }
 
 // ShutdownErrors returns any errors that occurred during the shutdown process.

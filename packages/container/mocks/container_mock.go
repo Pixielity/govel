@@ -193,12 +193,103 @@ func (m *MockContainer) FlushContainer() {
 	m.SingletonBindings = make(map[string]bool)
 }
 
+// GetBindings returns detailed information about all service bindings (mock implementation)
+func (m *MockContainer) GetBindings() map[string]interface{} {
+	bindings := make(map[string]interface{})
+
+	for abstract, concrete := range m.Bindings {
+		// Determine concrete type
+		concreteType := "unknown"
+		if concrete != nil {
+			switch concrete.(type) {
+			case func() interface{}:
+				concreteType = "function"
+			case func() (interface{}, error):
+				concreteType = "function_with_error"
+			default:
+				concreteType = "instance"
+			}
+		}
+
+		// Check if singleton
+		bindingType := "regular"
+		cached := false
+		if m.SingletonBindings[abstract] {
+			bindingType = "singleton"
+			_, cached = m.Singletons[abstract]
+		}
+
+		// Count resolutions from history
+		resolvedCount := 0
+		for _, operation := range m.MakeHistory {
+			if operation.Abstract == abstract && operation.Success {
+				resolvedCount++
+			}
+		}
+
+		bindings[abstract] = map[string]interface{}{
+			"type":           bindingType,
+			"concrete":       concreteType,
+			"cached":         cached,
+			"resolved_count": resolvedCount,
+		}
+	}
+
+	return bindings
+}
+
+// GetStatistics returns container usage statistics (mock implementation)
+func (m *MockContainer) GetStatistics() map[string]interface{} {
+	// Count different types of bindings
+	singletonBindings := len(m.SingletonBindings)
+	regularBindings := len(m.Bindings) - singletonBindings
+	cachedSingletons := len(m.Singletons)
+
+	// Count successful resolutions
+	totalResolutions := 0
+	for _, operation := range m.MakeHistory {
+		if operation.Success {
+			totalResolutions++
+		}
+	}
+
+	// Create most resolved list
+	resolvedCounts := make(map[string]int)
+	for _, operation := range m.MakeHistory {
+		if operation.Success {
+			resolvedCounts[operation.Abstract]++
+		}
+	}
+
+	mostResolved := make([]map[string]interface{}, 0)
+	for abstract, count := range resolvedCounts {
+		mostResolved = append(mostResolved, map[string]interface{}{
+			"name":  abstract,
+			"count": count,
+		})
+		// Limit to top 5
+		if len(mostResolved) >= 5 {
+			break
+		}
+	}
+
+	return map[string]interface{}{
+		"total_bindings":     len(m.Bindings),
+		"singleton_bindings": singletonBindings,
+		"regular_bindings":   regularBindings,
+		"cached_singletons":  cachedSingletons,
+		"total_resolutions":  totalResolutions,
+		"most_resolved":      mostResolved,
+		"memory_usage":       "mock implementation",
+	}
+}
+
 // Mock-specific helper methods
 
 /**
- * GetBindings returns all current bindings
+ * GetRawBindings returns all current bindings (mock helper method)
  */
-func (m *MockContainer) GetBindings() map[string]interface{} {
+func (m *MockContainer) GetRawBindings() map[string]interface{} {
 	result := make(map[string]interface{})
 	for k, v := range m.Bindings {
 		result[k] = v
@@ -352,7 +443,7 @@ func NewMockContainable() *MockContainable {
 
 // ContainableInterface Implementation
 
-func (m *MockContainable) GetContainer() containerInterfaces.ContainerInterface {
+func (m *MockContainable) Container() containerInterfaces.ContainerInterface {
 	return m.ContainerInstance
 }
 

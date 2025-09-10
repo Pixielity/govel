@@ -58,7 +58,10 @@ type AppBuilder struct {
 	shutdownTimeout time.Duration
 
 	// customContainer allows injection of a custom container
-	customContainer *container.Container
+	customContainer *container.ServiceContainer
+
+	// serviceProviders holds service providers to register with the application
+	serviceProviders []interface{}
 }
 
 // NewApp creates a new AppBuilder with sensible defaults.
@@ -301,7 +304,7 @@ func (b *AppBuilder) WithShutdownTimeout(timeout time.Duration) *AppBuilder {
 //
 //	customContainer := container.New()
 //	application := NewApp().WithContainer(customContainer).Build()
-func (b *AppBuilder) WithContainer(container *container.Container) *AppBuilder {
+func (b *AppBuilder) WithContainer(container *container.ServiceContainer) *AppBuilder {
 	b.customContainer = container
 	return b
 }
@@ -355,6 +358,29 @@ func (b *AppBuilder) ForTesting() *AppBuilder {
 		WithShutdownTimeout(5 * time.Second)
 }
 
+// WithServiceProviders sets the service providers to register with the application.
+// These providers will be registered after the application is built.
+//
+// Parameters:
+//
+//	providers: A slice of service provider instances to register
+//
+// Returns:
+//
+//	*AppBuilder: The builder instance for method chaining
+//
+// Example:
+//
+//	providers := []interface{}{
+//	    userProviders.NewUserServiceProvider(),
+//	    productProviders.NewProductServiceProvider(),
+//	}
+//	application := NewApp().WithServiceProviders(providers).Build()
+func (b *AppBuilder) WithServiceProviders(providers []interface{}) *AppBuilder {
+	b.serviceProviders = providers
+	return b
+}
+
 // Build creates and returns the configured Application instance.
 // This is the final method in the builder chain and creates
 // the actual application with all configured values.
@@ -389,6 +415,14 @@ func (b *AppBuilder) Build() *application.Application {
 	app.SetRunningInConsole(b.runningInConsole)
 	app.SetRunningUnitTests(b.runningUnitTests)
 	app.SetShutdownTimeout(b.shutdownTimeout)
+
+	// Register service providers if any were provided
+	if len(b.serviceProviders) > 0 {
+		if err := app.RegisterProviders(b.serviceProviders); err != nil {
+			// Log the error but don't panic - let the application start
+			app.GetLogger().Error("Failed to register service providers during build: %v", err)
+		}
+	}
 
 	return app
 }

@@ -4,8 +4,10 @@ package application
 import (
 	"context"
 	"fmt"
+	"path/filepath"
+
 	"govel/packages/application/core/maintenance"
-	"govel/packages/application/core/service_provider"
+	"govel/packages/application/core/providers"
 	"govel/packages/application/helpers"
 	applicationInterfaces "govel/packages/application/interfaces/application"
 	providerInterfaces "govel/packages/application/interfaces/providers"
@@ -54,22 +56,47 @@ type Application struct {
 	 */
 	mutex sync.RWMutex
 
-	// Service management properties
+	// Service Provider Management
 
 	/**
-	 * serviceProviderRegistry manages registered service providers
+	 * providerRepository manages service provider registration and lifecycle
 	 */
-	serviceProviderRegistry *service_provider.ServiceProviderRegistry
+	providerRepository *providers.ProviderRepository
 
 	/**
-	 * deferredProviderRepository manages deferred service providers
+	 * terminatableProviders holds providers that need graceful termination
 	 */
-	deferredProviderRepository *service_provider.DeferredProviderRepository
+	terminatableProviders []providerInterfaces.TerminatableProvider
 
 	/**
-	 * terminationManager manages terminatable service providers
+	 * bootingCallbacks holds callbacks to execute before booting providers
 	 */
-	terminationManager *service_provider.TerminationManager
+	bootingCallbacks []func(ApplicationInterface)
+
+	/**
+	 * bootedCallbacks holds callbacks to execute after booting providers
+	 */
+	bootedCallbacks []func(ApplicationInterface)
+
+	/**
+	 * terminatingCallbacks holds callbacks to execute during application termination
+	 */
+	terminatingCallbacks []func(ApplicationInterface)
+
+	/**
+	 * booted indicates whether the application has been booted
+	 */
+	booted bool
+
+	/**
+	 * loadedProviders tracks which providers have been loaded by type
+	 */
+	loadedProviders map[string]bool
+
+	/**
+	 * deferredServices holds the mapping of services to their provider types
+	 */
+	deferredServices map[string]string
 
 	// Trait embeddings - these provide all the specialized functionality
 
@@ -173,6 +200,17 @@ func New() *Application {
 		runningUnitTests: envHelper.GetRunningUnitTests(), // From APP_TESTING or default
 		startTime:        time.Time{},                     // Will be set when the application starts
 
+		// Initialize service provider management
+		terminatableProviders: make([]providerInterfaces.TerminatableProvider, 0),
+
+		// Initialize callback tracking
+		bootingCallbacks:      make([]func(ApplicationInterface), 0),
+		bootedCallbacks:       make([]func(ApplicationInterface), 0),
+		terminatingCallbacks:  make([]func(ApplicationInterface), 0),
+		booted:               false,
+		loadedProviders:      make(map[string]bool),
+		deferredServices:     make(map[string]string),
+
 		// Embed traits anonymously for method promotion
 		Directable:      directoriesTrait,
 		Localizable:     localeTrait,
@@ -186,14 +224,13 @@ func New() *Application {
 		Configurable:    hasConfigTrait,
 	}
 
-	// Initialize service provider management
-	application.serviceProviderRegistry = service_provider.NewServiceProviderRegistry()
-	application.deferredProviderRepository = service_provider.NewDeferredProviderRepository(application)
-	application.terminationManager = service_provider.NewTerminationManager(application)
-
 	// Set up maintenance manager with application reference (once it's created)
 	maintenanceManager := maintenance.NewMaintenanceManager(application)
 	application.Maintainable.SetManager(maintenanceManager)
+
+	// Initialize provider repository with manifest path
+	manifestPath := filepath.Join(basePath, "bootstrap", "cache", "providers.json")
+	application.providerRepository = providers.NewProviderRepository(application, manifestPath)
 
 	return application
 }
@@ -295,34 +332,6 @@ func (a *Application) GetUptime() time.Duration {
 	return time.Since(a.startTime)
 }
 
-// Service Provider Management
-
-// RegisterProvider registers a service provider with the application.
-// TODO: Fix interface compliance to re-enable provider registration
-func (a *Application) RegisterProvider(provider providerInterfaces.ServiceProviderInterface) error {
-	a.serviceProviderRegistry.Register(provider)
-
-	if err := provider.Register(a); err != nil {
-		return fmt.Errorf("service provider registration failed: %w", err)
-	}
-
-	return nil
-}
-
-// BootProviders boots all registered service providers.
-// TODO: Fix interface compliance to re-enable provider booting
-func (a *Application) BootProviders(ctx context.Context) error {
-	providers := a.serviceProviderRegistry.AllServiceProviders()
-
-	for _, provider := range providers {
-		if err := provider.Boot(a); err != nil {
-			return fmt.Errorf("failed to boot service provider %T: %w", provider, err)
-		}
-	}
-
-	return nil
-}
-
 // Application Information
 
 // GetApplicationInfo returns comprehensive application information.
@@ -356,6 +365,232 @@ func (a *Application) GetApplicationInfo() map[string]interface{} {
 	}
 
 	return info
+}
+
+// Service Provider Management
+
+// RegisterProvider registers a service provider with the application.
+// This method stores the provider instance for later loading and adds it
+// to the terminatable providers list if it implements TerminatableProvider.
+//
+// Parameters:
+//
+//	provider: The service provider instance to register (should implement ServiceProviderInterface)
+//
+// Returns:
+//
+//	error: Any error that occurred during registration
+//
+// Example:
+//
+//	postgresProvider := modules.NewPostgreSQLServiceProvider(app)
+//	if err := app.RegisterProvider(postgresProvider); err != nil {
+//	    return fmt.Errorf("failed to register PostgreSQL provider: %w", err)
+//	}
+func (a *Application) RegisterProvider(provider interface{}) error {
+	// Cast to ServiceProviderInterface
+	serviceProvider, ok := provider.(providerInterfaces.ServiceProviderInterface)
+	if !ok {
+		return fmt.Errorf("provider must implement ServiceProviderInterface, got %T", provider)
+	}
+
+	if err := a.providerRepository.RegisterProvider(serviceProvider); err != nil {
+		return fmt.Errorf("failed to register provider: %w", err)
+	}
+
+	// Check if provider is terminatable and store it
+	if terminatable, ok := provider.(providerInterfaces.TerminatableProvider); ok {
+		a.terminatableProviders = append(a.terminatableProviders, terminatable)
+	}
+
+	return nil
+}
+
+// RegisterProviders registers multiple service providers.
+// This is a convenience method for registering multiple providers at once.
+//
+// Parameters:
+//
+//	providers: A slice of service provider instances to register (should implement ServiceProviderInterface)
+//
+// Returns:
+//
+//	error: Any error that occurred during registration
+//
+// Example:
+//
+//	providers := []interface{}{
+//	    modules.NewPostgreSQLServiceProvider(app),
+//	    modules.NewRedisServiceProvider(app),
+//	}
+//	if err := app.RegisterProviders(providers); err != nil {
+//	    return fmt.Errorf("failed to register providers: %w", err)
+//	}
+func (a *Application) RegisterProviders(providers []interface{}) error {
+	for _, provider := range providers {
+		if err := a.RegisterProvider(provider); err != nil {
+			return fmt.Errorf("failed to register provider %T: %w", provider, err)
+		}
+	}
+	return nil
+}
+
+// BootProviders boots all registered service providers.
+// This method handles the provider lifecycle by loading providers
+// (respecting eager/deferred loading) and then booting all loaded providers.
+//
+// Parameters:
+//
+//	ctx: Context for the boot process
+//
+// Returns:
+//
+//	error: Any error that occurred during booting
+//
+// Example:
+//
+//	ctx := context.Background()
+//	if err := app.BootProviders(ctx); err != nil {
+//	    return fmt.Errorf("failed to boot providers: %w", err)
+//	}
+func (a *Application) BootProviders(ctx context.Context) error {
+	// Load providers using the repository (this handles eager/deferred loading)
+	registeredProviders := a.providerRepository.GetRegisteredProviders()
+	if err := a.providerRepository.LoadProviders(registeredProviders); err != nil {
+		return fmt.Errorf("failed to load providers: %w", err)
+	}
+
+	// Boot all loaded providers
+	if err := a.providerRepository.BootProviders(); err != nil {
+		return fmt.Errorf("failed to boot providers: %w", err)
+	}
+
+	return nil
+}
+
+// TerminateProviders gracefully terminates all terminatable providers.
+// This method is called during application shutdown to allow providers
+// to clean up resources, close connections, and perform graceful shutdown.
+//
+// Parameters:
+//
+//	ctx: Context for the termination process (with timeout)
+//
+// Returns:
+//
+//	[]error: A slice of errors that occurred during termination
+//
+// Example:
+//
+//	shutdownCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+//	defer cancel()
+//
+//	errors := app.TerminateProviders(shutdownCtx)
+//	if len(errors) > 0 {
+//	    for _, err := range errors {
+//	        log.Printf("Termination error: %v", err)
+//	    }
+//	}
+func (a *Application) TerminateProviders(ctx context.Context) []error {
+	var errors []error
+
+	for _, provider := range a.terminatableProviders {
+		if err := provider.Terminate(ctx, a); err != nil {
+			errors = append(errors, fmt.Errorf("provider %T termination failed: %w", provider, err))
+		}
+	}
+
+	return errors
+}
+
+// LoadDeferredProvider loads a deferred provider when its service is requested.
+// This method is typically called by the container when a deferred service is requested.
+//
+// Parameters:
+//
+//	service: The service name that triggered the provider loading
+//
+// Returns:
+//
+//	error: Any error that occurred during loading
+//
+// Example:
+//
+//	// This would typically be called by the container automatically
+//	if err := app.LoadDeferredProvider("redis"); err != nil {
+//	    return fmt.Errorf("failed to load Redis provider: %w", err)
+//	}
+func (a *Application) LoadDeferredProvider(service string) error {
+	return a.providerRepository.LoadDeferredProvider(service)
+}
+
+// GetProviderRepository returns the provider repository for advanced operations.
+// This allows access to provider introspection and management functionality.
+//
+// Returns:
+//
+//	interface{}: The provider repository instance (cast to *providers.ProviderRepository when needed)
+//
+// Example:
+//
+//	repo := app.GetProviderRepository().(*providers.ProviderRepository)
+//	if repo.IsProviderLoaded("*modules.PostgreSQLServiceProvider") {
+//	    fmt.Println("PostgreSQL provider is loaded")
+//	}
+func (a *Application) GetProviderRepository() interface{} {
+	return a.providerRepository
+}
+
+// GetRegisteredProviders returns all registered service provider instances.
+// This is useful for introspection and debugging.
+//
+// Returns:
+//
+//	[]interface{}: List of registered providers (cast to []ServiceProviderInterface when needed)
+//
+// Example:
+//
+//	providers := app.GetRegisteredProviders()
+//	for _, provider := range providers {
+//	    fmt.Printf("Registered provider: %T\n", provider)
+//	}
+func (a *Application) GetRegisteredProviders() []interface{} {
+	registeredProviders := a.providerRepository.GetRegisteredProviders()
+	result := make([]interface{}, len(registeredProviders))
+	for i, provider := range registeredProviders {
+		result[i] = provider
+	}
+	return result
+}
+
+// GetLoadedProviders returns the list of loaded provider type names.
+// This is useful for debugging and monitoring.
+//
+// Returns:
+//
+//	[]string: List of loaded provider type names
+//
+// Example:
+//
+//	loadedProviders := app.GetLoadedProviders()
+//	fmt.Printf("Loaded providers: %v\n", loadedProviders)
+func (a *Application) GetLoadedProviders() []string {
+	return a.providerRepository.GetLoadedProviders()
+}
+
+// GetBootedProviders returns the list of booted provider type names.
+// This is useful for debugging and monitoring.
+//
+// Returns:
+//
+//	[]string: List of booted provider type names
+//
+// Example:
+//
+//	bootedProviders := app.GetBootedProviders()
+//	fmt.Printf("Booted providers: %v\n", bootedProviders)
+func (a *Application) GetBootedProviders() []string {
+	return a.providerRepository.GetBootedProviders()
 }
 
 // Compile-time interface compliance check

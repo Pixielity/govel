@@ -36,4 +36,5 @@ type ApplicationInterface interface {
 	ApplicationRuntimeInterface
 	ApplicationTimingInterface
 	ApplicationInfoInterface
+	ApplicationProviderInterface
 }

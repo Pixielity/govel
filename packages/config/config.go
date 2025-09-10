@@ -20,6 +20,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"govel/packages/config/interfaces"
 )
 
 // Config represents a configuration manager that handles loading,
@@ -289,7 +291,7 @@ func (c *Config) Get(key string) (interface{}, bool) {
 // Parameters:
 //
 //	key: The configuration key using dot notation
-//	defaultValue: The default string value to return if key is not found
+//	defaultValue: Optional default string value to return if key is not found (empty string if not provided)
 //
 // Returns:
 //
@@ -297,9 +299,15 @@ func (c *Config) Get(key string) (interface{}, bool) {
 //
 // Example:
 //
-//	host := config.GetString("database.host", "localhost")
-func (c *Config) GetString(key string, defaultValue string) string {
-	value := c.GetWithDefault(key, defaultValue)
+//	host := config.GetString("database.host", "localhost") // With default
+//	name := config.GetString("app.name")                   // Without default
+func (c *Config) GetString(key string, defaultValue ...string) string {
+	default_ := ""
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
+	value := c.GetWithDefault(key, default_)
 	if str, ok := value.(string); ok {
 		return str
 	}
@@ -311,7 +319,7 @@ func (c *Config) GetString(key string, defaultValue string) string {
 // Parameters:
 //
 //	key: The configuration key using dot notation
-//	defaultValue: The default integer value to return if key is not found
+//	defaultValue: Optional default integer value to return if key is not found (0 if not provided)
 //
 // Returns:
 //
@@ -319,9 +327,15 @@ func (c *Config) GetString(key string, defaultValue string) string {
 //
 // Example:
 //
-//	port := config.GetInt("database.port", 3306)
-func (c *Config) GetInt(key string, defaultValue int) int {
-	value := c.GetWithDefault(key, defaultValue)
+//	port := config.GetInt("database.port", 3306) // With default
+//	workers := config.GetInt("server.workers")   // Without default
+func (c *Config) GetInt(key string, defaultValue ...int) int {
+	default_ := 0
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
+	value := c.GetWithDefault(key, default_)
 
 	switch v := value.(type) {
 	case int:
@@ -334,7 +348,7 @@ func (c *Config) GetInt(key string, defaultValue int) int {
 		}
 	}
 
-	return defaultValue
+	return default_
 }
 
 // GetBool retrieves a configuration value as a boolean.
@@ -342,7 +356,7 @@ func (c *Config) GetInt(key string, defaultValue int) int {
 // Parameters:
 //
 //	key: The configuration key using dot notation
-//	defaultValue: The default boolean value to return if key is not found
+//	defaultValue: Optional default boolean value to return if key is not found (false if not provided)
 //
 // Returns:
 //
@@ -350,9 +364,15 @@ func (c *Config) GetInt(key string, defaultValue int) int {
 //
 // Example:
 //
-//	debug := config.GetBool("application.debug", false)
-func (c *Config) GetBool(key string, defaultValue bool) bool {
-	value := c.GetWithDefault(key, defaultValue)
+//	debug := config.GetBool("application.debug", false) // With default
+//	enabled := config.GetBool("feature.enabled")       // Without default
+func (c *Config) GetBool(key string, defaultValue ...bool) bool {
+	default_ := false
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
+	value := c.GetWithDefault(key, default_)
 
 	switch v := value.(type) {
 	case bool:
@@ -363,7 +383,7 @@ func (c *Config) GetBool(key string, defaultValue bool) bool {
 		}
 	}
 
-	return defaultValue
+	return default_
 }
 
 // GetInt64 retrieves a configuration value as an int64.
@@ -371,13 +391,18 @@ func (c *Config) GetBool(key string, defaultValue bool) bool {
 // Parameters:
 //
 //	key: The configuration key using dot notation
-//	defaultValue: The default int64 value to return if key is not found
+//	defaultValue: Optional default int64 value to return if key is not found (0 if not provided)
 //
 // Returns:
 //
 //	int64: The configuration value as an int64 or default value
-func (c *Config) GetInt64(key string, defaultValue int64) int64 {
-	value := c.GetWithDefault(key, defaultValue)
+func (c *Config) GetInt64(key string, defaultValue ...int64) int64 {
+	default_ := int64(0)
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
+	value := c.GetWithDefault(key, default_)
 
 	switch v := value.(type) {
 	case int64:
@@ -392,7 +417,7 @@ func (c *Config) GetInt64(key string, defaultValue int64) int64 {
 		}
 	}
 
-	return defaultValue
+	return default_
 }
 
 // GetFloat64 retrieves a configuration value as a float64.
@@ -400,7 +425,7 @@ func (c *Config) GetInt64(key string, defaultValue int64) int64 {
 // Parameters:
 //
 //	key: The configuration key using dot notation
-//	defaultValue: The default float64 value to return if key is not found
+//	defaultValue: Optional default float64 value to return if key is not found (0.0 if not provided)
 //
 // Returns:
 //
@@ -408,9 +433,15 @@ func (c *Config) GetInt64(key string, defaultValue int64) int64 {
 //
 // Example:
 //
-//	timeout := config.GetFloat64("server.timeout", 30.0)
-func (c *Config) GetFloat64(key string, defaultValue float64) float64 {
-	value := c.GetWithDefault(key, defaultValue)
+//	timeout := config.GetFloat64("server.timeout", 30.0) // With default
+//	rate := config.GetFloat64("cache.hit_rate")         // Without default
+func (c *Config) GetFloat64(key string, defaultValue ...float64) float64 {
+	default_ := 0.0
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
+	value := c.GetWithDefault(key, default_)
 
 	switch v := value.(type) {
 	case float64:
@@ -423,7 +454,7 @@ func (c *Config) GetFloat64(key string, defaultValue float64) float64 {
 		}
 	}
 
-	return defaultValue
+	return default_
 }
 
 // GetDuration retrieves a configuration value as a time.Duration.
@@ -431,13 +462,18 @@ func (c *Config) GetFloat64(key string, defaultValue float64) float64 {
 // Parameters:
 //
 //	key: The configuration key using dot notation
-//	defaultValue: The default duration to return if key is not found
+//	defaultValue: Optional default duration to return if key is not found (0 if not provided)
 //
 // Returns:
 //
 //	time.Duration: The configuration duration or default value
-func (c *Config) GetDuration(key string, defaultValue time.Duration) time.Duration {
-	value := c.GetWithDefault(key, defaultValue)
+func (c *Config) GetDuration(key string, defaultValue ...time.Duration) time.Duration {
+	default_ := time.Duration(0)
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
+	value := c.GetWithDefault(key, default_)
 
 	switch v := value.(type) {
 	case time.Duration:
@@ -457,7 +493,7 @@ func (c *Config) GetDuration(key string, defaultValue time.Duration) time.Durati
 		return time.Duration(v * float64(time.Second))
 	}
 
-	return defaultValue
+	return default_
 }
 
 // GetStringSlice retrieves a configuration value as a string slice.
@@ -465,13 +501,18 @@ func (c *Config) GetDuration(key string, defaultValue time.Duration) time.Durati
 // Parameters:
 //
 //	key: The configuration key using dot notation
-//	defaultValue: The default slice to return if key is not found
+//	defaultValue: Optional default slice to return if key is not found (empty slice if not provided)
 //
 // Returns:
 //
 //	[]string: The configuration slice or default value
-func (c *Config) GetStringSlice(key string, defaultValue []string) []string {
-	value := c.GetWithDefault(key, defaultValue)
+func (c *Config) GetStringSlice(key string, defaultValue ...[]string) []string {
+	default_ := []string{}
+	if len(defaultValue) > 0 {
+		default_ = defaultValue[0]
+	}
+
+	value := c.GetWithDefault(key, default_)
 
 	switch v := value.(type) {
 	case []string:
@@ -486,7 +527,7 @@ func (c *Config) GetStringSlice(key string, defaultValue []string) []string {
 	case string:
 		// Split comma-separated string
 		if v == "" {
-			return defaultValue
+			return default_
 		}
 		parts := strings.Split(v, ",")
 		for i, part := range parts {
@@ -495,7 +536,7 @@ func (c *Config) GetStringSlice(key string, defaultValue []string) []string {
 		return parts
 	}
 
-	return defaultValue
+	return default_
 }
 
 // HasKey checks if a configuration key exists.
@@ -700,3 +741,7 @@ func (c *Config) copyMap(src, dst map[string]interface{}) {
 		}
 	}
 }
+
+// Compile-time interface compliance check
+// This ensures that Config implements the ConfigInterface
+var _ interfaces.ConfigInterface = (*Config)(nil)

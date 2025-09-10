@@ -47,7 +47,7 @@ import (
  * - Handles configuration caching and optimization
  */
 type ConfigServiceProvider struct {
-	serviceProviders.BaseServiceProvider
+	serviceProviders.ServiceProvider
 }
 
 // NewConfigServiceProvider creates a new config service provider with default settings.
@@ -70,7 +70,7 @@ type ConfigServiceProvider struct {
 //	app.RegisterProvider(provider)
 func NewConfigServiceProvider() *ConfigServiceProvider {
 	return &ConfigServiceProvider{
-		BaseServiceProvider: serviceProviders.BaseServiceProvider{},
+		ServiceProvider: serviceProviders.ServiceProvider{},
 	}
 }
 
@@ -114,7 +114,7 @@ func NewConfigServiceProvider() *ConfigServiceProvider {
 //	debugMode := config.GetBool("app.debug", false)
 func (p *ConfigServiceProvider) Register(application applicationInterfaces.ApplicationInterface) error {
 	// Call parent Register method to set the registered flag
-	if err := p.BaseServiceProvider.Register(application); err != nil {
+	if err := p.ServiceProvider.Register(application); err != nil {
 		return fmt.Errorf("failed to register base service provider: %w", err)
 	}
 
@@ -129,19 +129,71 @@ func (p *ConfigServiceProvider) Register(application applicationInterfaces.Appli
 
 	// Register the configuration service as a singleton
 	// This binds the "config" abstract to the ConfigInterface implementation
-	if err := application.Singleton("config", config.NewWithEnvironment(environment)); err != nil {
+	if err := application.Singleton("config", p.configFactory(environment)); err != nil {
 		return fmt.Errorf("failed to register config singleton: %w", err)
+	}
+
+	// Register configuration factory for creating additional config instances
+	// This allows for environment-specific or scoped configuration instances
+	if err := application.Bind("config.factory", p.configFactoryMethod()); err != nil {
+		return fmt.Errorf("failed to register config factory: %w", err)
 	}
 
 	// Register environment-specific configuration resolver
 	// This provides access to the current environment configuration
 	if err := application.Bind("config.environment", func() interface{} {
-		return os.Getenv("APP_ENV")
+		return environment
 	}); err != nil {
 		return fmt.Errorf("failed to register config environment: %w", err)
 	}
 
 	return nil
+}
+
+// configFactory creates the main configuration service factory function.
+// This factory is responsible for creating and initializing the Config instance
+// with proper environment settings, paths, and default configurations.
+//
+// Returns:
+//
+//	func() interface{}: Factory function that creates ConfigInterface instance
+func (p *ConfigServiceProvider) configFactory(environment string) func() interface{} {
+	return func() interface{} {
+		// Create a new configuration instance for the specified environment
+		configInstance := config.NewWithEnvironment(environment)
+
+		// Return as ConfigInterface to maintain interface segregation
+		return configInterface(configInstance)
+	}
+}
+
+// configFactoryMethod creates a factory method for creating additional config instances.
+// This is useful for creating scoped or temporary configuration instances.
+//
+// Returns:
+//
+//	func() interface{}: Factory method that returns a config creation function
+func (p *ConfigServiceProvider) configFactoryMethod() func() interface{} {
+	return func() interface{} {
+		return func(environment string) configInterfaces.ConfigInterface {
+			configInstance := config.NewWithEnvironment(environment)
+			return configInterface(configInstance)
+		}
+	}
+}
+
+// configInterface is a type assertion helper that ensures the config instance
+// implements the ConfigInterface. This provides compile-time safety for the binding.
+//
+// Parameters:
+//
+//	configInstance: The concrete Config instance
+//
+// Returns:
+//
+//	configInterfaces.ConfigInterface: The config instance as an interface
+func configInterface(configInstance *config.Config) configInterfaces.ConfigInterface {
+	return configInstance
 }
 
 // Boot performs comprehensive configuration service bootstrapping after all providers are registered.
@@ -179,7 +231,7 @@ func (p *ConfigServiceProvider) Register(application applicationInterfaces.Appli
 //	// 4. Runtime configuration modifications
 func (p *ConfigServiceProvider) Boot(application applicationInterfaces.ApplicationInterface) error {
 	// Call parent Boot method to ensure proper provider state
-	if err := p.BaseServiceProvider.Boot(application); err != nil {
+	if err := p.ServiceProvider.Boot(application); err != nil {
 		return fmt.Errorf("failed to boot base service provider: %w", err)
 	}
 

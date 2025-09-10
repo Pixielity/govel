@@ -15,9 +15,6 @@ const (
 	// TimeoutBoot represents application boot timeout
 	TimeoutBoot TimeoutType = "boot"
 
-	// TimeoutServiceProviderBoot represents service provider boot timeout
-	TimeoutServiceProviderBoot TimeoutType = "service_provider_boot"
-
 	// TimeoutLifecycle represents lifecycle operation timeout
 	TimeoutLifecycle TimeoutType = "lifecycle"
 
@@ -62,16 +59,15 @@ const (
 
 // DefaultTimeouts maps timeout types to their default durations
 var DefaultTimeouts = map[TimeoutType]TimeoutDuration{
-	TimeoutShutdown:            TimeoutLong,                   // 30 seconds
-	TimeoutDrain:               TimeoutShort,                  // 5 seconds (was 10, but 5 is more appropriate)
-	TimeoutBoot:                TimeoutLong,                   // 30 seconds
-	TimeoutServiceProviderBoot: TimeoutMedium,                 // 15 seconds
-	TimeoutLifecycle:           TimeoutLong,                   // 30 seconds
-	TimeoutTermination:         TimeoutMedium,                 // 15 seconds (was 20)
-	TimeoutHTTP:                TimeoutLong,                   // 30 seconds
-	TimeoutDatabase:            TimeoutMedium,                 // 15 seconds
-	TimeoutCache:               TimeoutShort,                  // 5 seconds
-	TimeoutContext:             TimeoutMedium,                 // 15 seconds
+	TimeoutShutdown:    TimeoutLong,   // 30 seconds
+	TimeoutDrain:       TimeoutShort,  // 5 seconds (was 10, but 5 is more appropriate)
+	TimeoutBoot:        TimeoutLong,   // 30 seconds
+	TimeoutLifecycle:   TimeoutLong,   // 30 seconds
+	TimeoutTermination: TimeoutMedium, // 15 seconds (was 20)
+	TimeoutHTTP:        TimeoutLong,   // 30 seconds
+	TimeoutDatabase:    TimeoutMedium, // 15 seconds
+	TimeoutCache:       TimeoutShort,  // 5 seconds
+	TimeoutContext:     TimeoutMedium, // 15 seconds
 }
 
 // String returns the string representation of the timeout type

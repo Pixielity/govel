@@ -9,8 +9,6 @@ package interfaces
 //   import "govel/packages/application/interfaces"
 //
 //   var application applicationInterfaces.ApplicationInterface
-//   var provider interfaces.ServiceProviderInterface
-//   var bootable interfaces.HasBootableServiceProvider
 
 import (
 	// Import all interface packages
@@ -45,23 +43,8 @@ type ApplicationTimingInterface = applicationInterfaces.ApplicationTimingInterfa
 // ApplicationInfoInterface provides comprehensive application information
 type ApplicationInfoInterface = applicationInterfaces.ApplicationInfoInterface
 
-// Service Provider Interfaces
-// These interfaces are for different types of service providers
-
-// ServiceProviderInterface represents the base service provider interface
-type ServiceProviderInterface = providerInterfaces.ServiceProviderInterface
-
-// HasBootableServiceProvider represents service providers that can be booted with context
-type HasBootableServiceProvider = providerInterfaces.HasBootableServiceProvider
-
-// DeferredServiceProvider represents service providers with deferred loading
-type DeferredServiceProvider = providerInterfaces.DeferredServiceProvider
-
-// TerminatableServiceProvider represents service providers that can be terminated
-type TerminatableServiceProvider = providerInterfaces.TerminatableServiceProvider
-
-// ServiceProviderManagementInterface manages service provider registration and booting
-type ServiceProviderManagementInterface = providerInterfaces.ServiceProviderManagementInterface
+// ApplicationProviderInterface manages service provider lifecycle operations
+type ApplicationProviderInterface = applicationInterfaces.ApplicationProviderInterface
 
 // Core Trait Interfaces
 // These interfaces are for application-specific traits
@@ -122,3 +105,21 @@ type Shutdownable = traitInterfaces.ShutdownableInterface
 
 // Maintainable represents components that manage maintenance mode (deprecated: use MaintainableInterface)
 type Maintainable = traitInterfaces.MaintainableInterface
+
+// Service Provider Interfaces
+// These interfaces define contracts for service provider management
+
+// ServiceProviderInterface defines the contract for all service providers
+type ServiceProviderInterface = providerInterfaces.ServiceProviderInterface
+
+// ProviderRepositoryInterface manages provider registration and lifecycle
+type ProviderRepositoryInterface = providerInterfaces.ProviderRepositoryInterface
+
+// TerminatableProvider defines providers that require graceful termination
+type TerminatableProvider = providerInterfaces.TerminatableProvider
+
+// DeferrableProvider defines providers that can be deferred
+type DeferrableProvider = providerInterfaces.DeferrableProvider
+
+// EventTriggeredProvider defines providers that can be triggered by events
+type EventTriggeredProvider = providerInterfaces.EventTriggeredProvider
