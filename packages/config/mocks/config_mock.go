@@ -406,7 +406,7 @@ func (m *MockConfigurable) GetConfig() interfaces.ConfigInterface {
 	return m.ConfigInstance
 }
 
-func (m *MockConfigurable) SetConfig(config interface{}) {
+func (m *MockConfigurable) SetConfig(config interfaces.ConfigInterface) {
 	if cfg, ok := config.(interfaces.ConfigInterface); ok {
 		m.ConfigInstance = cfg
 		m.HasConfigValue = true

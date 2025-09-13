@@ -1,6 +1,6 @@
 package interfaces
 
 // seederInterface defines the contract for seeder interface functionality.
-type seederInterface interface {
+type SeederInterface interface {
 	// TODO: Define methods for this interface
 }

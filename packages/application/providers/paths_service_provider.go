@@ -2,7 +2,7 @@ package providers
 
 import (
 	"fmt"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 )
 
 /**
@@ -146,3 +146,8 @@ func (p *PathsServiceProvider) Register(application applicationInterfaces.Applic
 
 	return nil
 }
+
+// Compile-time interface compliance checks
+// These ensure PathsServiceProvider properly implements required interfaces
+// Prevents runtime errors from missing method implementations
+// var _ applicationInterfaces.ServiceProviderInterface = (*PathsServiceProvider)(nil)

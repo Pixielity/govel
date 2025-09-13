@@ -4,7 +4,7 @@ import (
 	"sync"
 
 	"govel/packages/application/helpers"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	concernsInterfaces "govel/packages/types/src/interfaces/application/concerns"
 )
 
 /**
@@ -120,4 +120,4 @@ func (i *HasIdentity) SetVersion(version string) {
 }
 
 // Compile-time interface compliance check
-var _ applicationInterfaces.HasIdentityInterface = (*HasIdentity)(nil)
+var _ concernsInterfaces.HasIdentityInterface = (*HasIdentity)(nil)

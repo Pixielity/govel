@@ -1,8 +1,9 @@
 package facades
 
 import (
-	appInterfaces "govel/packages/types/src/interfaces/application"
 	facade "govel/packages/support/src"
+	applicationTokens "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 )
 
 // App provides a clean, static-like interface to the application's core service.
@@ -372,14 +373,14 @@ import (
 //
 //	    return app
 //	})
-func App() appInterfaces.ApplicationInterface {
+func App() applicationInterfaces.ApplicationInterface {
 	// Use facade.Resolve() for clean facade implementation:
 	// - Resolves "app" service from the dependency injection container
 	// - Performs type assertion to ApplicationInterface
 	// - Caches the result for subsequent calls
 	// - Panics with descriptive error if resolution fails
 	// - Thread-safe with optimized locking
-	return facade.Resolve[appInterfaces.ApplicationInterface](appInterfaces.APPLICATION_TOKEN)
+	return facade.Resolve[applicationInterfaces.ApplicationInterface](applicationTokens.APPLICATION_TOKEN)
 }
 
 // AppWithError provides error-safe access to the application service.
@@ -436,12 +437,12 @@ func App() appInterfaces.ApplicationInterface {
 //
 //	    return nil
 //	}
-func AppWithError() (appInterfaces.ApplicationInterface, error) {
+func AppWithError() (applicationInterfaces.ApplicationInterface, error) {
 	// Use facade.Resolve() for error-return behavior:
 	// - Resolves "app" service from the dependency injection container
 	// - Performs type assertion with error handling
 	// - Caches the result for subsequent calls
 	// - Returns detailed error information instead of panicking
 	// - Thread-safe with optimized locking
-	return facade.TryResolve[appInterfaces.ApplicationInterface](appInterfaces.APPLICATION_TOKEN)
+	return facade.TryResolve[applicationInterfaces.ApplicationInterface](applicationTokens.APPLICATION_TOKEN)
 }

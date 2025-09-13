@@ -6,8 +6,9 @@ import (
 	"os"
 	"time"
 
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
 	providerInterfaces "govel/packages/types/src/interfaces/application/providers"
+	interfaces "govel/packages/types/src/interfaces/application/shutdown"
+	types "govel/packages/types/src/types/application"
 )
 
 // Shutdownable provides shutdown functionality using the ShutdownManager.
@@ -124,4 +125,4 @@ func (s *Shutdownable) GetShutdownInfo() map[string]interface{} {
 }
 
 // Compile-time interface compliance check
-var _ applicationInterfaces.ShutdownableInterface = (*Shutdownable)(nil)
+var _ interfaces.ShutdownableInterface = (*Shutdownable)(nil)

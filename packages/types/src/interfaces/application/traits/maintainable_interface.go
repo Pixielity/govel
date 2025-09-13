@@ -1,6 +1,10 @@
 package interfaces
 
-import "time"
+import (
+	"time"
+
+	shared "govel/packages/types/src/shared"
+)
 
 // MaintainableInterface defines the contract for maintenance mode functionality.
 type MaintainableInterface interface {
@@ -14,7 +18,7 @@ type MaintainableInterface interface {
 	IsMaintenanceModeOff() bool
 
 	// GetMaintenanceMode returns the current maintenance mode configuration
-	GetMaintenanceMode() interface{} // Using interface{} to avoid circular imports
+	GetMaintenanceMode() *shared.MaintenanceMode
 
 	// CanBypass checks if a request can bypass maintenance mode
 	CanBypass(clientIP, path, secret string) bool

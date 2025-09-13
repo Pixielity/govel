@@ -377,3 +377,6 @@ func (pc *PipelineContext) copyMetadata() map[string]interface{} {
 	}
 	return copy
 }
+
+// Compile-time interface compliance check removed for now
+var _ interfaces.PipelineContextInterface = (*PipelineContext)(nil)

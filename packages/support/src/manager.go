@@ -42,6 +42,7 @@ import (
 
 	configInterfaces "govel/packages/types/src/interfaces/config"
 	containerInterfaces "govel/packages/types/src/interfaces/container"
+	types "govel/packages/types/src/types/support"
 
 	"govel/packages/support/src/str"
 	"govel/packages/support/src/traits"

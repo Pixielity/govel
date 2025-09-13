@@ -4,7 +4,7 @@ import (
 	"fmt"
 	serviceProviders "govel/packages/application/providers"
 	"govel/packages/container"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 	containerInterfaces "govel/packages/types/src/interfaces/container"
 )
 
@@ -210,3 +210,8 @@ func containerInterface(containerInstance *container.ServiceContainer) container
 func (p *ContainerServiceProvider) Priority() int {
 	return 10 // Highest priority - container is fundamental infrastructure
 }
+
+// Compile-time interface compliance checks
+// These ensure ContainerServiceProvider properly implements required interfaces
+// Prevents runtime errors from missing method implementations
+// var _ applicationInterfaces.ServiceProviderInterface = (*ContainerServiceProvider)(nil)

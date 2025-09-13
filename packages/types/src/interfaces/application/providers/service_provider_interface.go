@@ -1,6 +1,6 @@
 package interfaces
 
-import applicationInterfaces "govel/packages/types/src/interfaces/application"
+import applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 
 // ServiceProviderInterface defines the contract that all service providers must implement.
 // This interface follows Laravel's ServiceProvider pattern, providing methods for
@@ -17,11 +17,11 @@ type ServiceProviderInterface interface {
 	// may not have been registered yet.
 	//
 	// Parameters:
-	//   app: The application instance for service registration
+	//   application: The application instance for service registration
 	//
 	// Returns:
 	//   error: Any error that occurred during registration
-	Register(app applicationInterfaces.ApplicationInterface) error
+	Register(application applicationInterfaces.ApplicationInterface) error
 
 	// Boot any application services.
 	// This method is called after all other service providers have been registered,
@@ -29,11 +29,11 @@ type ServiceProviderInterface interface {
 	// This is where you should place bootstrap logic that depends on other services.
 	//
 	// Parameters:
-	//   app: The application instance for service booting
+	//   application: The application instance for service booting
 	//
 	// Returns:
 	//   error: Any error that occurred during booting
-	Boot(app applicationInterfaces.ApplicationInterface) error
+	Boot(application applicationInterfaces.ApplicationInterface) error
 
 	// GetProvides returns the services provided by the provider.
 	// This method is used to determine which services this provider offers,

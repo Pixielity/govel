@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 
+	enums "govel/packages/types/src/enums/encryption"
 	pipelineInterfaces "govel/packages/types/src/interfaces/pipeline"
 )
 
@@ -23,16 +24,16 @@ type PipelineCallback func(pipeline pipelineInterfaces.PipelineInterface, passab
 type EncryptedPayload struct {
 	// Cipher is the encryption algorithm used
 	Cipher string `json:"cipher"`
-	
+
 	// IV is the Base64-encoded initialization vector
 	IV string `json:"iv"`
-	
+
 	// Value is the Base64-encoded encrypted value
 	Value string `json:"value"`
-	
+
 	// MAC is the Base64-encoded message authentication code
 	MAC string `json:"mac,omitempty"`
-	
+
 	// Tag is the Base64-encoded authentication tag (for AEAD ciphers like GCM)
 	Tag string `json:"tag,omitempty"`
 }
@@ -53,15 +54,15 @@ func NewEncryptedPayload(iv, encrypted, mac, tag []byte) *EncryptedPayload {
 		IV:    encodeBase64(iv),
 		Value: encodeBase64(encrypted),
 	}
-	
+
 	if len(mac) > 0 {
 		payload.MAC = encodeBase64(mac)
 	}
-	
+
 	if len(tag) > 0 {
 		payload.Tag = encodeBase64(tag)
 	}
-	
+
 	return payload
 }
 
@@ -172,22 +173,22 @@ func (p *EncryptedPayload) GetTagBytes() ([]byte, error) {
 type CipherInfo struct {
 	// Cipher is the cipher algorithm identifier (e.g., "aes-256-gcm")
 	Cipher string `json:"cipher"`
-	
+
 	// KeyLength is the required key length in bytes
 	KeyLength int `json:"key_length"`
-	
+
 	// IVLength is the required initialization vector length in bytes
 	IVLength int `json:"iv_length"`
-	
+
 	// Mode is the cipher mode of operation (e.g., "gcm", "cbc", "ctr")
 	Mode string `json:"mode"`
-	
+
 	// IsAEAD indicates if the cipher provides authenticated encryption
 	IsAEAD bool `json:"is_aead"`
-	
+
 	// RequiresMAC indicates if the cipher requires separate MAC validation
 	RequiresMAC bool `json:"requires_mac"`
-	
+
 	// Options contains cipher-specific parameters and settings
 	Options map[string]interface{} `json:"options"`
 }
@@ -205,10 +206,10 @@ type CipherInfo struct {
 type HashInfo struct {
 	// Algo is the hash algorithm identifier (e.g., "argon2id", "bcrypt")
 	Algo string `json:"algo"`
-	
+
 	// AlgoName is the human-readable algorithm name
 	AlgoName string `json:"algo_name"`
-	
+
 	// Options contains algorithm-specific parameters (cost, memory, time, etc.)
 	Options map[string]interface{} `json:"options"`
 }
@@ -218,7 +219,7 @@ type HashInfo struct {
 //
 // This function analyzes the cipher string and sets appropriate values for:
 //   - Key length requirements
-//   - IV length requirements  
+//   - IV length requirements
 //   - Cipher mode identification
 //   - AEAD capability detection
 //   - MAC requirement determination
@@ -228,56 +229,56 @@ type HashInfo struct {
 //
 // Returns:
 //   - CipherInfo: Populated cipher information structure
-func NewCipherInfo(cipher string) CipherInfo {
+func NewCipherInfo(cipher enums.Cipher) CipherInfo {
 	info := CipherInfo{
-		Cipher:  cipher,
+		Cipher:  cipher.String(),
 		Options: make(map[string]interface{}),
 	}
-	
+
 	// Parse cipher characteristics based on algorithm identifier
 	switch cipher {
 	case "aes-128-gcm", "AES-128-GCM":
-		info.KeyLength = 16   // 128 bits
-		info.IVLength = 12    // 96 bits for GCM
+		info.KeyLength = 16 // 128 bits
+		info.IVLength = 12  // 96 bits for GCM
 		info.Mode = "gcm"
 		info.IsAEAD = true
 		info.RequiresMAC = false
-		
+
 	case "aes-256-gcm", "AES-256-GCM":
-		info.KeyLength = 32   // 256 bits
-		info.IVLength = 12    // 96 bits for GCM
+		info.KeyLength = 32 // 256 bits
+		info.IVLength = 12  // 96 bits for GCM
 		info.Mode = "gcm"
 		info.IsAEAD = true
 		info.RequiresMAC = false
-		
+
 	case "aes-128-cbc", "AES-128-CBC":
-		info.KeyLength = 16   // 128 bits
-		info.IVLength = 16    // 128 bits for CBC
+		info.KeyLength = 16 // 128 bits
+		info.IVLength = 16  // 128 bits for CBC
 		info.Mode = "cbc"
 		info.IsAEAD = false
 		info.RequiresMAC = true
-		
+
 	case "aes-256-cbc", "AES-256-CBC":
-		info.KeyLength = 32   // 256 bits
-		info.IVLength = 16    // 128 bits for CBC
+		info.KeyLength = 32 // 256 bits
+		info.IVLength = 16  // 128 bits for CBC
 		info.Mode = "cbc"
 		info.IsAEAD = false
 		info.RequiresMAC = true
-		
+
 	case "aes-128-ctr", "AES-128-CTR":
-		info.KeyLength = 16   // 128 bits
-		info.IVLength = 16    // 128 bits for CTR
+		info.KeyLength = 16 // 128 bits
+		info.IVLength = 16  // 128 bits for CTR
 		info.Mode = "ctr"
 		info.IsAEAD = false
 		info.RequiresMAC = true
-		
+
 	case "aes-256-ctr", "AES-256-CTR":
-		info.KeyLength = 32   // 256 bits
-		info.IVLength = 16    // 128 bits for CTR
+		info.KeyLength = 32 // 256 bits
+		info.IVLength = 16  // 128 bits for CTR
 		info.Mode = "ctr"
 		info.IsAEAD = false
 		info.RequiresMAC = true
-		
+
 	default:
 		// Unknown cipher - return empty info
 		info.KeyLength = 0
@@ -286,7 +287,7 @@ func NewCipherInfo(cipher string) CipherInfo {
 		info.IsAEAD = false
 		info.RequiresMAC = true // Conservative default
 	}
-	
+
 	return info
 }
 
@@ -334,12 +335,12 @@ func NewHashInfo(algo string, options map[string]interface{}) HashInfo {
 	if options == nil {
 		options = make(map[string]interface{})
 	}
-	
+
 	info := HashInfo{
 		Algo:    algo,
 		Options: options,
 	}
-	
+
 	// Set human-readable algorithm names
 	switch algo {
 	case "argon2i":
@@ -351,6 +352,6 @@ func NewHashInfo(algo string, options map[string]interface{}) HashInfo {
 	default:
 		info.AlgoName = algo
 	}
-	
+
 	return info
 }

@@ -4,7 +4,7 @@ import (
 	"sync"
 
 	"govel/packages/application/helpers"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	concernsInterfaces "govel/packages/types/src/interfaces/application/concerns"
 )
 
 /**
@@ -146,4 +146,4 @@ func (r *HasRuntime) SetRunningUnitTests(testing bool) {
 }
 
 // Compile-time interface compliance check
-var _ applicationInterfaces.HasRuntimeInterface = (*HasRuntime)(nil)
+var _ concernsInterfaces.HasRuntimeInterface = (*HasRuntime)(nil)

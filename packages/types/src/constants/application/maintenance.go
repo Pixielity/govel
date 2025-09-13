@@ -11,6 +11,9 @@ const (
 	// DefaultMaintenanceRetryAfter is the default retry-after value in seconds
 	DefaultMaintenanceRetryAfter = 60
 
+	// MaintenanceFileActiveValue is the value indicating maintenance mode is active
+	MaintenanceFileActiveValue = true
+
 	// MaintenanceFileInactiveValue is the value indicating maintenance mode is inactive
 	MaintenanceFileInactiveValue = false
 )

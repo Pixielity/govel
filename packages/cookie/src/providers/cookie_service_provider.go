@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	providers "govel/packages/application/providers"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 
 	cookie "govel/packages/cookie/src"
 	cookieInterfaces "govel/packages/cookie/src/interfaces"

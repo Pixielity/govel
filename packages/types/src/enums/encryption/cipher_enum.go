@@ -11,35 +11,40 @@ type Cipher string
 const (
 	// CipherAES128CBC represents AES-128-CBC cipher
 	CipherAES128CBC Cipher = "AES-128-CBC"
-	
+
 	// CipherAES256CBC represents AES-256-CBC cipher
 	CipherAES256CBC Cipher = "AES-256-CBC"
-	
+
 	// CipherAES128GCM represents AES-128-GCM cipher
 	CipherAES128GCM Cipher = "AES-128-GCM"
-	
+
 	// CipherAES256GCM represents AES-256-GCM cipher
 	CipherAES256GCM Cipher = "AES-256-GCM"
-	
+
 	// CipherAES128CTR represents AES-128-CTR cipher
 	CipherAES128CTR Cipher = "AES-128-CTR"
-	
+
 	// CipherAES256CTR represents AES-256-CTR cipher
 	CipherAES256CTR Cipher = "AES-256-CTR"
 )
 
-// ValidateCipher validates if the given cipher string is supported.
+// String returns the string representation of the Cipher.
+func (c Cipher) String() string {
+	return string(c)
+}
+
+// ValidateCipher validates if the given cipher is supported.
 // Returns an error if the cipher is not recognized or supported.
 //
 // Parameters:
-//   - cipher: The cipher algorithm identifier to validate
+//   - cipher: The cipher algorithm to validate
 //
 // Returns:
 //   - error: nil if valid, error describing the issue if invalid
-func ValidateCipher(cipher string) error {
+func ValidateCipher(cipher Cipher) error {
 	// Normalize cipher string to uppercase
-	normalizedCipher := strings.ToUpper(cipher)
-	
+	normalizedCipher := strings.ToUpper(cipher.String())
+
 	switch normalizedCipher {
 	case "AES-128-CBC", "AES-256-CBC", "AES-128-GCM", "AES-256-GCM", "AES-128-CTR", "AES-256-CTR":
 		return nil
@@ -52,14 +57,14 @@ func ValidateCipher(cipher string) error {
 // Returns 0 if the cipher is not recognized.
 //
 // Parameters:
-//   - cipher: The cipher algorithm identifier
+//   - cipher: The cipher algorithm
 //
 // Returns:
 //   - int: Key length in bytes (16 for AES-128, 32 for AES-256, 0 if unknown)
-func GetKeyLength(cipher string) int {
+func GetKeyLength(cipher Cipher) int {
 	// Normalize cipher string to uppercase
-	normalizedCipher := strings.ToUpper(cipher)
-	
+	normalizedCipher := strings.ToUpper(cipher.String())
+
 	switch normalizedCipher {
 	case "AES-128-CBC", "AES-128-GCM", "AES-128-CTR":
 		return 16 // 128 bits
@@ -74,14 +79,14 @@ func GetKeyLength(cipher string) int {
 // AEAD ciphers (like GCM) don't require separate MAC as they provide authentication.
 //
 // Parameters:
-//   - cipher: The cipher algorithm identifier
+//   - cipher: The cipher algorithm
 //
 // Returns:
 //   - bool: true if separate MAC is required, false for AEAD ciphers
-func RequiresMAC(cipher string) bool {
+func RequiresMAC(cipher Cipher) bool {
 	// Normalize cipher string to uppercase
-	normalizedCipher := strings.ToUpper(cipher)
-	
+	normalizedCipher := strings.ToUpper(cipher.String())
+
 	switch normalizedCipher {
 	case "AES-128-GCM", "AES-256-GCM":
 		return false // AEAD ciphers have built-in authentication
@@ -103,12 +108,12 @@ func RequiresMAC(cipher string) bool {
 func IsAEAD(cipher string) bool {
 	// Normalize cipher string to uppercase
 	normalizedCipher := strings.ToUpper(cipher)
-	
+
 	switch normalizedCipher {
 	case "AES-128-GCM", "AES-256-GCM":
 		return true // GCM modes are AEAD
 	default:
-	return false // Other modes are not AEAD
+		return false // Other modes are not AEAD
 	}
 }
 
@@ -116,14 +121,14 @@ func IsAEAD(cipher string) bool {
 // Different cipher modes require different IV lengths for security.
 //
 // Parameters:
-//   - cipher: The cipher algorithm identifier
+//   - cipher: The cipher algorithm
 //
 // Returns:
 //   - int: IV length in bytes (12 for GCM, 16 for CBC/CTR, 0 if unknown)
-func GetIVLength(cipher string) int {
+func GetIVLength(cipher Cipher) int {
 	// Normalize cipher string to uppercase
-	normalizedCipher := strings.ToUpper(cipher)
-	
+	normalizedCipher := strings.ToUpper(cipher.String())
+
 	switch normalizedCipher {
 	case "AES-128-GCM", "AES-256-GCM":
 		return 12 // 96 bits for GCM mode

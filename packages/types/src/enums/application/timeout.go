@@ -127,6 +127,11 @@ const (
 	CategoryLengthy TimeoutCategory = "lengthy"
 )
 
+// String returns the string representation of the TimeoutCategory.
+func (tc TimeoutCategory) String() string {
+	return string(tc)
+}
+
 // GetTimeoutCategory returns the category for a given timeout duration
 func GetTimeoutCategory(duration TimeoutDuration) TimeoutCategory {
 	d := duration.Duration()

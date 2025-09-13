@@ -11,8 +11,9 @@ import (
 	"reflect"
 	"sync"
 
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 	configInterfaces "govel/packages/types/src/interfaces/config"
+	types "govel/packages/types/src/types/support"
 
 	"govel/packages/support/src/str"
 	"govel/packages/support/src/traits"
@@ -94,9 +95,15 @@ func NewMultipleInstanceManager(app applicationInterfaces.ApplicationInterface) 
 		panic(fmt.Sprintf("Failed to resolve config from application: %v", err))
 	}
 
+	// Safely type-assert the config with nil check
+	configInterface, ok := config.(configInterfaces.ConfigInterface)
+	if !ok {
+		panic(fmt.Sprintf("Config service does not implement ConfigInterface, got %T", config))
+	}
+
 	return &MultipleInstanceManager{
 		app:            app,
-		config:         config.(configInterfaces.ConfigInterface),
+		config:         configInterface,
 		instances:      make(map[string]interface{}),
 		customCreators: make(map[string]types.InstanceCreator),
 		driverKey:      "driver", // Default driver configuration key
@@ -213,25 +220,15 @@ func (m *MultipleInstanceManager) Instance(name ...string) (interface{}, error) 
 			if err == nil && len(results) > 0 {
 				instanceName = results[0].String()
 			} else {
-				panic("GetDefaultInstance method must be implemented by concrete manager")
+				return nil, fmt.Errorf("GetDefaultInstance method must be implemented by concrete manager: %v", err)
 			}
 		} else {
-			panic("GetDefaultInstance method must be implemented by concrete manager")
+			return nil, fmt.Errorf("GetDefaultInstance method must be implemented by concrete manager")
 		}
 	}
 
-	// Get the instance (from cache or create new)
-	instance, err := m.get(instanceName)
-	if err != nil {
-		return nil, err
-	}
-
-	// Cache the instance for future use
-	m.mutex.Lock()
-	m.instances[instanceName] = instance
-	m.mutex.Unlock()
-
-	return instance, nil
+	// Get the instance (from cache or create new) - get() handles its own caching
+	return m.get(instanceName)
 }
 
 // get attempts to retrieve an instance from cache or creates it via resolve.
@@ -261,7 +258,23 @@ func (m *MultipleInstanceManager) get(name string) (interface{}, error) {
 	m.mutex.RUnlock()
 
 	// Cache miss - create new instance
-	return m.resolve(name)
+	instance, err := m.resolve(name)
+	if err != nil {
+		return nil, err
+	}
+
+	// Cache the newly created instance (with double-checked locking pattern)
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	// Double-check if instance was created by another goroutine while we were waiting
+	if existingInstance, exists := m.instances[name]; exists {
+		return existingInstance, nil
+	}
+
+	// Cache the instance
+	m.instances[name] = instance
+	return instance, nil
 }
 
 // resolve creates a new instance using Laravel-style reflection or custom creators.
@@ -311,28 +324,36 @@ func (m *MultipleInstanceManager) resolve(name string) (interface{}, error) {
 		return nil, fmt.Errorf("instance [%s] is not defined", name)
 	}
 
-	// Extract driver name from configuration
-	driverName, exists := config[m.driverKey]
+	// Extract driver name from configuration (thread-safe access to driverKey)
+	m.mutex.RLock()
+	currentDriverKey := m.driverKey
+	m.mutex.RUnlock()
+
+	driverName, exists := config[currentDriverKey]
 	if !exists {
-		return nil, fmt.Errorf("instance [%s] does not specify a %s", name, m.driverKey)
+		return nil, fmt.Errorf("instance [%s] does not specify a %s", name, currentDriverKey)
 	}
 
 	// Validate driver name is a string
 	driverNameStr, ok := driverName.(string)
 	if !ok {
-		return nil, fmt.Errorf("instance [%s] %s must be a string", name, m.driverKey)
+		return nil, fmt.Errorf("instance [%s] %s must be a string", name, currentDriverKey)
 	}
 
 	// Priority 1: Check for custom creator (registered via Extend)
-	if creator, exists := m.customCreators[driverNameStr]; exists {
+	m.mutex.RLock()
+	creator, exists := m.customCreators[driverNameStr]
+	m.mutex.RUnlock()
+
+	if exists {
 		return m.callCustomCreator(config, creator)
 	}
 
 	// Priority 2: Use Laravel-style reflection to find Create{Driver}{DriverKey} methods
 	// Try different method naming conventions for compatibility
 	createMethods := []string{
-		fmt.Sprintf("Create%s%s", str.Title(driverNameStr), str.Title(m.driverKey)),
-		fmt.Sprintf("Create%s%s", str.Studly(driverNameStr), str.Title(m.driverKey)),
+		fmt.Sprintf("Create%s%s", str.Title(driverNameStr), str.Title(currentDriverKey)),
+		fmt.Sprintf("Create%s%s", str.Studly(driverNameStr), str.Title(currentDriverKey)),
 	}
 
 	// Use reflection to find and call the appropriate method on the concrete manager
@@ -354,9 +375,17 @@ func (m *MultipleInstanceManager) resolve(name string) (interface{}, error) {
 				return nil, fmt.Errorf("create method %s must return (interface{}, error)", methodName)
 			}
 
+			// Validate that the second return value is an error type
+			if results[1].Type() != reflect.TypeOf((*error)(nil)).Elem() {
+				return nil, fmt.Errorf("create method %s second return value must be error type, got %s", methodName, results[1].Type())
+			}
+
 			// Check if the method returned an error
 			if !results[1].IsNil() {
-				return nil, results[1].Interface().(error)
+				if err, ok := results[1].Interface().(error); ok {
+					return nil, err
+				}
+				return nil, fmt.Errorf("create method %s returned non-error as error: %v", methodName, results[1].Interface())
 			}
 
 			// Return the created instance
@@ -365,7 +394,7 @@ func (m *MultipleInstanceManager) resolve(name string) (interface{}, error) {
 	}
 
 	// No custom creator or Create{Driver}{DriverKey} method found
-	return nil, fmt.Errorf("instance %s [%s] is not supported", m.driverKey, driverNameStr)
+	return nil, fmt.Errorf("instance %s [%s] is not supported", currentDriverKey, driverNameStr)
 }
 
 // callCustomCreator executes a custom instance creation function.
@@ -532,11 +561,17 @@ func (m *MultipleInstanceManager) Extend(name string, creator types.InstanceCrea
 //	If the new application cannot provide a "config" binding, the config
 //	reference will remain unchanged (no error is thrown).
 func (m *MultipleInstanceManager) SetApplication(app applicationInterfaces.ApplicationInterface) *MultipleInstanceManager {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
 	m.app = app
 
 	// Attempt to update config reference from the new application
 	if config, err := app.Make("config"); err == nil {
-		m.config = config.(configInterfaces.ConfigInterface)
+		// Safely type-assert the config
+		if configInterface, ok := config.(configInterfaces.ConfigInterface); ok {
+			m.config = configInterface
+		}
 	}
 
 	return m
@@ -550,6 +585,8 @@ func (m *MultipleInstanceManager) SetApplication(app applicationInterfaces.Appli
 // Returns:
 //   - Application: The current application instance
 func (m *MultipleInstanceManager) GetApplication() applicationInterfaces.ApplicationInterface {
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
 	return m.app
 }
 
@@ -594,7 +631,9 @@ func (m *MultipleInstanceManager) GetInstances() map[string]interface{} {
 //	manager.SetDriverKey("type")
 //	// Now configurations should have: {"type": "mysql", ...}
 func (m *MultipleInstanceManager) SetDriverKey(key string) *MultipleInstanceManager {
+	m.mutex.Lock()
 	m.driverKey = key
+	m.mutex.Unlock()
 	return m
 }
 
@@ -603,6 +642,8 @@ func (m *MultipleInstanceManager) SetDriverKey(key string) *MultipleInstanceMana
 // Returns:
 //   - string: The current driver key (default: "driver")
 func (m *MultipleInstanceManager) GetDriverKey() string {
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
 	return m.driverKey
 }
 
@@ -614,5 +655,7 @@ func (m *MultipleInstanceManager) GetDriverKey() string {
 // Returns:
 //   - configInterfaces.ConfigInterface: The current configuration instance
 func (m *MultipleInstanceManager) GetConfig() configInterfaces.ConfigInterface {
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
 	return m.config
 }

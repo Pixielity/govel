@@ -8,6 +8,11 @@ import "time"
  */
 
 /**
+ * DefaultShutdownTimeout is the default timeout for graceful shutdown operations.
+ */
+const DefaultShutdownTimeout = 30 * time.Second
+
+/**
  * MinShutdownTimeout is the minimum allowed shutdown timeout.
  */
 const MinShutdownTimeout = 1 * time.Second
@@ -16,6 +21,12 @@ const MinShutdownTimeout = 1 * time.Second
  * MaxShutdownTimeout is the maximum allowed shutdown timeout.
  */
 const MaxShutdownTimeout = 5 * time.Minute
+
+/**
+ * DefaultDrainTimeout is the default timeout for drain operations.
+ * This is the maximum time to wait for active operations to complete during drain.
+ */
+const DefaultDrainTimeout = 10 * time.Second
 
 /**
  * DefaultGracePeriod is the default grace period before force shutdown.

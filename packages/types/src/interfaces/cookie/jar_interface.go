@@ -1,6 +1,6 @@
 package interfaces
 
 // jarInterface defines the contract for jar interface functionality.
-type jarInterface interface {
+type JarInterface interface {
 	// TODO: Define methods for this interface
 }

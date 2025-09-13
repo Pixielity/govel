@@ -6,11 +6,10 @@ import (
 	"os"
 	"time"
 
-	"govel/packages/application/providers"
 	configMocks "govel/packages/config/mocks"
 	containerMocks "govel/packages/container/mocks"
 	loggerMocks "govel/packages/logger/mocks"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 	types "govel/packages/types/src/types/application"
 )
 
@@ -424,7 +423,7 @@ func (m *MockApplication) RegisterProvider(provider interface{}) error {
 	return nil
 }
 
-func (m *MockApplication) RegisterProviders(providers []providers.ServiceProvider) error {
+func (m *MockApplication) RegisterProviders(providers []interface{}) error {
 	if m.ShouldFailRegister {
 		return &MockError{Message: "register providers failed"}
 	}

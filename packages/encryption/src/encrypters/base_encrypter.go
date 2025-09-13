@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"strings"
 
+	types "govel/packages/types/src"
 	enums "govel/packages/types/src/enums/encryption"
 	encryptionInterfaces "govel/packages/types/src/interfaces/encryption"
-	types "govel/packages/types/src"
 )
 
 // BaseEncrypter provides common functionality for all encrypter implementations.
@@ -48,12 +48,12 @@ type BaseEncrypter struct {
 // Returns a configured BaseEncrypter or an error if validation fails.
 func NewBaseEncrypter(key []byte, cipher string, config map[string]interface{}) (*BaseEncrypter, error) {
 	// Validate cipher
-	if err := enums.ValidateCipher(cipher); err != nil {
+	if err := enums.ValidateCipher(enums.Cipher(cipher)); err != nil {
 		return nil, fmt.Errorf("invalid cipher: %w", err)
 	}
 
 	// Validate key length
-	expectedKeyLen := enums.GetKeyLength(cipher)
+	expectedKeyLen := enums.GetKeyLength(enums.Cipher(cipher))
 	if expectedKeyLen == 0 {
 		return nil, fmt.Errorf("unsupported cipher: %s", cipher)
 	}
@@ -141,7 +141,7 @@ func (b *BaseEncrypter) GetCipher() string {
 func (b *BaseEncrypter) SetKey(key []byte) encryptionInterfaces.EncrypterInterface {
 	// Validate key length against cipher requirements
 	// Different AES variants require different key lengths
-	expectedKeyLen := enums.GetKeyLength(b.cipher)
+	expectedKeyLen := enums.GetKeyLength(enums.Cipher(b.cipher))
 	if len(key) != expectedKeyLen {
 		// Silently ignore invalid keys to match Laravel behavior
 		// This could panic like Laravel or return an error in stricter implementations
@@ -168,7 +168,7 @@ func (b *BaseEncrypter) SetKey(key []byte) encryptionInterfaces.EncrypterInterfa
 func (b *BaseEncrypter) SetCipher(cipher string) encryptionInterfaces.EncrypterInterface {
 	// Validate cipher algorithm against supported variants
 	// Ensures only secure, implemented ciphers are used
-	if err := enums.ValidateCipher(cipher); err != nil {
+	if err := enums.ValidateCipher(enums.Cipher(cipher)); err != nil {
 		// Silently ignore invalid ciphers to match Laravel behavior
 		// Maintains existing configuration on validation failure
 		return b
@@ -176,7 +176,7 @@ func (b *BaseEncrypter) SetCipher(cipher string) encryptionInterfaces.EncrypterI
 
 	// Check if current key is compatible with new cipher requirements
 	// Different ciphers may require different key lengths
-	expectedKeyLen := enums.GetKeyLength(cipher)
+	expectedKeyLen := enums.GetKeyLength(enums.Cipher(cipher))
 	if len(b.key) != expectedKeyLen {
 		// Key is incompatible, but we'll set the cipher anyway
 		// The user will need to set a new compatible key
@@ -201,13 +201,13 @@ func (b *BaseEncrypter) SetCipher(cipher string) encryptionInterfaces.EncrypterI
 func (b *BaseEncrypter) GenerateKey(cipher string) ([]byte, error) {
 	// Validate cipher algorithm before key generation
 	// Ensures we only generate keys for supported, secure ciphers
-	if err := enums.ValidateCipher(cipher); err != nil {
+	if err := enums.ValidateCipher(enums.Cipher(cipher)); err != nil {
 		return nil, fmt.Errorf("invalid cipher: %w", err)
 	}
 
 	// Get required key length for the specified cipher
 	// Different AES variants require different key lengths
-	keyLen := enums.GetKeyLength(cipher)
+	keyLen := enums.GetKeyLength(enums.Cipher(cipher))
 	if keyLen == 0 {
 		return nil, fmt.Errorf("unsupported cipher: %s", cipher)
 	}
@@ -235,7 +235,7 @@ func (b *BaseEncrypter) GenerateKey(cipher string) ([]byte, error) {
 func (b *BaseEncrypter) generateIV() ([]byte, error) {
 	// Get required IV length for the current cipher
 	// Different modes require different IV lengths for optimal security
-	ivLen := enums.GetIVLength(b.cipher)
+	ivLen := enums.GetIVLength(enums.Cipher(b.cipher))
 	if ivLen == 0 {
 		return nil, fmt.Errorf("unsupported cipher: %s", b.cipher)
 	}
@@ -492,7 +492,7 @@ func (b *BaseEncrypter) EnsureTagIsValid(tag string) error {
 func (b *BaseEncrypter) ShouldValidateMac() bool {
 	// Use cipher enumeration to determine MAC requirement
 	// AEAD ciphers like GCM don't need separate MAC validation
-	return enums.RequiresMAC(b.cipher)
+	return enums.RequiresMAC(enums.Cipher(b.cipher))
 }
 
 // Info extracts and returns comprehensive metadata about the current cipher configuration.
@@ -509,7 +509,7 @@ func (b *BaseEncrypter) Info(payload string) types.CipherInfo {
 	// Return comprehensive information about the current cipher
 	// Future implementations could analyze payload to detect cipher used
 	// Currently returns configured cipher information
-	return types.NewCipherInfo(b.cipher)
+	return types.NewCipherInfo(enums.Cipher(b.cipher))
 }
 
 // VerifyConfiguration validates that the encrypter's current configuration meets security requirements.
@@ -525,13 +525,13 @@ func (b *BaseEncrypter) Info(payload string) types.CipherInfo {
 func (b *BaseEncrypter) VerifyConfiguration() bool {
 	// Check cipher validity against supported algorithms
 	// Ensures only secure, implemented ciphers are used
-	if err := enums.ValidateCipher(b.cipher); err != nil {
+	if err := enums.ValidateCipher(enums.Cipher(b.cipher)); err != nil {
 		return false
 	}
 
 	// Check key length matches cipher requirements
 	// Prevents use of incorrect key sizes that could weaken security
-	expectedKeyLen := enums.GetKeyLength(b.cipher)
+	expectedKeyLen := enums.GetKeyLength(enums.Cipher(b.cipher))
 	if len(b.key) != expectedKeyLen {
 		return false
 	}

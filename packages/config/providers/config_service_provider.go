@@ -4,7 +4,7 @@ import (
 	"fmt"
 	serviceProviders "govel/packages/application/providers"
 	"govel/packages/config"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 	configInterfaces "govel/packages/types/src/interfaces/config"
 	"os"
 )
@@ -306,3 +306,8 @@ func (p *ConfigServiceProvider) setDefaultConfiguration(config configInterfaces.
 func (p *ConfigServiceProvider) Priority() int {
 	return 100 // Standard application service priority
 }
+
+// Compile-time interface compliance checks
+// These ensure ConfigServiceProvider properly implements required interfaces
+// Prevents runtime errors from missing method implementations
+// var _ applicationInterfaces.ServiceProviderInterface = (*ConfigServiceProvider)(nil)

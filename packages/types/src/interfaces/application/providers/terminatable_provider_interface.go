@@ -2,7 +2,7 @@ package interfaces
 
 import (
 	"context"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 )
 
 // TerminatableProvider defines the contract for service providers that require
@@ -40,5 +40,5 @@ type TerminatableProvider interface {
 	//       db, _ := app.GetContainer().Make("database")
 	//       return db.Close()
 	//   }
-	Terminate(ctx context.Context, app applicationInterfaces.ApplicationInterface) error
+	Terminate(ctx context.Context, application applicationInterfaces.ApplicationInterface) error
 }

@@ -21,6 +21,7 @@ import (
 	"govel/packages/logger"
 	constants "govel/packages/types/src/constants/application"
 	providerInterfaces "govel/packages/types/src/interfaces/application/providers"
+	types "govel/packages/types/src/types/application"
 )
 
 // ShutdownManager handles the graceful shutdown process for the application.

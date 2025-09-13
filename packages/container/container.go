@@ -14,6 +14,7 @@ import (
 	"sync"
 
 	types "govel/packages/types/src/types/container"
+	interfaces "govel/packages/types/src/interfaces/container"
 )
 
 // ServiceContainer represents a service container for dependency injection.
@@ -549,3 +550,8 @@ func (c *ServiceContainer) resolveService(concrete interface{}) (interface{}, er
 	// Return the concrete instance directly
 	return concrete, nil
 }
+
+// Compile-time interface compliance checks
+// These ensure ServiceContainer properly implements required interfaces
+// Prevents runtime errors from missing method implementations
+var _ interfaces.ContainerInterface = (*ServiceContainer)(nil)

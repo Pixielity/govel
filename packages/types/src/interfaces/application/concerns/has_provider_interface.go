@@ -10,7 +10,7 @@ import (
 //
 // Note: This interface uses interface{} for provider parameters to avoid circular
 // imports with the provider interfaces package. The actual types should be cast
-// to the appropriate provider interfaces when implementing.
+// to the appropriate ServiceProviderInterface when implementing.
 //
 // This interface provides methods for:
 // - Provider registration and management

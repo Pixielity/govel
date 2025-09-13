@@ -1,5 +1,9 @@
 package interfaces
 
+import (
+	"context"
+)
+
 // ProviderRepositoryInterface defines the contract for the provider repository
 // without creating circular dependencies with the application package.
 //
@@ -102,4 +106,19 @@ type ProviderRepositoryInterface interface {
 	// Returns:
 	//   error: Any error that occurred during recompilation
 	RecompileManifest() error
+
+	// GetTerminatableProviders returns all registered terminatable providers.
+	//
+	// Returns:
+	//   []TerminatableProvider: List of terminatable providers sorted by priority
+	GetTerminatableProviders() []TerminatableProvider
+
+	// TerminateProviders terminates all registered terminatable providers.
+	//
+	// Parameters:
+	//   ctx: Context for the termination process
+	//
+	// Returns:
+	//   []error: List of errors that occurred during termination
+	TerminateProviders(ctx context.Context) []error
 }

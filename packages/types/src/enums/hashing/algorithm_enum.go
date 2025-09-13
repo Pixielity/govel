@@ -11,32 +11,37 @@ type Algorithm string
 const (
 	// AlgorithmBcrypt represents bcrypt algorithm
 	AlgorithmBcrypt Algorithm = "bcrypt"
-	
+
 	// AlgorithmArgon2i represents Argon2i algorithm
 	AlgorithmArgon2i Algorithm = "argon2i"
-	
+
 	// AlgorithmArgon2id represents Argon2id algorithm
 	AlgorithmArgon2id Algorithm = "argon2id"
-	
+
 	// AlgorithmSHA256 represents SHA-256 algorithm
 	AlgorithmSHA256 Algorithm = "sha256"
-	
+
 	// AlgorithmSHA512 represents SHA-512 algorithm
 	AlgorithmSHA512 Algorithm = "sha512"
 )
 
-// ValidateAlgorithm validates if the given algorithm string is supported.
+// String returns the string representation of the Algorithm.
+func (a Algorithm) String() string {
+	return string(a)
+}
+
+// ValidateAlgorithm validates if the given algorithm is supported.
 // Returns an error if the algorithm is not recognized or supported.
 //
 // Parameters:
-//   - algorithm: The hashing algorithm identifier to validate
+//   - algorithm: The hashing algorithm to validate
 //
 // Returns:
 //   - error: nil if valid, error describing the issue if invalid
-func ValidateAlgorithm(algorithm string) error {
-	// Normalize algorithm string to lowercase
-	normalizedAlgorithm := strings.ToLower(algorithm)
-	
+func ValidateAlgorithm(algorithm Algorithm) error {
+	// Convert algorithm to string for validation
+	normalizedAlgorithm := strings.ToLower(algorithm.String())
+
 	switch normalizedAlgorithm {
 	case "bcrypt", "argon2i", "argon2id", "sha256", "sha512":
 		return nil

@@ -4,7 +4,7 @@
 package providers
 
 import (
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 	providerInterfaces "govel/packages/types/src/interfaces/application/providers"
 	types "govel/packages/types/src/types/application"
 )
@@ -305,3 +305,8 @@ func (sp *ServiceProvider) CallBootedCallbacks() error {
 	}
 	return nil
 }
+
+// Compile-time interface compliance checks
+// These ensure ServiceProvider properly implements required interfaces
+// Prevents runtime errors from missing method implementations
+// var _ foundationInterfaces.ServiceProviderInterface = (*ServiceProvider)(nil)

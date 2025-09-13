@@ -4,18 +4,20 @@ import (
 	"context"
 	"os"
 	"time"
+
+	shared "govel/packages/types/src/shared"
 )
 
 // ShutdownableInterface defines the contract for graceful shutdown functionality.
 type ShutdownableInterface interface {
 	// RegisterShutdownCallback registers a callback to be executed during shutdown
-	RegisterShutdownCallback(name string, callback interface{}) // Using interface{} to avoid circular imports
+	RegisterShutdownCallback(name string, callback shared.ShutdownCallback)
 	
 	// UnregisterShutdownCallback removes a registered shutdown callback
 	UnregisterShutdownCallback(name string) bool
 	
 	// GetShutdownCallbacks returns all registered shutdown callbacks
-	GetShutdownCallbacks() map[string]interface{}
+	GetShutdownCallbacks() map[string]shared.ShutdownCallback
 	
 	// Shutdown initiates the application shutdown process
 	Shutdown(ctx context.Context) error

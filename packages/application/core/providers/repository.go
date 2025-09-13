@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"sort"
 
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 	providerInterfaces "govel/packages/types/src/interfaces/application/providers"
 )
 

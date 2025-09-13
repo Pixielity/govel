@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"hash"
 
+	types "govel/packages/types/src"
 	enums "govel/packages/types/src/enums/encryption"
 	encryptionInterfaces "govel/packages/types/src/interfaces/encryption"
-	types "govel/packages/types/src"
 )
 
 // AESCTREncrypter provides AES encryption in CTR mode with HMAC-SHA256 MAC authentication.
@@ -198,7 +198,7 @@ func (e *AESCTREncrypter) Decrypt(payload string, unserialize bool) (interface{}
 
 	// Validate IV length matches cipher requirements
 	// CTR mode typically uses 16-byte IVs for AES
-	expectedIVLength := enums.GetIVLength(e.GetCipher())
+	expectedIVLength := enums.GetIVLength(enums.Cipher(e.GetCipher()))
 	if len(iv) != expectedIVLength {
 		return nil, fmt.Errorf(
 			"Invalid IV length: expected %d, got %d", expectedIVLength, len(iv))
@@ -326,7 +326,7 @@ func (e *AESCTREncrypter) VerifyConfiguration() bool {
 func (e *AESCTREncrypter) Info(payload string) types.CipherInfo {
 	// Return comprehensive cipher information for CTR mode
 	// Includes all relevant parameters and capabilities
-	return types.NewCipherInfo(e.GetCipher())
+	return types.NewCipherInfo(enums.Cipher(e.GetCipher()))
 }
 
 // SetKey sets a new encryption key with validation and method chaining support.
@@ -370,3 +370,8 @@ func (e *AESCTREncrypter) SetCipher(cipher string) encryptionInterfaces.Encrypte
 func (e *AESCTREncrypter) GenerateKey(cipher string) ([]byte, error) {
 	return e.BaseEncrypter.GenerateKey(cipher)
 }
+
+// Compile-time interface compliance check
+// Ensures AESCTREncrypter properly implements the EncrypterInterface
+// Prevents runtime errors from missing method implementations
+var _ encryptionInterfaces.EncrypterInterface = (*AESCTREncrypter)(nil)

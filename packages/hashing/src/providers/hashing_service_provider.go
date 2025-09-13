@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	providers "govel/packages/application/providers"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 
 	hashing "govel/packages/hashing/src"
 	hashingInterfaces "govel/packages/types/src/interfaces/hashing"

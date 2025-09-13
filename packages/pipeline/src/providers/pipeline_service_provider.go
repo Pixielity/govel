@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	providers "govel/packages/application/providers"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 	pipelineInterfaces "govel/packages/types/src/interfaces/pipeline"
 
 	pipeline "govel/packages/pipeline/src"

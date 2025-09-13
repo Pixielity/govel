@@ -2,10 +2,10 @@ package encryption
 
 import (
 	"govel/packages/encryption/src/encrypters"
+	support "govel/packages/support/src"
 	enums "govel/packages/types/src/enums/encryption"
 	containerInterfaces "govel/packages/types/src/interfaces/container"
 	encrypterInterfaces "govel/packages/types/src/interfaces/encryption"
-	support "govel/packages/support/src"
 )
 
 // EncryptionManager provides centralized encryption management with multiple algorithm support.
@@ -63,14 +63,14 @@ func NewEncryptionManager(container containerInterfaces.ContainerInterface) *Enc
 //   - Graceful error handling with nil returns
 //
 // Returns nil if cipher is invalid or driver creation fails.
-func (e *EncryptionManager) Encrypter(name ...string) encrypterInterfaces.EncrypterInterface {
+func (e *EncryptionManager) Encrypter(name ...enums.Cipher) encrypterInterfaces.EncrypterInterface {
 	var driverName string
 
 	// Determine which driver to use
 	if len(name) > 0 && name[0] != "" {
 		// Name provided - validate it
-		driverName = name[0]
-		if err := enums.ValidateCipher(driverName); err != nil {
+		driverName = string(name[0])
+		if err := enums.ValidateCipher(name[0]); err != nil {
 			return nil // Invalid cipher returns nil for graceful handling
 		}
 	}
@@ -134,7 +134,7 @@ func (e *EncryptionManager) CreateAES256CBCDriver() (interface{}, error) {
 		}
 	}
 
-	return encrypters.NewAESCBCEncrypter(key, cipher, config)
+	return encrypters.NewAESCBCEncrypter(key, string(cipher), config)
 }
 
 // CreateAES256GCMDriver creates AES-256-GCM driver instance.
@@ -152,7 +152,7 @@ func (e *EncryptionManager) CreateAES256GCMDriver() (interface{}, error) {
 
 	// Extract key and cipher from config or use defaults
 	var key []byte
-	cipher := enums.CipherAES256GCM
+	cipher := enums.CipherAES256GCM.String()
 
 	// Get key from config or global config
 	if keyValue, exists := config["key"]; exists {
@@ -190,7 +190,7 @@ func (e *EncryptionManager) CreateAES256CTRDriver() (interface{}, error) {
 
 	// Extract key from config or use defaults
 	var key []byte
-	cipher := enums.CipherAES256CTR
+	cipher := enums.CipherAES256CTR.String()
 
 	// Get key from config or global config
 	if keyValue, exists := config["key"]; exists {
@@ -228,7 +228,7 @@ func (e *EncryptionManager) CreateAES128CBCDriver() (interface{}, error) {
 
 	// Extract key and cipher from config or use defaults
 	var key []byte
-	cipher := enums.CipherAES128CBC
+	cipher := enums.CipherAES128CBC.String()
 
 	// Get key from config or global config
 	if keyValue, exists := config["key"]; exists {
@@ -266,7 +266,7 @@ func (e *EncryptionManager) CreateAES128GCMDriver() (interface{}, error) {
 
 	// Extract key and cipher from config or use defaults
 	var key []byte
-	cipher := enums.CipherAES128GCM
+	cipher := enums.CipherAES128GCM.String()
 
 	// Get key from config or global config
 	if keyValue, exists := config["key"]; exists {
@@ -304,7 +304,7 @@ func (e *EncryptionManager) CreateAES128CTRDriver() (interface{}, error) {
 
 	// Extract key from config or use defaults
 	var key []byte
-	cipher := enums.CipherAES128CTR
+	cipher := enums.CipherAES128CTR.String()
 
 	// Get key from config or global config
 	if keyValue, exists := config["key"]; exists {

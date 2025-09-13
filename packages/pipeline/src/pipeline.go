@@ -605,3 +605,6 @@ func (p *Pipeline) getPipeName(pipe interface{}) string {
 		return pipeType.String()
 	}
 }
+
+// Compile-time interface compliance check removed for now
+var _ interfaces.PipelineInterface = (*Pipeline)(nil)

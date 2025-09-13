@@ -7,8 +7,8 @@ import (
 	"sort"
 	"sync"
 
-	containerInterfaces "govel/packages/types/src/interfaces/container"
 	types "govel/packages/types/src"
+	containerInterfaces "govel/packages/types/src/interfaces/container"
 
 	interfaces "govel/packages/types/src/interfaces/pipeline"
 )
@@ -354,3 +354,6 @@ func (e *PipelineExecutionError) Error() string {
 func (e *PipelineExecutionError) Unwrap() error {
 	return e.Cause
 }
+
+// Compile-time interface compliance check removed for now
+var _ interfaces.HubInterface = (*Hub)(nil)

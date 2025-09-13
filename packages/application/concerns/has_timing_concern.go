@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	concernsInterfaces "govel/packages/types/src/interfaces/application/concerns"
 )
 
 /**
@@ -120,4 +120,4 @@ func (t *HasTiming) GetUptime() time.Duration {
 }
 
 // Compile-time interface compliance check
-var _ applicationInterfaces.HasTimingInterface = (*HasTiming)(nil)
+var _ concernsInterfaces.HasTimingInterface = (*HasTiming)(nil)

@@ -11,10 +11,10 @@ import (
 	"govel/packages/application/core/shutdown"
 	"govel/packages/application/providers"
 	"govel/packages/application/traits"
+	configTraits "govel/packages/config/traits"
 	containerTraits "govel/packages/container/traits"
 	loggerTraits "govel/packages/logger/traits"
-	configTraits "govel/packages/config/traits"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 	"os"
 	"sync"
 )

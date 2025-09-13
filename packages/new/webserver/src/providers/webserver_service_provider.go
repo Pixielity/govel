@@ -9,7 +9,7 @@ import (
 	"govel/packages/application/providers"
 	"govel/packages/new/webserver/src/enums"
 	"govel/packages/new/webserver/src/factories"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 )
 
 // WebserverServiceProvider provides webserver services through the container.

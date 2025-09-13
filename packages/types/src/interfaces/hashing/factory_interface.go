@@ -1,5 +1,7 @@
 package interfaces
 
+import enums "govel/packages/types/src/enums/hashing"
+
 // FactoryInterface defines the contract for hashing factory functionality.
 // This interface provides hasher instance creation and management capabilities.
 //
@@ -17,5 +19,5 @@ type FactoryInterface interface {
 	//
 	// Returns:
 	//   - HasherInterface: A hasher instance for the specified algorithm
-	Hasher(name ...string) HasherInterface
+	Hasher(name ...enums.Algorithm) HasherInterface
 }

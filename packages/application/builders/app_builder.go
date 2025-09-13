@@ -7,7 +7,7 @@ import (
 	"govel/packages/application/helpers"
 	"govel/packages/container"
 	enums "govel/packages/types/src/enums/application"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	providerInterfaces "govel/packages/types/src/interfaces/application/providers"
 )
 
 // app_builder.go implements the Builder pattern for GoVel application creation.
@@ -62,7 +62,7 @@ type AppBuilder struct {
 	customContainer *container.ServiceContainer
 
 	// serviceProviders holds service providers to register with the application
-	serviceProviders []applicationInterfaces.ServiceProviderInterface
+	serviceProviders []providerInterfaces.ServiceProviderInterface
 }
 
 // NewApp creates a new AppBuilder with sensible defaults.
@@ -377,7 +377,7 @@ func (b *AppBuilder) ForTesting() *AppBuilder {
 //	    productProviders.NewProductServiceProvider(),
 //	}
 //	application := NewApp().WithServiceProviders(providers).Build()
-func (b *AppBuilder) WithServiceProviders(providers []applicationInterfaces.ServiceProviderInterface) *AppBuilder {
+func (b *AppBuilder) WithServiceProviders(providers []providerInterfaces.ServiceProviderInterface) *AppBuilder {
 	b.serviceProviders = providers
 	return b
 }

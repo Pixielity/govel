@@ -2,10 +2,10 @@ package hashing
 
 import (
 	"govel/packages/hashing/src/hashers"
+	support "govel/packages/support/src"
 	enums "govel/packages/types/src/enums/hashing"
 	containerInterfaces "govel/packages/types/src/interfaces/container"
 	hashingInterfaces "govel/packages/types/src/interfaces/hashing"
-	support "govel/packages/support/src"
 )
 
 // HashManager provides centralized hash management with multiple algorithm support.
@@ -63,14 +63,14 @@ func NewHashManager(container containerInterfaces.ContainerInterface) *HashManag
 //   - Graceful error handling with nil returns
 //
 // Returns nil if algorithm is invalid or driver creation fails.
-func (h *HashManager) Hasher(name ...string) hashingInterfaces.HasherInterface {
+func (h *HashManager) Hasher(name ...enums.Algorithm) hashingInterfaces.HasherInterface {
 	var driverName string
 
 	// Determine which driver to use
 	if len(name) > 0 && name[0] != "" {
 		// Name provided - validate it
-		driverName = name[0]
-		if err := enums.ValidateAlgorithm(driverName); err != nil {
+		driverName = name[0].String()
+		if err := enums.ValidateAlgorithm(name[0]); err != nil {
 			return nil // Invalid algorithm returns nil for graceful handling
 		}
 	}

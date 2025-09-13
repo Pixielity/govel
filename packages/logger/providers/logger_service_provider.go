@@ -6,7 +6,7 @@ import (
 
 	serviceProviders "govel/packages/application/providers"
 	"govel/packages/logger"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
 	interfaces "govel/packages/types/src/interfaces/logger"
 	loggerInterfaces "govel/packages/types/src/interfaces/logger"
 )
@@ -253,3 +253,8 @@ func loggerInterface(loggerInstance *logger.Logger) loggerInterfaces.LoggerInter
 func (p *LoggerServiceProvider) Priority() int {
 	return 50 // High priority - logging is fundamental infrastructure
 }
+
+// Compile-time interface compliance checks
+// These ensure LoggerServiceProvider properly implements required interfaces
+// Prevents runtime errors from missing method implementations
+// var _ applicationInterfaces.ServiceProviderInterface = (*LoggerServiceProvider)(nil)

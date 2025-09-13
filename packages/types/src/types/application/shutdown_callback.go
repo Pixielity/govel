@@ -1,13 +1,11 @@
 package types
 
 import (
-	"context"
+	shared "govel/packages/types/src/shared"
 )
 
 /**
- * ShutdownCallback represents a function that can be registered to run during shutdown.
- *
- * @param ctx context.Context The context for the shutdown callback
- * @return error Any error that occurred during the callback execution
+ * ShutdownCallback is a type alias for the shared version to maintain backward compatibility.
+ * The actual type definition is now in the shared package to avoid circular imports.
  */
-type ShutdownCallback func(ctx context.Context) error
+type ShutdownCallback = shared.ShutdownCallback

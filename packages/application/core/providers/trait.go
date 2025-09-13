@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"sync"
 
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
+	providerTraits "govel/packages/types/src/interfaces/application/concerns"
 	providerInterfaces "govel/packages/types/src/interfaces/application/providers"
 )
 
@@ -278,4 +279,4 @@ func (sp *Serviceable) GetBootedProviders() []string {
 }
 
 // Compile-time interface compliance check
-var _ applicationInterfaces.ApplicationProviderInterface = (*Serviceable)(nil)
+var _ providerTraits.ApplicationProviderInterface = (*Serviceable)(nil)

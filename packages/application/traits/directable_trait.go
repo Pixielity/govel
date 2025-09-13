@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	constants "govel/packages/types/src/constants/application"
-	traitInterfaces "govel/packages/types/src/interfaces/application"
+	traitInterfaces "govel/packages/types/src/interfaces/application/traits"
 )
 
 /**
