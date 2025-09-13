@@ -1,7 +1,7 @@
 package interfaces
 
 import (
-	types "govel/packages/types/src/types/container"
+	types "govel/types/types/container"
 )
 
 // ContainerInterface defines the contract for dependency injection containers.

@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"govel/packages/new/webserver/src/builders"
-	"govel/packages/new/webserver/src/enums"
+	"govel/new/webserver/builders"
+	"govel/new/webserver/enums"
 )
 
 // Enhanced builder example demonstrating new security, performance, and static file methods

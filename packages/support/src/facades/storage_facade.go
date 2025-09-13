@@ -1,8 +1,8 @@
 package facades
 
 import (
-	storageInterfaces "govel/packages/types/src/interfaces/storage"
-	facade "govel/packages/support/src"
+	storageInterfaces "govel/types/interfaces/storage"
+	facade "govel/support"
 )
 
 // Storage provides a clean, static-like interface to the application's file storage service.

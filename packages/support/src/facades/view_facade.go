@@ -1,8 +1,8 @@
 package facades
 
 import (
-	viewInterfaces "govel/packages/types/src/interfaces/view"
-	facade "govel/packages/support/src"
+	viewInterfaces "govel/types/interfaces/view"
+	facade "govel/support"
 )
 
 // View provides a clean, static-like interface to the application's template rendering service.

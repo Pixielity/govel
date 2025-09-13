@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/govel/middleware/src/interfaces"
-	"github.com/govel/middleware/src/types"
+	"govel/middleware/interfaces"
+	"govel/middleware/types"
 )
 
 // contextManager manages middleware contexts and their lifecycle
@@ -59,7 +59,7 @@ func (cm *contextManager) CreateContext(
 		cm.mu.Unlock()
 
 		cm.logDebug("Created and stored middleware context", map[string]interface{}{
-			"context_id": mwCtx.ID,
+			"context_id":     mwCtx.ID,
 			"total_contexts": len(cm.contexts),
 		})
 	}
@@ -92,7 +92,7 @@ func (cm *contextManager) UpdateContext(id string, metadata map[string]interface
 	}
 
 	cm.logDebug("Updated context metadata", map[string]interface{}{
-		"context_id": id,
+		"context_id":    id,
 		"metadata_keys": len(metadata),
 	})
 
@@ -107,7 +107,7 @@ func (cm *contextManager) RemoveContext(id string) {
 	if _, exists := cm.contexts[id]; exists {
 		delete(cm.contexts, id)
 		cm.logDebug("Removed context from management", map[string]interface{}{
-			"context_id": id,
+			"context_id":         id,
 			"remaining_contexts": len(cm.contexts),
 		})
 	}
@@ -149,7 +149,7 @@ func (cm *contextManager) CleanupExpiredContexts() int {
 
 	if len(expired) > 0 {
 		cm.logDebug("Cleaned up expired contexts", map[string]interface{}{
-			"expired_count": len(expired),
+			"expired_count":      len(expired),
 			"remaining_contexts": len(cm.contexts),
 		})
 	}
@@ -222,7 +222,7 @@ func (cm *contextManager) GetStats() map[string]interface{} {
 
 	return map[string]interface{}{
 		"active_contexts": len(cm.contexts),
-		"cleanup_ttl": cm.cleanupTTL,
+		"cleanup_ttl":     cm.cleanupTTL,
 		"cleanup_enabled": cm.cleanupTTL > 0,
 	}
 }
@@ -261,9 +261,9 @@ func (cm *contextManager) logDebug(message string, context map[string]interface{
 // pooledContextManager extends contextManager with object pooling for performance
 type pooledContextManager struct {
 	*contextManager
-	contextPool     *sync.Pool
-	requestPool     *sync.Pool
-	executionPool   *sync.Pool
+	contextPool   *sync.Pool
+	requestPool   *sync.Pool
+	executionPool *sync.Pool
 }
 
 // NewPooledContextManager creates a context manager with object pooling

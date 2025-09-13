@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"govel/packages/bus/src/interfaces"
+	"govel/new/bus/interfaces"
 )
 
 // BatchCancelledEvent is fired when a batch is cancelled

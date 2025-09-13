@@ -6,11 +6,10 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
-	"govel/packages/healthcheck/src/interfaces"
+	"govel/healthcheck/interfaces"
 )
 
 // HealthController handles HTTP requests for health check endpoints.
@@ -26,10 +25,12 @@ type HealthController struct {
 // NewHealthController creates a new health controller instance.
 //
 // Parameters:
-//   registry: The health check registry to use
+//
+//	registry: The health check registry to use
 //
 // Returns:
-//   *HealthController: A new controller instance
+//
+//	*HealthController: A new controller instance
 func NewHealthController(registry interfaces.HealthRegistryInterface) *HealthController {
 	return &HealthController{
 		registry: registry,
@@ -40,7 +41,8 @@ func NewHealthController(registry interfaces.HealthRegistryInterface) *HealthCon
 // Responds with JSON by default, HTML if Accept header includes text/html.
 //
 // Endpoints:
-//   GET /health - Main health check endpoint
+//
+//	GET /health - Main health check endpoint
 func (hc *HealthController) HandleHealthCheck(w http.ResponseWriter, r *http.Request) {
 	// Convert standard HTTP interfaces to our interfaces
 	ctx := r.Context()
@@ -53,7 +55,7 @@ func (hc *HealthController) HandleHealthCheck(w http.ResponseWriter, r *http.Req
 
 	// Determine response format based on Accept header
 	acceptHeader := r.Header.Get("Accept")
-	
+
 	if strings.Contains(acceptHeader, "text/html") {
 		hc.handleHTMLResponse(w, r, results)
 	} else {
@@ -65,7 +67,8 @@ func (hc *HealthController) HandleHealthCheck(w http.ResponseWriter, r *http.Req
 // Always responds with JSON format.
 //
 // Endpoints:
-//   GET /health.json - JSON health check endpoint
+//
+//	GET /health.json - JSON health check endpoint
 func (hc *HealthController) HandleHealthCheckJSON(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	if ctx == nil {
@@ -96,7 +99,8 @@ func (hc *HealthController) HandleHealthCheckJSON(w http.ResponseWriter, r *http
 // Responds with simple "OK" or "FAILED" text.
 //
 // Endpoints:
-//   GET /health/simple - Simple text health check
+//
+//	GET /health/simple - Simple text health check
 func (hc *HealthController) HandleSimpleHealthCheck(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	if ctx == nil {
@@ -104,7 +108,7 @@ func (hc *HealthController) HandleSimpleHealthCheck(w http.ResponseWriter, r *ht
 	}
 
 	results := hc.registry.RunChecks(ctx)
-	
+
 	// Set content type
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0")
@@ -123,7 +127,8 @@ func (hc *HealthController) HandleSimpleHealthCheck(w http.ResponseWriter, r *ht
 // This endpoint should return 200 when the application is ready to serve traffic.
 //
 // Endpoints:
-//   GET /health/ready - Readiness probe
+//
+//	GET /health/ready - Readiness probe
 func (hc *HealthController) HandleReadinessCheck(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	if ctx == nil {
@@ -156,11 +161,12 @@ func (hc *HealthController) HandleReadinessCheck(w http.ResponseWriter, r *http.
 // This endpoint should return 200 when the application is alive and not deadlocked.
 //
 // Endpoints:
-//   GET /health/live - Liveness probe
+//
+//	GET /health/live - Liveness probe
 func (hc *HealthController) HandleLivenessCheck(w http.ResponseWriter, r *http.Request) {
 	// For liveness, we typically want very basic checks that just verify
 	// the application is responsive and not deadlocked
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate")
 
@@ -171,17 +177,19 @@ func (hc *HealthController) HandleLivenessCheck(w http.ResponseWriter, r *http.R
 		"timestamp": "%s",
 		"uptime": "unknown"
 	}`, time.Now().Format(time.RFC3339))
-	
+
 	w.Write([]byte(response))
 }
 
 // SetRegistry sets the health registry for the controller.
 //
 // Parameters:
-//   registry: The health registry to use
+//
+//	registry: The health registry to use
 //
 // Returns:
-//   *HealthController: Self for method chaining (interface compatible)
+//
+//	*HealthController: Self for method chaining (interface compatible)
 func (hc *HealthController) SetRegistry(registry interfaces.HealthRegistryInterface) *HealthController {
 	hc.registry = registry
 	return hc
@@ -190,7 +198,8 @@ func (hc *HealthController) SetRegistry(registry interfaces.HealthRegistryInterf
 // GetRegistry returns the configured health registry.
 //
 // Returns:
-//   interfaces.HealthRegistryInterface: The configured registry
+//
+//	interfaces.HealthRegistryInterface: The configured registry
 func (hc *HealthController) GetRegistry() interfaces.HealthRegistryInterface {
 	return hc.registry
 }
@@ -198,10 +207,12 @@ func (hc *HealthController) GetRegistry() interfaces.HealthRegistryInterface {
 // SetResultStore sets the result store for the controller.
 //
 // Parameters:
-//   store: The result store to use
+//
+//	store: The result store to use
 //
 // Returns:
-//   *HealthController: Self for method chaining (interface compatible)
+//
+//	*HealthController: Self for method chaining (interface compatible)
 func (hc *HealthController) SetResultStore(store interfaces.ResultStoreInterface) *HealthController {
 	hc.resultStore = store
 	return hc
@@ -210,7 +221,8 @@ func (hc *HealthController) SetResultStore(store interfaces.ResultStoreInterface
 // GetResultStore returns the configured result store.
 //
 // Returns:
-//   interfaces.ResultStoreInterface: The configured result store
+//
+//	interfaces.ResultStoreInterface: The configured result store
 func (hc *HealthController) GetResultStore() interfaces.ResultStoreInterface {
 	return hc.resultStore
 }
@@ -265,7 +277,7 @@ func (hc *HealthController) generateHTMLResponse(results interfaces.CheckResults
 	summary := results.GetHealthSummary()
 	overallStatus := "healthy"
 	overallColor := "#28a745"
-	
+
 	if results.ContainsFailingCheck() {
 		overallStatus = "unhealthy"
 		overallColor = "#dc3545"
@@ -421,7 +433,7 @@ func (hc *HealthController) generateHTMLResponse(results interfaces.CheckResults
 		}
 
 		duration := result.GetDuration().Milliseconds()
-		
+
 		html += fmt.Sprintf(`
             <div class="check %s">
                 <div>
@@ -468,11 +480,13 @@ func (hc *HealthController) generateHTMLResponse(results interfaces.CheckResults
 // This method can be used with frameworks like Gin, Echo, or standard http.ServeMux.
 //
 // Parameters:
-//   mux: HTTP request multiplexer (e.g., http.ServeMux, gin.Engine)
+//
+//	mux: HTTP request multiplexer (e.g., http.ServeMux, gin.Engine)
 //
 // Example usage:
-//   mux := http.NewServeMux()
-//   controller.RegisterRoutes(mux)
+//
+//	mux := http.NewServeMux()
+//	controller.RegisterRoutes(mux)
 func (hc *HealthController) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/health", hc.HandleHealthCheck)
 	mux.HandleFunc("/health.json", hc.HandleHealthCheckJSON)
@@ -485,11 +499,13 @@ func (hc *HealthController) RegisterRoutes(mux *http.ServeMux) {
 // This is useful for preventing health checks from hanging indefinitely.
 //
 // Parameters:
-//   handler: The handler function to wrap
-//   timeout: Maximum time to wait for the handler to complete
+//
+//	handler: The handler function to wrap
+//	timeout: Maximum time to wait for the handler to complete
 //
 // Returns:
-//   http.HandlerFunc: Wrapped handler with timeout
+//
+//	http.HandlerFunc: Wrapped handler with timeout
 func WithTimeout(handler http.HandlerFunc, timeout time.Duration) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), timeout)
@@ -504,10 +520,12 @@ func WithTimeout(handler http.HandlerFunc, timeout time.Duration) http.HandlerFu
 // This is useful for allowing browser-based health check monitoring tools.
 //
 // Parameters:
-//   handler: The handler function to wrap
+//
+//	handler: The handler function to wrap
 //
 // Returns:
-//   http.HandlerFunc: Wrapped handler with CORS headers
+//
+//	http.HandlerFunc: Wrapped handler with CORS headers
 func WithCORS(handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")

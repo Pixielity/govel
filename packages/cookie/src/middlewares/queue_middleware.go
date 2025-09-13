@@ -3,7 +3,7 @@ package middlewares
 import (
 	"net/http"
 
-	cookieInterfaces "govel/packages/cookie/src/interfaces"
+	cookieInterfaces "govel/cookie/interfaces"
 )
 
 // AddQueuedCookiesToResponse middleware automatically adds queued cookies to HTTP responses.

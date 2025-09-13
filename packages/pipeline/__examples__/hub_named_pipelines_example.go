@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"govel/packages/new/pipeline/src"
-	"govel/packages/new/pipeline/src/interfaces"
+	"govel/new/pipeline"
+	"govel/new/pipeline/interfaces"
 )
 
 // Order represents an order in our system

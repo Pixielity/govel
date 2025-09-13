@@ -1,8 +1,8 @@
 package facades
 
 import (
-	cookieInterfaces "govel/packages/cookie/src/interfaces"
-	facade "govel/packages/support/src"
+	cookieInterfaces "govel/cookie/interfaces"
+	facade "govel/support"
 )
 
 // Cookie returns the cookie jar instance from the service container.

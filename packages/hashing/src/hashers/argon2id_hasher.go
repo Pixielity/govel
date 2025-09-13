@@ -1,7 +1,7 @@
 package hashers
 
 import (
-	interfaces "govel/packages/types/src/interfaces/hashing"
+	interfaces "govel/types/interfaces/hashing"
 
 	"golang.org/x/crypto/argon2"
 )

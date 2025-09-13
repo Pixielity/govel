@@ -2,7 +2,7 @@ package number
 
 import (
 	"fmt"
-	"govel/packages/hashing/src/exceptions"
+	"govel/hashing/exceptions"
 	"math"
 	"strings"
 

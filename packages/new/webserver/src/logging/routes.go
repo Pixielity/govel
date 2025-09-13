@@ -6,8 +6,8 @@ import (
 	"sort"
 	"strings"
 
-	"govel/packages/new/routing/src"
-	"govel/packages/new/webserver/src/interfaces"
+	"govel/new/routing"
+	"govel/new/webserver/interfaces"
 )
 
 // DisplayRoutes logs all registered routes in a structured and easy-to-read format.

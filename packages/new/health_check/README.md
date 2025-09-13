@@ -30,7 +30,7 @@ package main
 
 import (
     "govel/packages/healthcheck/src"
-    "govel/packages/healthcheck/src/checks/checks"
+    "govel/healthcheck/checks/checks"
 )
 
 func main() {
@@ -135,7 +135,7 @@ Get notified when health checks fail:
 The package includes testing utilities for easy mocking:
 
 ```go
-import "govel/packages/healthcheck/src/testing"
+import "govel/healthcheck/testing"
 
 func TestMyApp(t *testing.T) {
     fakeCheck := testing.NewFakeCheck("test-check")

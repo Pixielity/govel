@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"govel/packages/bus/src/interfaces"
+	"govel/new/bus/interfaces"
 )
 
 // MemoryBatchRepository implements BatchRepository using in-memory storage

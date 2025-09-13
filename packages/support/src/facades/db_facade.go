@@ -1,8 +1,8 @@
 package facades
 
 import (
-	facade "govel/packages/support/src"
-	databaseInterfaces "govel/packages/types/src/interfaces/database"
+	facade "govel/support"
+	databaseInterfaces "govel/types/interfaces/database"
 )
 
 // DB provides a clean, static-like interface to the application's database service.

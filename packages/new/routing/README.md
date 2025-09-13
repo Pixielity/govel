@@ -17,8 +17,8 @@ A unified webserver package for the Govel framework that provides Laravel-like H
 package main
 
 import (
-    "govel/packages/new/webserver/src"
-    "govel/packages/new/webserver/src/enums"
+    "govel/webserver"
+    "govel/webserver/enums"
 )
 
 func main() {

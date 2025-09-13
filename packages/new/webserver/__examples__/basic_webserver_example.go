@@ -6,12 +6,12 @@ import (
 	"log"
 	"time"
 
-	webserver "govel/packages/new/webserver/src"
-	"govel/packages/new/webserver/src/builders"
-	"govel/packages/new/webserver/src/enums"
-	"govel/packages/new/webserver/src/interfaces"
-	"govel/packages/new/webserver/src/logging"
-	"govel/packages/new/webserver/src/types"
+	webserver "govel/new/webserver"
+	"govel/new/webserver/builders"
+	"govel/new/webserver/enums"
+	"govel/new/webserver/interfaces"
+	"govel/new/webserver/logging"
+	"govel/new/webserver/types"
 )
 
 // Basic webserver example showing unified API usage

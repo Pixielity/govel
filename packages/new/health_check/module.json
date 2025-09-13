@@ -1,51 +1,81 @@
 {
-  "name": "healthcheck",
+  "name": "@govel/new/health_check",
   "version": "1.0.0",
-  "description": "Health check module for GoVel framework - Monitor the health of your application with configurable checks and notifications",
-  "main": "health.go",
+  "description": "Health check monitoring system for GoVel applications",
   "author": "GoVel Framework Team",
   "license": "MIT",
   "keywords": [
     "go", 
     "golang", 
-    "healthcheck", 
-    "health", 
-    "monitoring", 
+    "health", "monitoring", "check", "status",
+    "laravel", 
+    "govel", 
     "framework", 
-    "govel",
-    "diagnostics",
-    "uptime",
-    "status"
+    "module"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/govel/govel-healthcheck.git"
+    "url": "https://github.com/govel-framework/govel.git",
+    "directory": "packages/new/health_check"
   },
   "bugs": {
-    "url": "https://github.com/govel/govel-healthcheck/issues"
+    "url": "https://github.com/govel-framework/govel/issues"
   },
-  "homepage": "https://github.com/govel/govel-healthcheck#readme",
-  "dependencies": {},
-  "devDependencies": {},
+  "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/health_check#readme",
+  "dependencies": {"@govel/healthcheck/checks": "^1.0.0", "@govel/healthcheck/enums": "^1.0.0", "@govel/healthcheck/http/controllers": "^1.0.0", "@govel/healthcheck/interfaces": "^1.0.0", "@govel/healthcheck/registry": "^1.0.0", "@govel/healthcheck/types": "^1.0.0"},
   "scripts": {
-    "test": "go test ./...",
-    "build": "go build",
+    "test": "go test -v ./...",
+    "test:coverage": "go test -v -cover ./...",
+    "test:race": "go test -v -race ./...",
+    "build": "go build ./...",
     "lint": "golangci-lint run",
     "fmt": "go fmt ./...",
     "vet": "go vet ./...",
-    "mod": "go mod tidy"
+    "mod:tidy": "go mod tidy",
+    "mod:verify": "go mod verify",
+    "clean": "go clean -cache -testcache -modcache"
+  },
+  "hooks": {
+    "pre-install": [],
+    "post-install": [
+      "go mod tidy",
+      "go mod download"
+    ],
+    "pre-update": [],
+    "post-update": [
+      "go mod tidy",
+      "go mod download"
+    ],
+    "pre-build": [
+      "go fmt ./...",
+      "go vet ./..."
+    ],
+    "post-build": [],
+    "pre-test": [
+      "go mod verify"
+    ],
+    "post-test": [],
+    "pre-publish": [
+      "go test ./...",
+      "go fmt ./...",
+      "go vet ./...",
+      "golangci-lint run"
+    ],
+    "post-publish": []
   },
   "engines": {
     "go": ">=1.19"
   },
-  "features": [
-    "Registry pattern for health checks",
-    "Multiple check types (database, redis, filesystem, etc.)",
-    "HTTP endpoints for health status",
-    "Configurable timeouts and thresholds",
-    "Rich result metadata",
-    "Notification channels",
-    "Background job support",
-    "Multiple result storage backends"
-  ]
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE",
+    "go.mod",
+    "go.sum"
+  ],
+  "govel": {
+    "type": "package",
+    "category": "monitoring",
+    "providers": ["HealthCheckServiceProvider"]
+  }
 }

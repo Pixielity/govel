@@ -5,9 +5,9 @@ import (
 	"crypto/cipher"
 	"fmt"
 
-	"govel/packages/encryption/src/exceptions"
-	enums "govel/packages/types/src/enums/encryption"
-	encryptionInterfaces "govel/packages/types/src/interfaces/encryption"
+	"govel/encryption/exceptions"
+	enums "govel/types/enums/encryption"
+	encryptionInterfaces "govel/types/interfaces/encryption"
 )
 
 // AESCBCEncrypter implements AES encryption in CBC (Cipher Block Chaining) mode.

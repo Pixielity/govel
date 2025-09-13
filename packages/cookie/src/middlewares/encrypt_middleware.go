@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	encryptionInterfaces "govel/packages/types/src/interfaces/encryption"
+	encryptionInterfaces "govel/types/interfaces/encryption"
 )
 
 // EncryptCookies middleware provides Laravel-compatible cookie encryption and decryption.

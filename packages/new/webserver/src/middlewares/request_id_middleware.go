@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	webserver "govel/packages/new/webserver/src"
-	"govel/packages/new/webserver/src/interfaces"
+	webserver "govel/new/webserver"
+	"govel/new/webserver/interfaces"
 )
 
 // RequestIDMiddleware generates and manages unique request identifiers for

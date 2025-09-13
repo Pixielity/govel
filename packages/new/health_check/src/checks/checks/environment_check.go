@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"govel/packages/healthcheck/src/checks"
-	"govel/packages/healthcheck/src/enums"
-	"govel/packages/healthcheck/src/interfaces"
+	"govel/healthcheck/checks"
+	"govel/healthcheck/enums"
+	"govel/healthcheck/interfaces"
 )
 
 // EnvironmentCheck validates the application environment.

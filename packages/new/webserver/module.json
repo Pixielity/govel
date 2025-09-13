@@ -1,18 +1,90 @@
 {
-  "name": "webserver",
+  "name": "@govel/new/webserver",
   "version": "1.0.0",
-  "description": "Unified webserver package for Govel framework with support for GoFiber, Gin, and Echo",
-  "main": "src/webserver.go",
-  "author": "Govel Framework",
+  "description": "Web server abstraction with multiple adapter support for GoVel framework",
+  "author": "GoVel Framework Team",
   "license": "MIT",
-  "dependencies": {
-    "gofiber/fiber/v2": "^2.50.0",
-    "gin-gonic/gin": "^1.9.1",
-    "labstack/echo/v4": "^4.11.2"
-  },
-  "keywords": ["webserver", "http", "gofiber", "gin", "echo", "laravel", "framework"],
+  "keywords": [
+    "go",
+    "golang",
+    "webserver",
+    "http",
+    "server",
+    "web",
+    "fiber",
+    "laravel",
+    "govel",
+    "framework",
+    "module"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/govel/govel"
+    "url": "https://github.com/govel-framework/govel.git",
+    "directory": "packages/new/webserver"
+  },
+  "bugs": {
+    "url": "https://github.com/govel-framework/govel/issues"
+  },
+  "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/webserver#readme",
+  "dependencies": {
+    "@govel/application/providers": "^1.0.0",
+    "@govel/routing": "^1.0.0"
+  },
+  "scripts": {
+    "test": "go test -v ./...",
+    "test:coverage": "go test -v -cover ./...",
+    "test:race": "go test -v -race ./...",
+    "build": "go build ./...",
+    "lint": "golangci-lint run",
+    "fmt": "go fmt ./...",
+    "vet": "go vet ./...",
+    "mod:tidy": "go mod tidy",
+    "mod:verify": "go mod verify",
+    "clean": "go clean -cache -testcache -modcache"
+  },
+  "hooks": {
+    "pre-install": [],
+    "post-install": [
+      "go mod tidy",
+      "go mod download"
+    ],
+    "pre-update": [],
+    "post-update": [
+      "go mod tidy",
+      "go mod download"
+    ],
+    "pre-build": [
+      "go fmt ./...",
+      "go vet ./..."
+    ],
+    "post-build": [],
+    "pre-test": [
+      "go mod verify"
+    ],
+    "post-test": [],
+    "pre-publish": [
+      "go test ./...",
+      "go fmt ./...",
+      "go vet ./...",
+      "golangci-lint run"
+    ],
+    "post-publish": []
+  },
+  "engines": {
+    "go": ">=1.19"
+  },
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE",
+    "go.mod",
+    "go.sum"
+  ],
+  "govel": {
+    "type": "package",
+    "category": "web",
+    "providers": [
+      "WebserverServiceProvider"
+    ]
   }
 }

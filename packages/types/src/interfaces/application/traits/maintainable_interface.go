@@ -3,7 +3,7 @@ package interfaces
 import (
 	"time"
 
-	shared "govel/packages/types/src/shared"
+	shared "govel/types/shared"
 )
 
 // MaintainableInterface defines the contract for maintenance mode functionality.

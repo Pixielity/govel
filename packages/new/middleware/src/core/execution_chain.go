@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/govel/middleware/src/interfaces"
-	"github.com/govel/middleware/src/types"
+	"govel/middleware/interfaces"
+	"govel/middleware/types"
 )
 
 // executionChain implements the middleware execution chain using the Russian Doll pattern
@@ -34,7 +34,7 @@ func NewExecutionChain(config *types.ExecutionConfig) interfaces.ExecutionChainI
 func (ec *executionChain) AddMiddleware(middleware interfaces.MiddlewareInterface[any, any]) {
 	ec.mu.Lock()
 	defer ec.mu.Unlock()
-	
+
 	ec.middlewares = append(ec.middlewares, middleware)
 	ec.logDebug("Added middleware to chain", map[string]interface{}{
 		"middleware_count": len(ec.middlewares),
@@ -45,7 +45,7 @@ func (ec *executionChain) AddMiddleware(middleware interfaces.MiddlewareInterfac
 func (ec *executionChain) PrependMiddleware(middleware interfaces.MiddlewareInterface[any, any]) {
 	ec.mu.Lock()
 	defer ec.mu.Unlock()
-	
+
 	ec.middlewares = append([]interfaces.MiddlewareInterface[any, any]{middleware}, ec.middlewares...)
 	ec.logDebug("Prepended middleware to chain", map[string]interface{}{
 		"middleware_count": len(ec.middlewares),
@@ -55,57 +55,57 @@ func (ec *executionChain) PrependMiddleware(middleware interfaces.MiddlewareInte
 // Execute runs the middleware chain with the given context and request
 func (ec *executionChain) Execute(ctx context.Context, request any) (any, error) {
 	startTime := time.Now()
-	
+
 	// Update metrics
 	ec.metrics.IncrementExecutions()
-	
+
 	defer func() {
 		duration := time.Since(startTime)
 		ec.metrics.AddExecutionTime(duration)
-		
+
 		if r := recover(); r != nil {
 			ec.metrics.IncrementPanics()
 			ec.logError("Panic during execution chain", map[string]interface{}{
-				"panic": r,
+				"panic":    r,
 				"duration": duration,
 			})
 			panic(r)
 		}
 	}()
-	
+
 	// Check if chain is empty
 	if len(ec.middlewares) == 0 {
 		ec.logDebug("Empty middleware chain, returning request as response", nil)
 		return request, nil
 	}
-	
+
 	// Apply timeout if configured
 	if ec.config.Timeout > 0 {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, ec.config.Timeout)
 		defer cancel()
 	}
-	
+
 	// Create execution context
 	execCtx := types.NewExecutionContext(ctx, ec.config)
-	
+
 	// Execute the chain using the Russian Doll pattern
 	response, err := ec.executeChain(execCtx, request, 0)
-	
+
 	if err != nil {
 		ec.metrics.IncrementErrors()
 		ec.logError("Error in execution chain", map[string]interface{}{
-			"error": err.Error(),
+			"error":    err.Error(),
 			"duration": time.Since(startTime),
 		})
 		return nil, err
 	}
-	
+
 	ec.logDebug("Successfully executed middleware chain", map[string]interface{}{
 		"middleware_count": len(ec.middlewares),
-		"duration": time.Since(startTime),
+		"duration":         time.Since(startTime),
 	})
-	
+
 	return response, nil
 }
 
@@ -115,15 +115,15 @@ func (ec *executionChain) executeChain(ctx *types.ExecutionContext, request any,
 	if err := ctx.GetContext().Err(); err != nil {
 		return nil, fmt.Errorf("context cancelled: %w", err)
 	}
-	
+
 	// If we've reached the end of the chain, return the request as response
 	if index >= len(ec.middlewares) {
 		return request, nil
 	}
-	
+
 	// Get the current middleware
 	middleware := ec.middlewares[index]
-	
+
 	// Create a next function for the current middleware
 	next := func(nextCtx context.Context, nextRequest any) (any, error) {
 		// Update the context if it changed
@@ -132,7 +132,7 @@ func (ec *executionChain) executeChain(ctx *types.ExecutionContext, request any,
 		}
 		return ec.executeChain(ctx, nextRequest, index+1)
 	}
-	
+
 	// Execute the middleware
 	return ec.executeMiddleware(ctx, middleware, request, next)
 }
@@ -146,13 +146,13 @@ func (ec *executionChain) executeMiddleware(
 ) (any, error) {
 	var lastErr error
 	maxRetries := ec.config.RetryPolicy.MaxRetries
-	
+
 	for attempt := 0; attempt <= maxRetries; attempt++ {
 		// Check circuit breaker
 		if ec.config.CircuitBreaker.IsOpen() {
 			return nil, errors.New("circuit breaker is open")
 		}
-		
+
 		// Add delay for retry attempts
 		if attempt > 0 {
 			delay := ec.config.RetryPolicy.BackoffStrategy(attempt)
@@ -162,33 +162,33 @@ func (ec *executionChain) executeMiddleware(
 				return nil, ctx.GetContext().Err()
 			}
 		}
-		
+
 		// Execute middleware with panic recovery
 		response, err := ec.executeWithRecovery(ctx, middleware, request, next)
-		
+
 		if err == nil {
 			// Success - record in circuit breaker
 			ec.config.CircuitBreaker.RecordSuccess()
 			return response, nil
 		}
-		
+
 		lastErr = err
-		
+
 		// Check if error is retryable
 		if !ec.isRetryableError(err) {
 			break
 		}
-		
+
 		// Record failure in circuit breaker
 		ec.config.CircuitBreaker.RecordFailure()
-		
+
 		ec.logWarning("Middleware execution failed, retrying", map[string]interface{}{
-			"attempt": attempt + 1,
+			"attempt":     attempt + 1,
 			"max_retries": maxRetries,
-			"error": err.Error(),
+			"error":       err.Error(),
 		})
 	}
-	
+
 	return nil, fmt.Errorf("middleware execution failed after %d attempts: %w", maxRetries+1, lastErr)
 }
 
@@ -203,12 +203,12 @@ func (ec *executionChain) executeWithRecovery(
 		if r := recover(); r != nil {
 			err = fmt.Errorf("panic in middleware: %v", r)
 			ec.logError("Panic recovered in middleware", map[string]interface{}{
-				"panic": r,
+				"panic":      r,
 				"middleware": fmt.Sprintf("%T", middleware),
 			})
 		}
 	}()
-	
+
 	return middleware.Handle(ctx.GetContext(), request, next)
 }
 
@@ -217,13 +217,13 @@ func (ec *executionChain) isRetryableError(err error) bool {
 	if ec.config.RetryPolicy.RetryableErrors == nil {
 		return true // Retry all errors by default
 	}
-	
+
 	for _, retryableErr := range ec.config.RetryPolicy.RetryableErrors {
 		if errors.Is(err, retryableErr) {
 			return true
 		}
 	}
-	
+
 	return false
 }
 
@@ -241,10 +241,10 @@ func (ec *executionChain) GetConfig() *types.ExecutionConfig {
 func (ec *executionChain) UpdateConfig(config *types.ExecutionConfig) {
 	ec.mu.Lock()
 	defer ec.mu.Unlock()
-	
+
 	ec.config = config
 	ec.logger = config.Logger
-	
+
 	ec.logDebug("Updated execution chain configuration", nil)
 }
 
@@ -252,10 +252,10 @@ func (ec *executionChain) UpdateConfig(config *types.ExecutionConfig) {
 func (ec *executionChain) Clear() {
 	ec.mu.Lock()
 	defer ec.mu.Unlock()
-	
+
 	ec.middlewares = ec.middlewares[:0]
 	ec.metrics.Reset()
-	
+
 	ec.logDebug("Cleared middleware chain", nil)
 }
 
@@ -263,7 +263,7 @@ func (ec *executionChain) Clear() {
 func (ec *executionChain) Count() int {
 	ec.mu.RLock()
 	defer ec.mu.RUnlock()
-	
+
 	return len(ec.middlewares)
 }
 
@@ -271,11 +271,11 @@ func (ec *executionChain) Count() int {
 func (ec *executionChain) GetMiddlewares() []interfaces.MiddlewareInterface[any, any] {
 	ec.mu.RLock()
 	defer ec.mu.RUnlock()
-	
+
 	// Return a copy to prevent external modification
 	middlewares := make([]interfaces.MiddlewareInterface[any, any], len(ec.middlewares))
 	copy(middlewares, ec.middlewares)
-	
+
 	return middlewares
 }
 
@@ -321,7 +321,7 @@ func (cec *conditionalExecutionChain) Execute(ctx context.Context, request any) 
 		cec.logDebug("Condition not met, skipping middleware chain", nil)
 		return request, nil
 	}
-	
+
 	return cec.executionChain.Execute(ctx, request)
 }
 
@@ -349,19 +349,19 @@ func (pec *parallelExecutionChain) Execute(ctx context.Context, request any) (an
 	if len(pec.chains) == 0 {
 		return request, nil
 	}
-	
+
 	if len(pec.chains) == 1 {
 		return pec.chains[0].Execute(ctx, request)
 	}
-	
+
 	type result struct {
 		response any
 		err      error
 		index    int
 	}
-	
+
 	results := make(chan result, len(pec.chains))
-	
+
 	// Execute all chains in parallel
 	for i, chain := range pec.chains {
 		go func(idx int, c interfaces.ExecutionChainInterface[any, any]) {
@@ -374,7 +374,7 @@ func (pec *parallelExecutionChain) Execute(ctx context.Context, request any) (an
 					}
 				}
 			}()
-			
+
 			response, err := c.Execute(ctx, request)
 			results <- result{
 				response: response,
@@ -383,11 +383,11 @@ func (pec *parallelExecutionChain) Execute(ctx context.Context, request any) (an
 			}
 		}(i, chain)
 	}
-	
+
 	// Collect results
 	responses := make([]any, len(pec.chains))
 	var firstError error
-	
+
 	for i := 0; i < len(pec.chains); i++ {
 		select {
 		case res := <-results:
@@ -399,18 +399,18 @@ func (pec *parallelExecutionChain) Execute(ctx context.Context, request any) (an
 			return nil, ctx.Err()
 		}
 	}
-	
+
 	if firstError != nil {
 		return nil, firstError
 	}
-	
+
 	// Return the first non-nil response or the original request
 	for _, response := range responses {
 		if response != nil {
 			return response, nil
 		}
 	}
-	
+
 	return request, nil
 }
 
@@ -432,7 +432,7 @@ func (pec *parallelExecutionChain) PrependMiddleware(middleware interfaces.Middl
 func (pec *parallelExecutionChain) GetMetrics() *types.ExecutionMetrics {
 	// Aggregate metrics from all chains
 	aggregated := types.NewExecutionMetrics()
-	
+
 	for _, chain := range pec.chains {
 		metrics := chain.GetMetrics()
 		aggregated.Executions += metrics.Executions
@@ -440,7 +440,7 @@ func (pec *parallelExecutionChain) GetMetrics() *types.ExecutionMetrics {
 		aggregated.Panics += metrics.Panics
 		aggregated.TotalDuration += metrics.TotalDuration
 	}
-	
+
 	return aggregated
 }
 
@@ -451,7 +451,7 @@ func (pec *parallelExecutionChain) GetConfig() *types.ExecutionConfig {
 func (pec *parallelExecutionChain) UpdateConfig(config *types.ExecutionConfig) {
 	pec.config = config
 	pec.logger = config.Logger
-	
+
 	// Update all chains
 	for _, chain := range pec.chains {
 		chain.UpdateConfig(config)

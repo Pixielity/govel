@@ -1,7 +1,7 @@
 package interfaces
 
 import (
-	shared "govel/packages/types/src/shared"
+	shared "govel/types/shared"
 )
 
 /**

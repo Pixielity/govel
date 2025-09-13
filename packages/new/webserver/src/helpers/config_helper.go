@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"govel/packages/new/webserver/src/constants"
-	"govel/packages/new/webserver/src/enums"
+	"govel/new/webserver/constants"
+	"govel/new/webserver/enums"
 )
 
 // ConfigHelper provides utilities for webserver configuration management and validation.

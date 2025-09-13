@@ -1,6 +1,6 @@
 package types
 
-import applicationInterfaces "govel/packages/types/src/interfaces/application/base"
+import applicationInterfaces "govel/types/interfaces/application/base"
 
 // ProviderCallback defines the signature for provider callback functions.
 // These callbacks are used for pre-boot and post-boot operations in service providers,

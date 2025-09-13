@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	cookie "govel/packages/cookie/src"
-	cookieInterfaces "govel/packages/cookie/src/interfaces"
+	cookie "govel/cookie"
+	cookieInterfaces "govel/cookie/interfaces"
 )
 
 // CSRFProtection provides Laravel-compatible CSRF protection for cookies and forms.

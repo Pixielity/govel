@@ -16,8 +16,8 @@ import (
 	"text/template"
 	"time"
 
-	"govel/packages/new/webserver/src/enums"
-	"govel/packages/new/webserver/src/interfaces"
+	"govel/new/webserver/enums"
+	"govel/new/webserver/interfaces"
 )
 
 // BaseAdapter provides comprehensive enterprise-grade functionality for all adapter implementations.

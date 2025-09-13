@@ -1,8 +1,8 @@
 package facades
 
 import (
-	scheduleInterfaces "govel/packages/types/src/interfaces/schedule"
-	facade "govel/packages/support/src"
+	scheduleInterfaces "govel/types/interfaces/schedule"
+	facade "govel/support"
 )
 
 // Schedule provides a clean, static-like interface to the application's task scheduling service.

@@ -1,7 +1,7 @@
 package types
 
 import (
-	containerInterfaces "govel/packages/types/src/interfaces/container"
+	containerInterfaces "govel/types/interfaces/container"
 )
 
 // DriverCreator represents a function that creates drivers for the Manager.

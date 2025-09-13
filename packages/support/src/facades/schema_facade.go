@@ -1,8 +1,8 @@
 package facades
 
 import (
-	schemaInterfaces "govel/packages/types/src/interfaces/schema"
-	facade "govel/packages/support/src"
+	schemaInterfaces "govel/types/interfaces/schema"
+	facade "govel/support"
 )
 
 // Schema provides a clean, static-like interface to the application's database schema management service.

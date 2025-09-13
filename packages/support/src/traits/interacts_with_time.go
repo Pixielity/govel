@@ -5,7 +5,7 @@ import (
 	"math"
 	"time"
 
-	carbon "govel/packages/support/src/carbon"
+	carbon "govel/support/carbon"
 )
 
 // TimeInteractor interface defines methods for time-related operations

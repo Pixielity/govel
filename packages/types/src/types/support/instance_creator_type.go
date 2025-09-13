@@ -1,7 +1,7 @@
 package types
 
 import (
-	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
+	applicationInterfaces "govel/types/interfaces/application/base"
 )
 
 // InstanceCreator represents a function that creates instances for the MultipleInstanceManager.

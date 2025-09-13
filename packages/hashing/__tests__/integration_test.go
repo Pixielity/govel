@@ -5,10 +5,10 @@ import (
 	"strings"
 	"testing"
 
-	containerMocks "govel/packages/container/mocks"
-	"govel/packages/hashing/src"
-	configMocks "govel/packages/config/mocks"
-	hashingInterfaces "govel/packages/types/src/interfaces/hashing"
+	containerMocks "govel/container/mocks"
+	"govel/hashing"
+	configMocks "govel/config/mocks"
+	hashingInterfaces "govel/types/interfaces/hashing"
 )
 
 func TestCompleteWorkflow(t *testing.T) {

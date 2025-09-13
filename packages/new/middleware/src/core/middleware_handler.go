@@ -7,10 +7,10 @@ package core
 import (
 	"context"
 	"fmt"
+	"govel/middleware/interfaces"
+	"govel/middleware/types"
 	"sync"
 	"time"
-	"github.com/govel/middleware/src/interfaces"
-	"github.com/govel/middleware/src/types"
 )
 
 // MiddlewareHandler is the primary implementation for handling middleware execution.
@@ -32,19 +32,19 @@ import (
 type MiddlewareHandler[TRequest, TResponse any] struct {
 	// middlewares holds the registered middleware in execution order
 	middlewares []interfaces.Middleware[TRequest, TResponse]
-	
+
 	// config contains the handler configuration
 	config *MiddlewareHandlerConfig
-	
+
 	// metrics tracks execution performance and health
 	metrics *HandlerMetrics
-	
+
 	// contextFactory creates execution contexts
 	contextFactory interfaces.ContextFactory
-	
+
 	// executionChain manages actual middleware execution
 	executionChain *types.ExecutionChain[TRequest, TResponse]
-	
+
 	// mu protects concurrent access to handler state
 	mu sync.RWMutex
 }
@@ -83,34 +83,34 @@ type MiddlewareHandlerConfig struct {
 type HandlerMetrics struct {
 	// totalRequests is the total number of requests processed
 	totalRequests int64
-	
+
 	// successfulRequests is the number of requests that completed successfully
 	successfulRequests int64
-	
+
 	// failedRequests is the number of requests that failed
 	failedRequests int64
-	
+
 	// totalProcessingTime is the cumulative time spent processing requests
 	totalProcessingTime time.Duration
-	
+
 	// averageProcessingTime is the average time to process a request
 	averageProcessingTime time.Duration
-	
+
 	// minProcessingTime is the minimum time to process a request
 	minProcessingTime time.Duration
-	
+
 	// maxProcessingTime is the maximum time to process a request
 	maxProcessingTime time.Duration
-	
+
 	// currentConcurrency is the current number of concurrent executions
 	currentConcurrency int64
-	
+
 	// maxConcurrency is the peak number of concurrent executions
 	maxConcurrency int64
-	
+
 	// lastRequestTime is the timestamp of the last processed request
 	lastRequestTime time.Time
-	
+
 	// mu protects concurrent access to metrics
 	mu sync.RWMutex
 }
@@ -130,39 +130,40 @@ type HandlerMetrics struct {
 //   - *MiddlewareHandler[TRequest, TResponse]: Configured middleware handler
 //
 // Usage:
-//   handler := NewMiddlewareHandler[*http.Request, *http.Response](&MiddlewareHandlerConfig{
-//       Name: "HTTP Handler",
-//       EnableMetrics: true,
-//       EnableTracing: true,
-//       DefaultTimeout: 30 * time.Second,
-//       MaxConcurrency: 100,
-//   })
+//
+//	handler := NewMiddlewareHandler[*http.Request, *http.Response](&MiddlewareHandlerConfig{
+//	    Name: "HTTP Handler",
+//	    EnableMetrics: true,
+//	    EnableTracing: true,
+//	    DefaultTimeout: 30 * time.Second,
+//	    MaxConcurrency: 100,
+//	})
 func NewMiddlewareHandler[TRequest, TResponse any](
 	config *MiddlewareHandlerConfig,
 ) *MiddlewareHandler[TRequest, TResponse] {
 	// Apply default configuration if needed
 	if config == nil {
 		config = &MiddlewareHandlerConfig{
-			Name:            "DefaultMiddlewareHandler",
-			EnableMetrics:   true,
-			DefaultTimeout:  30 * time.Second,
-			MaxConcurrency:  0, // unlimited
+			Name:           "DefaultMiddlewareHandler",
+			EnableMetrics:  true,
+			DefaultTimeout: 30 * time.Second,
+			MaxConcurrency: 0, // unlimited
 		}
 	}
-	
+
 	// Create execution chain configuration
 	executionConfig := types.ExecutionConfig{
-		Name:             config.Name,
-		EnableProfiling:  config.EnableProfiling,
-		EnableTracing:    config.EnableTracing,
-		EnableMetrics:    config.EnableMetrics,
-		Timeout:          config.DefaultTimeout,
-		MaxConcurrency:   config.MaxConcurrency,
-		RetryPolicy:      config.RetryPolicy,
-		CircuitBreaker:   config.CircuitBreakerConfig,
-		Properties:       config.Properties,
+		Name:            config.Name,
+		EnableProfiling: config.EnableProfiling,
+		EnableTracing:   config.EnableTracing,
+		EnableMetrics:   config.EnableMetrics,
+		Timeout:         config.DefaultTimeout,
+		MaxConcurrency:  config.MaxConcurrency,
+		RetryPolicy:     config.RetryPolicy,
+		CircuitBreaker:  config.CircuitBreakerConfig,
+		Properties:      config.Properties,
 	}
-	
+
 	return &MiddlewareHandler[TRequest, TResponse]{
 		middlewares:    make([]interfaces.Middleware[TRequest, TResponse], 0),
 		config:         config,
@@ -180,14 +181,15 @@ func NewMiddlewareHandler[TRequest, TResponse any](
 //   - middleware: One or more middleware instances to register
 //
 // Thread Safety:
-//   This method is safe for concurrent use and will not affect ongoing executions.
+//
+//	This method is safe for concurrent use and will not affect ongoing executions.
 func (mh *MiddlewareHandler[TRequest, TResponse]) AddMiddleware(middleware ...interfaces.Middleware[TRequest, TResponse]) {
 	mh.mu.Lock()
 	defer mh.mu.Unlock()
-	
+
 	// Add to local middleware list
 	mh.middlewares = append(mh.middlewares, middleware...)
-	
+
 	// Update execution chain
 	mh.executionChain.AddMiddleware(middleware...)
 }
@@ -200,17 +202,18 @@ func (mh *MiddlewareHandler[TRequest, TResponse]) AddMiddleware(middleware ...in
 //   - middleware: One or more middleware instances to prepend
 //
 // Thread Safety:
-//   This method is safe for concurrent use and will not affect ongoing executions.
+//
+//	This method is safe for concurrent use and will not affect ongoing executions.
 func (mh *MiddlewareHandler[TRequest, TResponse]) PrependMiddleware(middleware ...interfaces.Middleware[TRequest, TResponse]) {
 	mh.mu.Lock()
 	defer mh.mu.Unlock()
-	
+
 	// Create new slice with prepended middleware
 	newMiddlewares := make([]interfaces.Middleware[TRequest, TResponse], len(middleware)+len(mh.middlewares))
 	copy(newMiddlewares, middleware)
 	copy(newMiddlewares[len(middleware):], mh.middlewares)
 	mh.middlewares = newMiddlewares
-	
+
 	// Update execution chain
 	mh.executionChain.PrependMiddleware(middleware...)
 }
@@ -246,25 +249,25 @@ func (mh *MiddlewareHandler[TRequest, TResponse]) Handle(
 ) (TResponse, error) {
 	start := time.Now()
 	var zeroResponse TResponse
-	
+
 	// Update concurrency metrics
 	mh.updateConcurrency(1)
 	defer mh.updateConcurrency(-1)
-	
+
 	// Create execution context if tracing is enabled
 	var executionCtx interfaces.ExecutionContext
 	if mh.config.EnableTracing {
 		executionCtx = mh.contextFactory.CreateExecutionContext(ctx)
 		ctx = executionCtx
 	}
-	
+
 	// Execute the middleware chain with error recovery
 	response, err := mh.executeWithRecovery(ctx, request, finalHandler)
-	
+
 	// Update performance metrics
 	duration := time.Since(start)
 	mh.updateMetrics(err == nil, duration)
-	
+
 	// Record execution in tracing context
 	if executionCtx != nil {
 		if err != nil {
@@ -272,7 +275,7 @@ func (mh *MiddlewareHandler[TRequest, TResponse]) Handle(
 		}
 		executionCtx.RecordMetric("execution_time", duration.Milliseconds(), map[string]string{"unit": "ms"})
 	}
-	
+
 	return response, err
 }
 
@@ -290,7 +293,7 @@ func (mh *MiddlewareHandler[TRequest, TResponse]) executeWithRecovery(
 			// Could add stack trace here if needed
 		}
 	}()
-	
+
 	// Execute through the execution chain
 	return mh.executionChain.Execute(ctx, request, finalHandler)
 }
@@ -299,7 +302,7 @@ func (mh *MiddlewareHandler[TRequest, TResponse]) executeWithRecovery(
 func (mh *MiddlewareHandler[TRequest, TResponse]) updateConcurrency(delta int64) {
 	mh.metrics.mu.Lock()
 	defer mh.metrics.mu.Unlock()
-	
+
 	mh.metrics.currentConcurrency += delta
 	if mh.metrics.currentConcurrency > mh.metrics.maxConcurrency {
 		mh.metrics.maxConcurrency = mh.metrics.currentConcurrency
@@ -310,7 +313,7 @@ func (mh *MiddlewareHandler[TRequest, TResponse]) updateConcurrency(delta int64)
 func (mh *MiddlewareHandler[TRequest, TResponse]) updateMetrics(success bool, duration time.Duration) {
 	mh.metrics.mu.Lock()
 	defer mh.metrics.mu.Unlock()
-	
+
 	// Update request counts
 	mh.metrics.totalRequests++
 	if success {
@@ -318,12 +321,12 @@ func (mh *MiddlewareHandler[TRequest, TResponse]) updateMetrics(success bool, du
 	} else {
 		mh.metrics.failedRequests++
 	}
-	
+
 	// Update timing metrics
 	mh.metrics.totalProcessingTime += duration
 	mh.metrics.averageProcessingTime = mh.metrics.totalProcessingTime / time.Duration(mh.metrics.totalRequests)
 	mh.metrics.lastRequestTime = time.Now()
-	
+
 	// Update min/max timing
 	if mh.metrics.totalRequests == 1 || duration < mh.metrics.minProcessingTime {
 		mh.metrics.minProcessingTime = duration
@@ -341,17 +344,18 @@ func (mh *MiddlewareHandler[TRequest, TResponse]) updateMetrics(success bool, du
 //   - HandlerMetricsSnapshot: Current performance metrics
 //
 // Thread Safety:
-//   This method is safe for concurrent use and returns a consistent snapshot
-//   of metrics at the time of the call.
+//
+//	This method is safe for concurrent use and returns a consistent snapshot
+//	of metrics at the time of the call.
 func (mh *MiddlewareHandler[TRequest, TResponse]) GetMetrics() HandlerMetricsSnapshot {
 	mh.metrics.mu.RLock()
 	defer mh.metrics.mu.RUnlock()
-	
+
 	var successRate float64
 	if mh.metrics.totalRequests > 0 {
 		successRate = float64(mh.metrics.successfulRequests) / float64(mh.metrics.totalRequests) * 100
 	}
-	
+
 	return HandlerMetricsSnapshot{
 		HandlerName:           mh.config.Name,
 		TotalRequests:         mh.metrics.totalRequests,
@@ -395,7 +399,7 @@ func (mh *MiddlewareHandler[TRequest, TResponse]) GetMiddlewareCount() int {
 func (mh *MiddlewareHandler[TRequest, TResponse]) GetConfig() *MiddlewareHandlerConfig {
 	mh.mu.RLock()
 	defer mh.mu.RUnlock()
-	
+
 	// Return a copy to prevent external modification
 	configCopy := *mh.config
 	return &configCopy
@@ -408,28 +412,29 @@ func (mh *MiddlewareHandler[TRequest, TResponse]) GetConfig() *MiddlewareHandler
 //   - config: New configuration to apply
 //
 // Thread Safety:
-//   This method is safe for concurrent use, though configuration changes
-//   may not affect already-running middleware executions.
+//
+//	This method is safe for concurrent use, though configuration changes
+//	may not affect already-running middleware executions.
 func (mh *MiddlewareHandler[TRequest, TResponse]) UpdateConfig(config *MiddlewareHandlerConfig) {
 	mh.mu.Lock()
 	defer mh.mu.Unlock()
-	
+
 	// Update configuration
 	mh.config = config
-	
+
 	// Update execution chain configuration if needed
 	executionConfig := types.ExecutionConfig{
-		Name:             config.Name,
-		EnableProfiling:  config.EnableProfiling,
-		EnableTracing:    config.EnableTracing,
-		EnableMetrics:    config.EnableMetrics,
-		Timeout:          config.DefaultTimeout,
-		MaxConcurrency:   config.MaxConcurrency,
-		RetryPolicy:      config.RetryPolicy,
-		CircuitBreaker:   config.CircuitBreakerConfig,
-		Properties:       config.Properties,
+		Name:            config.Name,
+		EnableProfiling: config.EnableProfiling,
+		EnableTracing:   config.EnableTracing,
+		EnableMetrics:   config.EnableMetrics,
+		Timeout:         config.DefaultTimeout,
+		MaxConcurrency:  config.MaxConcurrency,
+		RetryPolicy:     config.RetryPolicy,
+		CircuitBreaker:  config.CircuitBreakerConfig,
+		Properties:      config.Properties,
 	}
-	
+
 	// Create new execution chain with updated config
 	newExecutionChain := types.NewExecutionChain[TRequest, TResponse](executionConfig)
 	newExecutionChain.AddMiddleware(mh.middlewares...)
@@ -440,14 +445,15 @@ func (mh *MiddlewareHandler[TRequest, TResponse]) UpdateConfig(config *Middlewar
 // This method is primarily useful for testing and development scenarios.
 //
 // Thread Safety:
-//   This method is safe for concurrent use, though it may affect ongoing executions.
+//
+//	This method is safe for concurrent use, though it may affect ongoing executions.
 func (mh *MiddlewareHandler[TRequest, TResponse]) Reset() {
 	mh.mu.Lock()
 	defer mh.mu.Unlock()
-	
+
 	// Clear middleware
 	mh.middlewares = mh.middlewares[:0]
-	
+
 	// Reset metrics
 	mh.metrics.mu.Lock()
 	mh.metrics.totalRequests = 0
@@ -460,18 +466,18 @@ func (mh *MiddlewareHandler[TRequest, TResponse]) Reset() {
 	mh.metrics.currentConcurrency = 0
 	mh.metrics.maxConcurrency = 0
 	mh.metrics.mu.Unlock()
-	
+
 	// Create new execution chain
 	executionConfig := types.ExecutionConfig{
-		Name:             mh.config.Name,
-		EnableProfiling:  mh.config.EnableProfiling,
-		EnableTracing:    mh.config.EnableTracing,
-		EnableMetrics:    mh.config.EnableMetrics,
-		Timeout:          mh.config.DefaultTimeout,
-		MaxConcurrency:   mh.config.MaxConcurrency,
-		RetryPolicy:      mh.config.RetryPolicy,
-		CircuitBreaker:   mh.config.CircuitBreakerConfig,
-		Properties:       mh.config.Properties,
+		Name:            mh.config.Name,
+		EnableProfiling: mh.config.EnableProfiling,
+		EnableTracing:   mh.config.EnableTracing,
+		EnableMetrics:   mh.config.EnableMetrics,
+		Timeout:         mh.config.DefaultTimeout,
+		MaxConcurrency:  mh.config.MaxConcurrency,
+		RetryPolicy:     mh.config.RetryPolicy,
+		CircuitBreaker:  mh.config.CircuitBreakerConfig,
+		Properties:      mh.config.Properties,
 	}
 	mh.executionChain = types.NewExecutionChain[TRequest, TResponse](executionConfig)
 }

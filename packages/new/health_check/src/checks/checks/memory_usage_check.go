@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"runtime"
 
-	"govel/packages/healthcheck/src/checks"
-	"govel/packages/healthcheck/src/enums"
-	"govel/packages/healthcheck/src/interfaces"
+	"govel/healthcheck/checks"
+	"govel/healthcheck/enums"
+	"govel/healthcheck/interfaces"
 )
 
 // MemoryUsageCheck monitors memory usage and alerts on configurable thresholds.

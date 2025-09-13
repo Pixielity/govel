@@ -7,8 +7,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	containerInterfaces "govel/packages/types/src/interfaces/container"
-	containerTypes "govel/packages/types/src/types/container"
+	containerInterfaces "govel/types/interfaces/container"
+	containerTypes "govel/types/types/container"
 )
 
 // ================================================================================================

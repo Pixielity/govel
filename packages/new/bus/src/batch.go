@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"govel/packages/bus/src/interfaces"
+	"govel/new/bus/interfaces"
 )
 
 // Batch represents a collection of jobs that can be processed together

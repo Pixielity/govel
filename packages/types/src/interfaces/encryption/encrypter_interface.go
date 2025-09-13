@@ -1,7 +1,7 @@
 package interfaces
 
 import (
-	types "govel/packages/types/src"
+	types "govel/types"
 )
 
 // EncrypterInterface defines the contract for encryption operations.

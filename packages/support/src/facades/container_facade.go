@@ -1,8 +1,8 @@
 package facades
 
 import (
-	containerInterfaces "govel/packages/types/src/interfaces/container"
-	facade "govel/packages/support/src"
+	containerInterfaces "govel/types/interfaces/container"
+	facade "govel/support"
 )
 
 // Container provides a clean, static-like interface to the application's dependency injection container service.

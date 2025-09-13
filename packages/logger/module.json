@@ -1,0 +1,81 @@
+{
+  "name": "@govel/logger",
+  "version": "1.0.0",
+  "description": "Logging infrastructure with multiple channels and formatters for GoVel framework",
+  "author": "GoVel Framework Team",
+  "license": "MIT",
+  "keywords": [
+    "go", 
+    "golang", 
+    "logging", "logger", "infrastructure", "monitoring",
+    "laravel", 
+    "govel", 
+    "framework", 
+    "module"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/govel-framework/govel.git",
+    "directory": "packages/logger"
+  },
+  "bugs": {
+    "url": "https://github.com/govel-framework/govel/issues"
+  },
+  "homepage": "https://github.com/govel-framework/govel/tree/main/packages/logger#readme",
+  "dependencies": {"@govel/types/interfaces/logger": "^1.0.0"},
+  "scripts": {
+    "test": "go test -v ./...",
+    "test:coverage": "go test -v -cover ./...",
+    "test:race": "go test -v -race ./...",
+    "build": "go build ./...",
+    "lint": "golangci-lint run",
+    "fmt": "go fmt ./...",
+    "vet": "go vet ./...",
+    "mod:tidy": "go mod tidy",
+    "mod:verify": "go mod verify",
+    "clean": "go clean -cache -testcache -modcache"
+  },
+  "hooks": {
+    "pre-install": [],
+    "post-install": [
+      "go mod tidy",
+      "go mod download"
+    ],
+    "pre-update": [],
+    "post-update": [
+      "go mod tidy",
+      "go mod download"
+    ],
+    "pre-build": [
+      "go fmt ./...",
+      "go vet ./..."
+    ],
+    "post-build": [],
+    "pre-test": [
+      "go mod verify"
+    ],
+    "post-test": [],
+    "pre-publish": [
+      "go test ./...",
+      "go fmt ./...",
+      "go vet ./...",
+      "golangci-lint run"
+    ],
+    "post-publish": []
+  },
+  "engines": {
+    "go": ">=1.19"
+  },
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE",
+    "go.mod",
+    "go.sum"
+  ],
+  "govel": {
+    "type": "package",
+    "category": "infrastructure",
+    "providers": ["LoggerServiceProvider"]
+  }
+}

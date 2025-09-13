@@ -7,10 +7,10 @@ import (
 	"sort"
 	"sync"
 
-	types "govel/packages/types/src"
-	containerInterfaces "govel/packages/types/src/interfaces/container"
+	types "govel/types"
+	containerInterfaces "govel/types/interfaces/container"
 
-	interfaces "govel/packages/types/src/interfaces/pipeline"
+	interfaces "govel/types/interfaces/pipeline"
 )
 
 // ErrPipelineNotFound is returned when trying to execute a pipeline that doesn't exist

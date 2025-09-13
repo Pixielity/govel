@@ -3,7 +3,7 @@
 package webserver
 
 import (
-	"govel/packages/new/webserver/src/interfaces"
+	"govel/new/webserver/interfaces"
 )
 
 // ConditionalMiddleware represents middleware that only executes under certain conditions.

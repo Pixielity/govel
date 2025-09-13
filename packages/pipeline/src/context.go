@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	interfaces "govel/packages/types/src/interfaces/pipeline"
+	interfaces "govel/types/interfaces/pipeline"
 )
 
 // PipelineContext implements the PipelineContextInterface interface.

@@ -1,11 +1,11 @@
 package interfaces
 
 import (
-	concernsInterfaces "govel/packages/types/src/interfaces/application/concerns"
-	traitInterfaces "govel/packages/types/src/interfaces/application/traits"
-	configInterfaces "govel/packages/types/src/interfaces/config"
-	containerInterfaces "govel/packages/types/src/interfaces/container"
-	loggerInterfaces "govel/packages/types/src/interfaces/logger"
+	concernsInterfaces "govel/types/interfaces/application/concerns"
+	traitInterfaces "govel/types/interfaces/application/traits"
+	configInterfaces "govel/types/interfaces/config"
+	containerInterfaces "govel/types/interfaces/container"
+	loggerInterfaces "govel/types/interfaces/logger"
 )
 
 // ApplicationInterface defines the contract for the GoVel application.

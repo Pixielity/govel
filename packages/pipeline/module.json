@@ -1,28 +1,81 @@
 {
-  "name": "application",
+  "name": "@govel/pipeline",
   "version": "1.0.0",
-  "description": "application module for Go framework",
-  "main": "application.go",
-  "author": "Go Framework Team",
+  "description": "Pipeline processing system for middleware and data transformation in GoVel framework",
+  "author": "GoVel Framework Team",
   "license": "MIT",
-  "keywords": ["go", "golang", "application", "framework", "module"],
+  "keywords": [
+    "go", 
+    "golang", 
+    "pipeline", "middleware", "processing", "chain",
+    "laravel", 
+    "govel", 
+    "framework", 
+    "module"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/go-framework-application.git"
+    "url": "https://github.com/govel-framework/govel.git",
+    "directory": "packages/pipeline"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/go-framework-application/issues"
+    "url": "https://github.com/govel-framework/govel/issues"
   },
-  "homepage": "https://github.com/yourusername/go-framework-application#readme",
+  "homepage": "https://github.com/govel-framework/govel/tree/main/packages/pipeline#readme",
   "dependencies": {},
-  "devDependencies": {},
   "scripts": {
-    "test": "go test ./...",
-    "build": "go build",
+    "test": "go test -v ./...",
+    "test:coverage": "go test -v -cover ./...",
+    "test:race": "go test -v -race ./...",
+    "build": "go build ./...",
     "lint": "golangci-lint run",
-    "fmt": "go fmt ./..."
+    "fmt": "go fmt ./...",
+    "vet": "go vet ./...",
+    "mod:tidy": "go mod tidy",
+    "mod:verify": "go mod verify",
+    "clean": "go clean -cache -testcache -modcache"
+  },
+  "hooks": {
+    "pre-install": [],
+    "post-install": [
+      "go mod tidy",
+      "go mod download"
+    ],
+    "pre-update": [],
+    "post-update": [
+      "go mod tidy",
+      "go mod download"
+    ],
+    "pre-build": [
+      "go fmt ./...",
+      "go vet ./..."
+    ],
+    "post-build": [],
+    "pre-test": [
+      "go mod verify"
+    ],
+    "post-test": [],
+    "pre-publish": [
+      "go test ./...",
+      "go fmt ./...",
+      "go vet ./...",
+      "golangci-lint run"
+    ],
+    "post-publish": []
   },
   "engines": {
     "go": ">=1.19"
+  },
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE",
+    "go.mod",
+    "go.sum"
+  ],
+  "govel": {
+    "type": "package",
+    "category": "core",
+    "providers": ["PipelineServiceProvider"]
   }
 }

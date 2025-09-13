@@ -4,8 +4,8 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	enums "govel/packages/types/src/enums/encryption"
-	pipelineInterfaces "govel/packages/types/src/interfaces/pipeline"
+	enums "govel/types/enums/encryption"
+	pipelineInterfaces "govel/types/interfaces/pipeline"
 )
 
 // PipelineCallback represents a function that configures and executes a pipeline.

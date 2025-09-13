@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"govel/packages/logger"
+	"govel/logger"
 )
 
 // TestLoggerWithFields tests structured logging with fields

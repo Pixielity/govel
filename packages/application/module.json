@@ -1,0 +1,81 @@
+{
+  "name": "@govel/application",
+  "version": "1.0.0",
+  "description": "Core application framework with lifecycle management and service container integration for GoVel",
+  "author": "GoVel Framework Team",
+  "license": "MIT",
+  "keywords": [
+    "go", 
+    "golang", 
+    "application", "lifecycle", "bootstrap", "service-provider",
+    "laravel", 
+    "govel", 
+    "framework", 
+    "module"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/govel-framework/govel.git",
+    "directory": "packages/application"
+  },
+  "bugs": {
+    "url": "https://github.com/govel-framework/govel/issues"
+  },
+  "homepage": "https://github.com/govel-framework/govel/tree/main/packages/application#readme",
+  "dependencies": {"@govel/container": "^1.0.0", "@govel/logger": "^1.0.0", "@govel/packages/application/builders": "^1.0.0", "@govel/packages/application/concerns": "^1.0.0", "@govel/packages/application/core/maintenance": "^1.0.0", "@govel/packages/application/core/shutdown": "^1.0.0", "@govel/packages/application/helpers": "^1.0.0", "@govel/packages/application/traits": "^1.0.0"},
+  "scripts": {
+    "test": "go test -v ./...",
+    "test:coverage": "go test -v -cover ./...",
+    "test:race": "go test -v -race ./...",
+    "build": "go build ./...",
+    "lint": "golangci-lint run",
+    "fmt": "go fmt ./...",
+    "vet": "go vet ./...",
+    "mod:tidy": "go mod tidy",
+    "mod:verify": "go mod verify",
+    "clean": "go clean -cache -testcache -modcache"
+  },
+  "hooks": {
+    "pre-install": [],
+    "post-install": [
+      "go mod tidy",
+      "go mod download"
+    ],
+    "pre-update": [],
+    "post-update": [
+      "go mod tidy",
+      "go mod download"
+    ],
+    "pre-build": [
+      "go fmt ./...",
+      "go vet ./..."
+    ],
+    "post-build": [],
+    "pre-test": [
+      "go mod verify"
+    ],
+    "post-test": [],
+    "pre-publish": [
+      "go test ./...",
+      "go fmt ./...",
+      "go vet ./...",
+      "golangci-lint run"
+    ],
+    "post-publish": []
+  },
+  "engines": {
+    "go": ">=1.19"
+  },
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE",
+    "go.mod",
+    "go.sum"
+  ],
+  "govel": {
+    "type": "package",
+    "category": "core",
+    "providers": ["ApplicationServiceProvider"]
+  }
+}

@@ -1,7 +1,7 @@
 package interfaces
 
 import (
-	types "govel/packages/types/src"
+	types "govel/types"
 )
 
 // HasherInterface defines the contract for hash operations.

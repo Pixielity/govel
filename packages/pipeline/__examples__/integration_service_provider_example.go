@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"govel/packages/new/pipeline/src"
-	"govel/packages/new/pipeline/src/interfaces"
-	"govel/packages/new/pipeline/src/providers"
-	"govel/packages/container/mocks"
+	"govel/new/pipeline"
+	"govel/new/pipeline/interfaces"
+	"govel/new/pipeline/providers"
+	"govel/container/mocks"
 )
 
 // RequestProcessor is a sample service that uses pipelines

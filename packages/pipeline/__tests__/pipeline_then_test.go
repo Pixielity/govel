@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	containerMocks "govel/packages/container/mocks"
-	"govel/packages/new/pipeline/src"
+	containerMocks "govel/container/mocks"
+	"govel/new/pipeline"
 )
 
 // TestPipelineThen tests the Then method functionality

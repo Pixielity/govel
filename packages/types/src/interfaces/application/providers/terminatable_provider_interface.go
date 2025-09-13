@@ -2,7 +2,7 @@ package interfaces
 
 import (
 	"context"
-	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
+	applicationInterfaces "govel/types/interfaces/application/base"
 )
 
 // TerminatableProvider defines the contract for service providers that require

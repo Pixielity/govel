@@ -1,6 +1,6 @@
 package interfaces
 
-import enums "govel/packages/types/src/enums/encryption"
+import enums "govel/types/enums/encryption"
 
 // FactoryInterface defines the contract for encryption factory functionality.
 // This interface provides encrypter instance creation and management capabilities.

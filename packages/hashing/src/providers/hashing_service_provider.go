@@ -6,11 +6,11 @@ package providers
 import (
 	"fmt"
 
-	providers "govel/packages/application/providers"
-	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
+	providers "govel/application/providers"
+	applicationInterfaces "govel/types/interfaces/application/base"
 
-	hashing "govel/packages/hashing/src"
-	hashingInterfaces "govel/packages/types/src/interfaces/hashing"
+	hashing "govel/hashing"
+	hashingInterfaces "govel/types/interfaces/hashing"
 )
 
 // HashingServiceProvider implements a Laravel-compatible service provider

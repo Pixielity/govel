@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	shared "govel/packages/types/src/shared"
+	shared "govel/types/shared"
 )
 
 // ShutdownableInterface defines the contract for shutdownable functionality.

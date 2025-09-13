@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"govel/packages/new/routing/src"
-	"govel/packages/new/webserver/src/interfaces"
+	"govel/new/routing"
+	"govel/new/webserver/interfaces"
 )
 
 // DisplayRoutesClickable logs all registered routes with clickable URLs for easy testing.

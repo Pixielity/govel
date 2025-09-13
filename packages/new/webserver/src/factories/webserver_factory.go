@@ -3,8 +3,8 @@
 package factories
 
 import (
-	webserver "govel/packages/new/webserver/src"
-	"govel/packages/new/webserver/src/interfaces"
+	webserver "govel/new/webserver"
+	"govel/new/webserver/interfaces"
 )
 
 // WebserverFactory provides factory methods for creating webserver instances.

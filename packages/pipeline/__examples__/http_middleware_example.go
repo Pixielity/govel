@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"govel/packages/new/pipeline/src"
+	"govel/new/pipeline"
 )
 
 // HTTPRequest represents an HTTP request for the pipeline

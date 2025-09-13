@@ -2,23 +2,16 @@
   "name": "@govel/cookie",
   "version": "1.0.0",
   "description": "Laravel-compatible cookie management package for GoVel framework",
-  "main": "src/jar.go",
   "author": "GoVel Framework Team",
   "license": "MIT",
   "keywords": [
     "go", 
     "golang", 
-    "cookie", 
+    "cookie", "http", "web", "csrf", "security", "encryption", "samesite",
     "laravel", 
     "govel", 
     "framework", 
-    "module",
-    "http", 
-    "web",
-    "csrf",
-    "security",
-    "encryption",
-    "samesite"
+    "module"
   ],
   "repository": {
     "type": "git",
@@ -29,18 +22,7 @@
     "url": "https://github.com/govel-framework/govel/issues"
   },
   "homepage": "https://github.com/govel-framework/govel/tree/main/packages/cookie#readme",
-  "dependencies": {
-    "@govel/support": "^1.0.0",
-    "@govel/interfaces": "^1.0.0",
-    "@govel/encryption": "^1.0.0"
-  },
-  "devDependencies": {
-    "@govel/testing": "^1.0.0"
-  },
-  "peerDependencies": {
-    "@govel/container": "^1.0.0",
-    "@govel/config": "^1.0.0"
-  },
+  "dependencies": {"@govel/support/symbol": "^1.0.0"},
   "scripts": {
     "test": "go test -v ./...",
     "test:coverage": "go test -v -cover ./...",
@@ -52,6 +34,34 @@
     "mod:tidy": "go mod tidy",
     "mod:verify": "go mod verify",
     "clean": "go clean -cache -testcache -modcache"
+  },
+  "hooks": {
+    "pre-install": [],
+    "post-install": [
+      "go mod tidy",
+      "go mod download"
+    ],
+    "pre-update": [],
+    "post-update": [
+      "go mod tidy",
+      "go mod download"
+    ],
+    "pre-build": [
+      "go fmt ./...",
+      "go vet ./..."
+    ],
+    "post-build": [],
+    "pre-test": [
+      "go mod verify"
+    ],
+    "post-test": [],
+    "pre-publish": [
+      "go test ./...",
+      "go fmt ./...",
+      "go vet ./...",
+      "golangci-lint run"
+    ],
+    "post-publish": []
   },
   "engines": {
     "go": ">=1.19"
@@ -66,37 +76,6 @@
   "govel": {
     "type": "package",
     "category": "web",
-    "provides": [
-      "cookie.jar",
-      "cookie.csrf",
-      "cookie.samesite",
-      "cookie.encryption",
-      "cookie.middleware"
-    ],
-    "facades": [
-      "Cookie"
-    ],
-    "middleware": [
-      "EncryptCookies",
-      "AddQueuedCookiesToResponse"
-    ],
-    "providers": [
-      "CookieServiceProvider"
-    ],
-    "config": {
-      "publishes": {
-        "cookie.php": "config/cookie.php"
-      }
-    },
-    "laravel_compatibility": {
-      "version": "10.x",
-      "features": [
-        "cookie_encryption",
-        "cookie_queuing",
-        "csrf_protection",
-        "samesite_policies",
-        "cookie_facade"
-      ]
-    }
+    "providers": ["CookieServiceProvider"]
   }
 }

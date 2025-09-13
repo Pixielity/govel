@@ -37,9 +37,9 @@
 package factories
 
 import (
-	webserver "govel/packages/new/webserver/src"
-	"govel/packages/new/webserver/src/interfaces"
-	"govel/packages/new/webserver/src/types"
+	webserver "govel/new/webserver"
+	"govel/new/webserver/interfaces"
+	"govel/new/webserver/types"
 )
 
 // MiddlewareFactory provides methods for creating and managing middleware instances.

@@ -1,11 +1,11 @@
 package hashing
 
 import (
-	"govel/packages/hashing/src/hashers"
-	support "govel/packages/support/src"
-	enums "govel/packages/types/src/enums/hashing"
-	containerInterfaces "govel/packages/types/src/interfaces/container"
-	hashingInterfaces "govel/packages/types/src/interfaces/hashing"
+	"govel/hashing/hashers"
+	support "govel/support"
+	enums "govel/types/enums/hashing"
+	containerInterfaces "govel/types/interfaces/container"
+	hashingInterfaces "govel/types/interfaces/hashing"
 )
 
 // HashManager provides centralized hash management with multiple algorithm support.

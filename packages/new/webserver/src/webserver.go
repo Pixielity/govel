@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"strings"
 
-	routing "govel/packages/new/routing/src"
-	"govel/packages/new/webserver/src/enums"
-	"govel/packages/new/webserver/src/interfaces"
+	routing "govel/new/routing"
+	"govel/new/webserver/enums"
+	"govel/new/webserver/interfaces"
 
-	"govel/packages/new/webserver/src/adapters"
+	"govel/new/webserver/adapters"
 )
 
 // Webserver is the main webserver struct that provides a unified interface across multiple web frameworks.

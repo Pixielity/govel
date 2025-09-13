@@ -4,7 +4,7 @@
 package traits
 
 import (
-	reflector "govel/packages/support/src/reflector"
+	reflector "govel/support/reflector"
 	"reflect"
 	"sync"
 )

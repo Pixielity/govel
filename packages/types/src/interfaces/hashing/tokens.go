@@ -1,6 +1,6 @@
 package interfaces
 
-import "govel/packages/support/src/symbol"
+import "govel/support/symbol"
 
 
 // Standard tokens for hashing package

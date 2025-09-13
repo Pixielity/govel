@@ -1,8 +1,8 @@
 package facades
 
 import (
-	validationInterfaces "govel/packages/types/src/interfaces/validation"
-	facade "govel/packages/support/src"
+	validationInterfaces "govel/types/interfaces/validation"
+	facade "govel/support"
 )
 
 // Validation provides a clean, static-like interface to the application's input validation service.

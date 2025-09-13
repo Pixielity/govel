@@ -1,8 +1,8 @@
 package facades
 
 import (
-	eventInterfaces "govel/packages/types/src/interfaces/event"
-	facade "govel/packages/support/src"
+	eventInterfaces "govel/types/interfaces/event"
+	facade "govel/support"
 )
 
 // Event provides a clean, static-like interface to the application's event dispatching service.

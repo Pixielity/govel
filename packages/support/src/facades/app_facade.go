@@ -1,9 +1,9 @@
 package facades
 
 import (
-	facade "govel/packages/support/src"
-	applicationTokens "govel/packages/types/src/interfaces/application"
-	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
+	facade "govel/support"
+	applicationTokens "govel/types/interfaces/application"
+	applicationInterfaces "govel/types/interfaces/application/base"
 )
 
 // App provides a clean, static-like interface to the application's core service.

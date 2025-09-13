@@ -3,9 +3,9 @@ package tests
 import (
 	"testing"
 
-	containerMocks "govel/packages/container/mocks"
-	"govel/packages/hashing/src"
-	configMocks "govel/packages/config/mocks"
+	containerMocks "govel/container/mocks"
+	"govel/hashing"
+	configMocks "govel/config/mocks"
 )
 
 func TestNewHashManager(t *testing.T) {

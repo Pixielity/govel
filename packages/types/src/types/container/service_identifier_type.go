@@ -1,7 +1,7 @@
 package types
 
 import (
-	"govel/packages/support/src/symbol"
+	"govel/support/symbol"
 )
 
 // ServiceIdentifier represents a service identifier in the container.

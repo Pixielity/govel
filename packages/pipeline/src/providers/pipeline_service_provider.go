@@ -6,11 +6,11 @@ package providers
 import (
 	"fmt"
 
-	providers "govel/packages/application/providers"
-	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
-	pipelineInterfaces "govel/packages/types/src/interfaces/pipeline"
+	providers "govel/application/providers"
+	applicationInterfaces "govel/types/interfaces/application/base"
+	pipelineInterfaces "govel/types/interfaces/pipeline"
 
-	pipeline "govel/packages/pipeline/src"
+	pipeline "govel/pipeline"
 )
 
 // PipelineServiceProvider implements a Laravel-compatible service provider

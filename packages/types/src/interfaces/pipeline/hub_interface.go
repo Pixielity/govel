@@ -1,7 +1,7 @@
 package interfaces
 
 import (
-	containerInterfaces "govel/packages/types/src/interfaces/container"
+	containerInterfaces "govel/types/interfaces/container"
 )
 
 // HubInterface defines the contract for pipeline hub operations.

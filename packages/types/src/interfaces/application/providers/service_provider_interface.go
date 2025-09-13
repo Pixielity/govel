@@ -1,6 +1,6 @@
 package interfaces
 
-import applicationInterfaces "govel/packages/types/src/interfaces/application/base"
+import applicationInterfaces "govel/types/interfaces/application/base"
 
 // ServiceProviderInterface defines the contract that all service providers must implement.
 // This interface follows Laravel's ServiceProvider pattern, providing methods for

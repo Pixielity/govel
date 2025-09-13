@@ -2,8 +2,8 @@ package encryption
 
 import (
 	"fmt"
-	types "govel/packages/types/src"
-	encrypterInterfaces "govel/packages/types/src/interfaces/encryption"
+	types "govel/types"
+	encrypterInterfaces "govel/types/interfaces/encryption"
 )
 
 // Info gets comprehensive information about the given encrypted payload.

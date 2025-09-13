@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"hash"
 
-	types "govel/packages/types/src"
-	enums "govel/packages/types/src/enums/encryption"
-	encryptionInterfaces "govel/packages/types/src/interfaces/encryption"
+	types "govel/types"
+	enums "govel/types/enums/encryption"
+	encryptionInterfaces "govel/types/interfaces/encryption"
 )
 
 // AESCTREncrypter provides AES encryption in CTR mode with HMAC-SHA256 MAC authentication.

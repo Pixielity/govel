@@ -3,8 +3,8 @@
 package webserver
 
 import (
-	"govel/packages/new/webserver/src/interfaces"
-	"govel/packages/new/webserver/src/types"
+	"govel/new/webserver/interfaces"
+	"govel/new/webserver/types"
 )
 
 // MiddlewareChain represents a chain of middleware that can be executed in sequence.

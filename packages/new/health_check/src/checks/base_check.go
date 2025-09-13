@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"strings"
 
-	"govel/packages/healthcheck/src/enums"
-	"govel/packages/healthcheck/src/interfaces"
+	"govel/healthcheck/enums"
+	"govel/healthcheck/interfaces"
 )
 
 // ConditionFunc represents a condition function that returns whether a check should run

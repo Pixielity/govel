@@ -6,11 +6,11 @@ package providers
 import (
 	"fmt"
 
-	providers "govel/packages/application/providers"
-	applicationInterfaces "govel/packages/types/src/interfaces/application/base"
+	providers "govel/application/providers"
+	applicationInterfaces "govel/types/interfaces/application/base"
 
-	encryption "govel/packages/encryption/src"
-	encryptionInterfaces "govel/packages/types/src/interfaces/encryption"
+	encryption "govel/encryption"
+	encryptionInterfaces "govel/types/interfaces/encryption"
 )
 
 // EncryptionServiceProvider implements a Laravel-compatible service provider
