@@ -88,7 +88,7 @@ func (t *Configurable) GetConfig() interfaces.ConfigInterface {
  *
  * @param configInstance interface{} The config instance to set (using interface{} to avoid circular import)
  */
-func (t *Configurable) SetConfig(configInstance interface{}) {
+func (t *Configurable) SetConfig(configInstance interfaces.ConfigInterface) {
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
 

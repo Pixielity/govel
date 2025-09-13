@@ -3,6 +3,7 @@ package hashing
 import (
 	"fmt"
 	hashingInterfaces "govel/packages/types/src/interfaces/hashing"
+	types "govel/packages/types/src"
 )
 
 // HasherInterface implementation - delegates to default driver

@@ -1,8 +1,9 @@
 package encryption
-
 import (
 	"fmt"
+	types "govel/packages/types/src"
 	encrypterInterfaces "govel/packages/types/src/interfaces/encryption"
+)
 	types "govel/packages/types/src"
 )
 

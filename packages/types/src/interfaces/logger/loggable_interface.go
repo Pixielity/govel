@@ -10,6 +10,8 @@ package interfaces
 //   - Support for dependency injection and factory patterns
 //   - Thread-safe logger state management
 type LoggableInterface interface {
+	LoggerInterface
+
 	// GetLogger returns the logger instance.
 	// Provides access to the current logger for logging operations.
 	//

@@ -2,9 +2,9 @@ package interfaces
 
 import (
 	traitInterfaces "govel/packages/types/src/interfaces/application/traits"
-	loggerInterfaces "govel/packages/types/src/interfaces/logger"
 	configInterfaces "govel/packages/types/src/interfaces/config"
 	containerInterfaces "govel/packages/types/src/interfaces/container"
+	loggerInterfaces "govel/packages/types/src/interfaces/logger"
 )
 
 // ApplicationInterface defines the contract for the GoVel application.
@@ -15,7 +15,6 @@ type ApplicationInterface interface {
 	// Core trait interfaces for application functionality
 	traitInterfaces.DirectableInterface
 	traitInterfaces.EnvironmentableInterface
-	traitInterfaces.HookableInterface
 	traitInterfaces.LifecycleableInterface
 	traitInterfaces.LocalizableInterface
 	traitInterfaces.ShutdownableInterface
@@ -42,12 +41,4 @@ type ApplicationInterface interface {
 type ApplicationInfoInterface interface {
 	// GetApplicationInfo returns comprehensive application information
 	GetApplicationInfo() map[string]interface{}
-}
-
-// ApplicationProviderInterface provides service provider management
-type ApplicationProviderInterface interface {
-	// RegisterProvider registers a service provider
-	RegisterProvider(provider interface{}) error
-	// GetProviders returns all registered providers
-	GetProviders() []interface{}
 }

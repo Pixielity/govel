@@ -67,7 +67,7 @@ func (sp *Serviceable) RegisterProvider(provider interface{}) error {
 	defer sp.mutex.Unlock()
 
 	// Cast to ServiceProviderInterface
-	serviceProvider, ok := provider.(applicationInterfaces.ServiceProviderInterface)
+	serviceProvider, ok := provider.(providerInterfaces.ServiceProviderInterface)
 	if !ok {
 		return fmt.Errorf("provider must implement ServiceProviderInterface, got %T", provider)
 	}
@@ -278,4 +278,4 @@ func (sp *Serviceable) GetBootedProviders() []string {
 }
 
 // Compile-time interface compliance check
-var _ applicationInterfaces.ServiceableInterface = (*Serviceable)(nil)
+var _ applicationInterfaces.ApplicationProviderInterface = (*Serviceable)(nil)

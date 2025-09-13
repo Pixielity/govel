@@ -24,7 +24,10 @@ type PipelineContextInterface interface {
 	//
 	// Parameters:
 	//   - startTime: The time when pipeline execution began
-	SetExecutionStartTime(startTime time.Time)
+	//
+	// Returns:
+	//   - PipelineContextInterface: Returns self for method chaining
+	SetExecutionStartTime(startTime time.Time) PipelineContextInterface
 
 	// GetExecutionStartTime returns the pipeline execution start time.
 	// Returns zero time if not set.
@@ -38,7 +41,10 @@ type PipelineContextInterface interface {
 	//
 	// Parameters:
 	//   - pipeName: The name or identifier of the current pipe
-	SetCurrentPipe(pipeName string)
+	//
+	// Returns:
+	//   - PipelineContextInterface: Returns self for method chaining
+	SetCurrentPipe(pipeName string) PipelineContextInterface
 
 	// GetCurrentPipe returns the name of the currently executing pipe.
 	// Returns empty string if not set.

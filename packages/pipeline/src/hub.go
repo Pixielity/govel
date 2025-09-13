@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	containerInterfaces "govel/packages/types/src/interfaces/container"
+	types "govel/packages/types/src"
 
 	interfaces "govel/packages/types/src/interfaces/pipeline"
 )

@@ -1,5 +1,10 @@
 package enums
 
+import (
+	"errors"
+	"strings"
+)
+
 // Algorithm represents the hashing algorithms.
 type Algorithm string
 
@@ -19,3 +24,32 @@ const (
 	// AlgorithmSHA512 represents SHA-512 algorithm
 	AlgorithmSHA512 Algorithm = "sha512"
 )
+
+// ValidateAlgorithm validates if the given algorithm string is supported.
+// Returns an error if the algorithm is not recognized or supported.
+//
+// Parameters:
+//   - algorithm: The hashing algorithm identifier to validate
+//
+// Returns:
+//   - error: nil if valid, error describing the issue if invalid
+func ValidateAlgorithm(algorithm string) error {
+	// Normalize algorithm string to lowercase
+	normalizedAlgorithm := strings.ToLower(algorithm)
+	
+	switch normalizedAlgorithm {
+	case "bcrypt", "argon2i", "argon2id", "sha256", "sha512":
+		return nil
+	default:
+		return errors.New("unsupported hashing algorithm")
+	}
+}
+
+// GetDefaultAlgorithm returns the default hashing algorithm for the system.
+// This provides a centralized way to manage the default hashing algorithm.
+//
+// Returns:
+//   - string: The default hashing algorithm identifier
+func GetDefaultAlgorithm() string {
+	return string(AlgorithmBcrypt) // Default to bcrypt for compatibility
+}

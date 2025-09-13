@@ -31,3 +31,45 @@ const (
 	// DefaultShutdownTimeout is the default graceful shutdown timeout
 	DefaultShutdownTimeout = 30 * time.Second
 )
+
+// Directory constants
+const (
+	// DirectoryPublic is the public directory name
+	DirectoryPublic = "public"
+
+	// DirectoryStorage is the storage directory name
+	DirectoryStorage = "storage"
+
+	// DirectoryConfig is the config directory name
+	DirectoryConfig = "config"
+
+	// DirectoryLogs is the logs directory name
+	DirectoryLogs = "logs"
+
+	// DirectoryCache is the cache directory name
+	DirectoryCache = "cache"
+
+	// DirectoryViews is the views directory name
+	DirectoryViews = "resources/views"
+
+	// DirectoryResources is the resources directory name
+	DirectoryResources = "resources"
+
+	// DirectoryBootstrap is the bootstrap directory name
+	DirectoryBootstrap = "bootstrap"
+
+	// DirectoryDatabase is the database directory name
+	DirectoryDatabase = "database"
+
+	// DirectoryFramework is the framework directory name
+	DirectoryFramework = "storage/framework"
+)
+
+// Maintenance constants
+const (
+	// MaintenanceFileName is the name of the maintenance file
+	MaintenanceFileName = "down"
+
+	// MaintenanceFileActiveValue is the value indicating maintenance is active
+	MaintenanceFileActiveValue = "1"
+)

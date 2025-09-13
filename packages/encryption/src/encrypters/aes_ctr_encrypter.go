@@ -7,9 +7,11 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"hash"
+
 	enums "govel/packages/types/src/enums/encryption"
 	encryptionInterfaces "govel/packages/types/src/interfaces/encryption"
-	"hash"
+	types "govel/packages/types/src"
 )
 
 // AESCTREncrypter provides AES encryption in CTR mode with HMAC-SHA256 MAC authentication.
@@ -53,7 +55,7 @@ func NewAESCTREncrypter(key []byte, cipher string) (*AESCTREncrypter, error) {
 
 	// Validate that the cipher is a supported CTR variant
 	// Only AES-128-CTR and AES-256-CTR are currently supported
-	if cipher != enums.CipherAES256CTR && cipher != enums.CipherAES128CTR {
+	if cipher != string(enums.CipherAES256CTR) && cipher != string(enums.CipherAES128CTR) {
 		return nil, fmt.Errorf(
 			"Unsupported CTR cipher: %s. Only AES-128-CTR and AES-256-CTR are supported", cipher)
 	}
@@ -303,7 +305,7 @@ func (e *AESCTREncrypter) VerifyConfiguration() bool {
 	// Additional CTR-specific validation
 	// Ensure cipher is a supported CTR variant
 	cipher := e.GetCipher()
-	if cipher != enums.CipherAES256CTR && cipher != enums.CipherAES128CTR {
+	if cipher != string(enums.CipherAES256CTR) && cipher != string(enums.CipherAES128CTR) {
 		return false
 	}
 

@@ -9,6 +9,7 @@ import (
 
 	constants "govel/packages/types/src/constants/application"
 	containerInterfaces "govel/packages/types/src/interfaces/container"
+	types "govel/packages/types/src/types/application"
 )
 
 // MaintenanceManager handles maintenance mode operations including

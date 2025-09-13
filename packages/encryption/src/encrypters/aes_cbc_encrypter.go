@@ -45,7 +45,7 @@ type AESCBCEncrypter struct {
 // Returns a configured AESCBCEncrypter or an error if validation fails.
 func NewAESCBCEncrypter(key []byte, cipher string, config map[string]interface{}) (*AESCBCEncrypter, error) {
 	// Validate that this is a CBC cipher
-	if cipher != enums.CipherAES128CBC && cipher != enums.CipherAES256CBC {
+	if cipher != string(enums.CipherAES128CBC) && cipher != string(enums.CipherAES256CBC) {
 		return nil, fmt.Errorf("cipher %s is not supported by AES-CBC encrypter", cipher)
 	}
 
@@ -165,7 +165,7 @@ func (e *AESCBCEncrypter) Decrypt(payload string, unserialize bool) (interface{}
 	payloadMap := map[string]interface{}{
 		"iv":    parsedPayload.IV,
 		"value": parsedPayload.Value,
-		"mac":   parsedPayload.Mac,
+		"mac":   parsedPayload.MAC,
 	}
 
 	if !e.ValidMac(payloadMap) {

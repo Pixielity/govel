@@ -7,10 +7,11 @@ import (
 	"time"
 
 	"govel/packages/application/providers"
+	configMocks "govel/packages/config/mocks"
 	containerMocks "govel/packages/container/mocks"
 	loggerMocks "govel/packages/logger/mocks"
-	configMocks "govel/packages/config/mocks"
 	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	types "govel/packages/types/src/types/application"
 )
 
 /**
@@ -149,35 +150,6 @@ func (m *MockApplication) GetEnvironmentInfo() map[string]interface{} {
 		"is_production": false,
 		"is_debug":      true,
 	}
-}
-
-// HookableInterface Methods
-func (m *MockApplication) RegisterHook(name string, priority int, callback types.HookCallback) {}
-func (m *MockApplication) UnregisterHook(name string) bool                                     { return false }
-func (m *MockApplication) UnregisterHookCallback(name string, callback types.HookCallback) bool {
-	return false
-}
-func (m *MockApplication) HasHook(name string) bool { return false }
-func (m *MockApplication) GetHooks() map[string][]types.HookCallback {
-	return map[string][]types.HookCallback{}
-}
-func (m *MockApplication) GetHookCallbacks(name string) []types.HookCallback {
-	return []types.HookCallback{}
-}
-func (m *MockApplication) CallHook(name string, args ...interface{}) ([]interface{}, error) {
-	return []interface{}{}, nil
-}
-func (m *MockApplication) CallHookFirst(name string, args ...interface{}) (interface{}, error) {
-	return nil, nil
-}
-func (m *MockApplication) CallHookUntil(name string, args ...interface{}) (bool, error) {
-	return false, nil
-}
-func (m *MockApplication) GetHookCount(name string) int { return 0 }
-func (m *MockApplication) GetAllHookNames() []string    { return []string{} }
-func (m *MockApplication) ClearHooks()                  {}
-func (m *MockApplication) GetHooksInfo() map[string]interface{} {
-	return map[string]interface{}{"total_hooks": 0}
 }
 
 // LifecycleableInterface Methods

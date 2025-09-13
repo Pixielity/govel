@@ -6,6 +6,7 @@ package providers
 import (
 	applicationInterfaces "govel/packages/types/src/interfaces/application"
 	providerInterfaces "govel/packages/types/src/interfaces/application/providers"
+	types "govel/packages/types/src/types/application"
 )
 
 // ServiceProvider provides a base implementation for service providers.
@@ -282,7 +283,7 @@ func (sp *ServiceProvider) Booted(callback types.ProviderCallback) {
 func (sp *ServiceProvider) CallBootingCallbacks() error {
 	for _, callback := range sp.bootingCallbacks {
 		// Cast app back to interface{} for the callback
-		if err := callback(interface{}(sp.app)); err != nil {
+		if err := callback(applicationInterfaces.ApplicationInterface(sp.app)); err != nil {
 			return err
 		}
 	}
@@ -298,7 +299,7 @@ func (sp *ServiceProvider) CallBootingCallbacks() error {
 func (sp *ServiceProvider) CallBootedCallbacks() error {
 	for _, callback := range sp.bootedCallbacks {
 		// Cast app back to interface{} for the callback
-		if err := callback(interface{}(sp.app)); err != nil {
+		if err := callback(applicationInterfaces.ApplicationInterface(sp.app)); err != nil {
 			return err
 		}
 	}

@@ -45,7 +45,7 @@ type AESGCMEncrypter struct {
 // Returns a configured AESGCMEncrypter or an error if validation fails.
 func NewAESGCMEncrypter(key []byte, cipher string, config map[string]interface{}) (*AESGCMEncrypter, error) {
 	// Validate that this is a GCM cipher
-	if cipher != enums.CipherAES128GCM && cipher != enums.CipherAES256GCM {
+	if cipher != string(enums.CipherAES128GCM) && cipher != string(enums.CipherAES256GCM) {
 		return nil, fmt.Errorf("cipher %s is not supported by AES-GCM encrypter", cipher)
 	}
 

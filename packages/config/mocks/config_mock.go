@@ -1,8 +1,8 @@
 package mocks
 
 import (
+	interfaces "govel/packages/types/src/interfaces/config"
 	"time"
-
 )
 
 /**
@@ -384,7 +384,7 @@ func (e *MockConfigError) Error() string {
 type MockConfigurable struct {
 	*MockConfig
 
-	ConfigInstance interface{}
+	ConfigInstance interfaces.ConfigInterface
 	HasConfigValue bool
 }
 
@@ -402,12 +402,12 @@ func NewMockConfigurable() *MockConfigurable {
 
 // ConfigurableInterface Implementation
 
-func (m *MockConfigurable) GetConfig() interface{} {
+func (m *MockConfigurable) GetConfig() interfaces.ConfigInterface {
 	return m.ConfigInstance
 }
 
 func (m *MockConfigurable) SetConfig(config interface{}) {
-	if cfg, ok := config.(interface{}); ok {
+	if cfg, ok := config.(interfaces.ConfigInterface); ok {
 		m.ConfigInstance = cfg
 		m.HasConfigValue = true
 	} else if cfg, ok := config.(*MockConfig); ok {

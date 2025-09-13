@@ -9,6 +9,7 @@ import (
 	"sort"
 
 	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	providerInterfaces "govel/packages/types/src/interfaces/application/providers"
 )
 
 // ProviderRepository handles the registration and management of service providers.
@@ -22,16 +23,16 @@ type ProviderRepository struct {
 	manifestManager *ProviderManifestManager
 
 	// loadedProviders tracks which provider instances have been loaded
-	loadedProviders map[string]applicationInterfaces.ServiceProviderInterface
+	loadedProviders map[string]providerInterfaces.ServiceProviderInterface
 
 	// bootedProviders tracks which provider instances have been booted
-	bootedProviders map[string]applicationInterfaces.ServiceProviderInterface
+	bootedProviders map[string]providerInterfaces.ServiceProviderInterface
 
 	// providerInstances holds all registered provider instances
-	providerInstances map[string]applicationInterfaces.ServiceProviderInterface
+	providerInstances map[string]providerInterfaces.ServiceProviderInterface
 
 	// terminatableProviders holds providers that need graceful termination
-	terminatableProviders []applicationInterfaces.TerminatableProvider
+	terminatableProviders []providerInterfaces.TerminatableProvider
 }
 
 // NewProviderRepository creates a new provider repository instance.
@@ -48,10 +49,10 @@ func NewProviderRepository(app applicationInterfaces.ApplicationInterface, manif
 	return &ProviderRepository{
 		app:                   app,
 		manifestManager:       NewProviderManifestManager(manifestPath),
-		loadedProviders:       make(map[string]applicationInterfaces.ServiceProviderInterface),
-		bootedProviders:       make(map[string]applicationInterfaces.ServiceProviderInterface),
-		providerInstances:     make(map[string]applicationInterfaces.ServiceProviderInterface),
-		terminatableProviders: make([]applicationInterfaces.TerminatableProvider, 0),
+		loadedProviders:       make(map[string]providerInterfaces.ServiceProviderInterface),
+		bootedProviders:       make(map[string]providerInterfaces.ServiceProviderInterface),
+		providerInstances:     make(map[string]providerInterfaces.ServiceProviderInterface),
+		terminatableProviders: make([]providerInterfaces.TerminatableProvider, 0),
 	}
 }
 
@@ -65,12 +66,12 @@ func NewProviderRepository(app applicationInterfaces.ApplicationInterface, manif
 // Returns:
 //
 //	error: Any error that occurred during registration
-func (pr *ProviderRepository) RegisterProvider(provider applicationInterfaces.ServiceProviderInterface) error {
+func (pr *ProviderRepository) RegisterProvider(provider providerInterfaces.ServiceProviderInterface) error {
 	providerType := fmt.Sprintf("%T", provider)
 	pr.providerInstances[providerType] = provider
 
 	// Check if provider is terminatable and store it
-	if terminatable, ok := provider.(applicationInterfaces.TerminatableProvider); ok {
+	if terminatable, ok := provider.(providerInterfaces.TerminatableProvider); ok {
 		pr.terminatableProviders = append(pr.terminatableProviders, terminatable)
 		pr.app.GetLogger().Debug("Registered terminatable provider: %s", providerType)
 	}
@@ -96,7 +97,7 @@ func (pr *ProviderRepository) RegisterProvider(provider applicationInterfaces.Se
 // Returns:
 //
 //	error: Any error that occurred during provider loading
-func (pr *ProviderRepository) LoadProviders(providers []applicationInterfaces.ServiceProviderInterface) error {
+func (pr *ProviderRepository) LoadProviders(providers []providerInterfaces.ServiceProviderInterface) error {
 	pr.app.GetLogger().Info("🚀 Starting robust provider loading with deferred support")
 	pr.app.GetLogger().Info("📊 Processing %d providers", len(providers))
 
@@ -214,8 +215,8 @@ func (pr *ProviderRepository) GetBootedProviders() []string {
 // Returns:
 //
 //	[]ServiceProviderInterface: List of all registered providers sorted by priority
-func (pr *ProviderRepository) GetRegisteredProviders() []applicationInterfaces.ServiceProviderInterface {
-	providers := make([]applicationInterfaces.ServiceProviderInterface, 0, len(pr.providerInstances))
+func (pr *ProviderRepository) GetRegisteredProviders() []providerInterfaces.ServiceProviderInterface {
+	providers := make([]providerInterfaces.ServiceProviderInterface, 0, len(pr.providerInstances))
 	for _, provider := range pr.providerInstances {
 		providers = append(providers, provider)
 	}
@@ -276,7 +277,7 @@ func (pr *ProviderRepository) IsProviderRegistered(providerType string) bool {
 //
 //	providers.ServiceProvider: The provider instance
 //	bool: true if the provider was found
-func (pr *ProviderRepository) GetProviderInstance(providerType string) (applicationInterfaces.ServiceProviderInterface, bool) {
+func (pr *ProviderRepository) GetProviderInstance(providerType string) (providerInterfaces.ServiceProviderInterface, bool) {
 	provider, exists := pr.providerInstances[providerType]
 	return provider, exists
 }
@@ -317,9 +318,9 @@ func (pr *ProviderRepository) RecompileManifest() error {
 // Returns:
 //
 //	[]TerminatableProvider: List of terminatable providers sorted by priority
-func (pr *ProviderRepository) GetTerminatableProviders() []applicationInterfaces.TerminatableProvider {
+func (pr *ProviderRepository) GetTerminatableProviders() []providerInterfaces.TerminatableProvider {
 	// Return a copy to prevent external modification
-	providers := make([]applicationInterfaces.TerminatableProvider, len(pr.terminatableProviders))
+	providers := make([]providerInterfaces.TerminatableProvider, len(pr.terminatableProviders))
 	copy(providers, pr.terminatableProviders)
 
 	// Sort providers by priority before returning (higher priority first)
@@ -377,7 +378,7 @@ func (pr *ProviderRepository) TerminateProviders(ctx context.Context) []error {
 //
 //	*ProviderManifest: The compiled manifest containing provider categorization
 //	error: Any error that occurred during manifest compilation
-func (pr *ProviderRepository) compileProviderManifest(providers []applicationInterfaces.ServiceProviderInterface) (*ProviderManifest, error) {
+func (pr *ProviderRepository) compileProviderManifest(providers []providerInterfaces.ServiceProviderInterface) (*ProviderManifest, error) {
 	// Load existing manifest from storage/cache to avoid unnecessary recompilation
 	// This improves performance by reusing previously compiled manifests when possible
 	manifest, err := pr.manifestManager.LoadManifest()
@@ -447,7 +448,7 @@ func (pr *ProviderRepository) loadEagerProviders(manifest *ProviderManifest) err
 	}
 
 	// Get the actual provider instances for sorting by priority
-	eagerProviders := make([]applicationInterfaces.ServiceProviderInterface, 0, len(eagerProviderTypes))
+	eagerProviders := make([]providerInterfaces.ServiceProviderInterface, 0, len(eagerProviderTypes))
 	for _, providerType := range eagerProviderTypes {
 		if provider, exists := pr.providerInstances[providerType]; exists {
 			eagerProviders = append(eagerProviders, provider)
@@ -737,7 +738,7 @@ func (pr *ProviderRepository) setupDeferredServices(deferredServices map[string]
 // Parameters:
 //
 //	providers: The slice of providers to sort
-func (pr *ProviderRepository) sortProviders(providers []applicationInterfaces.ServiceProviderInterface) {
+func (pr *ProviderRepository) sortProviders(providers []providerInterfaces.ServiceProviderInterface) {
 	sort.Slice(providers, func(i, j int) bool {
 		// Sort in descending order by priority (higher priority first)
 		return providers[i].Priority() > providers[j].Priority()
@@ -745,4 +746,4 @@ func (pr *ProviderRepository) sortProviders(providers []applicationInterfaces.Se
 }
 
 // Compile-time interface compliance check
-var _ applicationInterfaces.ProviderRepositoryInterface = (*ProviderRepository)(nil)
+var _ providerInterfaces.ProviderRepositoryInterface = (*ProviderRepository)(nil)

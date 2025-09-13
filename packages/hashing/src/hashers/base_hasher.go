@@ -8,6 +8,7 @@ import (
 
 	"govel/packages/hashing/src/exceptions"
 	enums "govel/packages/types/src/enums/hashing"
+	types "govel/packages/types/src"
 )
 
 // BaseHasher provides common functionality and utilities shared across all hasher implementations.
@@ -358,7 +359,7 @@ func (h *BaseHasher) parseBcryptInfo(hashedValue string) types.HashInfo {
 
 	return types.HashInfo{
 		Algo:     "2y", // bcrypt identifier
-		AlgoName: enums.AlgorithmBcrypt,
+		AlgoName: string(enums.AlgorithmBcrypt),
 		Options: map[string]interface{}{
 			"cost": cost,
 		},
@@ -630,10 +631,10 @@ func (h *BaseHasher) parseArgonInfo(hashedValue string) types.HashInfo {
 	switch algoName {
 	case "argon2i":
 		// Use enum constant for Argon2i
-		standardAlgoName = enums.AlgorithmArgon2i
+		standardAlgoName = string(enums.AlgorithmArgon2i)
 	case "argon2id":
 		// Use enum constant for Argon2id (recommended variant)
-		standardAlgoName = enums.AlgorithmArgon2id
+		standardAlgoName = string(enums.AlgorithmArgon2id)
 	default:
 		// Fallback to original name for unknown variants
 		standardAlgoName = algoName

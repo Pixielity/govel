@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 
 	baseProviders "govel/packages/application/providers"
-	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	providerInterfaces "govel/packages/types/src/interfaces/application/providers"
 )
 
 // ProviderManifest represents the provider manifest structure.
@@ -131,7 +131,7 @@ func (pmm *ProviderManifestManager) SaveManifest(manifest *ProviderManifest) err
 //
 //	*ProviderManifest: The compiled manifest
 //	error: Any error that occurred during compilation
-func (pmm *ProviderManifestManager) CompileManifest(providers []applicationInterfaces.ServiceProviderInterface) (*ProviderManifest, error) {
+func (pmm *ProviderManifestManager) CompileManifest(providers []providerInterfaces.ServiceProviderInterface) (*ProviderManifest, error) {
 	manifest := &ProviderManifest{
 		Providers: make([]string, 0, len(providers)),
 		Eager:     make([]string, 0),
@@ -145,15 +145,15 @@ func (pmm *ProviderManifestManager) CompileManifest(providers []applicationInter
 
 		if baseProviders.IsProviderDeferred(provider) {
 			// Handle deferred provider - get services directly from DeferrableProvider
-			if deferrable, ok := provider.(applicationInterfaces.DeferrableProvider); ok {
-				services := deferrable.GetProvides()
+			if deferrable, ok := provider.(providerInterfaces.DeferrableProvider); ok {
+				services := deferrable.Provides()
 				for _, service := range services {
 					manifest.Deferred[service] = providerType
 				}
 			}
 
 			// Check if provider implements EventTriggeredProvider for event triggers
-			if eventTriggered, ok := provider.(applicationInterfaces.EventTriggeredProvider); ok {
+			if eventTriggered, ok := provider.(providerInterfaces.EventTriggeredProvider); ok {
 				events := eventTriggered.When()
 				if len(events) > 0 {
 					manifest.When[providerType] = events
