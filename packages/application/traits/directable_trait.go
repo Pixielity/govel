@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"sync"
 
-	"govel/packages/application/constants"
-	traitInterfaces "govel/packages/application/interfaces/traits"
+	"govel/types/src/constants/application"
+	traitInterfaces "govel/types/src/interfaces/application"
 )
 
 /**
@@ -37,11 +37,11 @@ func NewDirectable(basePath string) *Directable {
 }
 
 /**
- * GetBasePath returns the base directory path of the application.
+ * BasePath returns the base directory path of the application.
  *
  * @return string The absolute path to the application's base directory
  */
-func (d *Directable) GetBasePath() string {
+func (d *Directable) BasePath() string {
 	d.mutex.RLock()
 	defer d.mutex.RUnlock()
 	return d.basePath
@@ -217,12 +217,12 @@ func (d *Directable) SetViewPath(path string) {
 }
 
 /**
- * GetCustomPath returns a custom directory path by key.
+ * CustomPath returns a custom directory path by key.
  *
  * @param key string The custom path key
  * @return string The custom path or empty string if not found
  */
-func (d *Directable) GetCustomPath(key string) string {
+func (d *Directable) CustomPath(key string) string {
 	d.mutex.RLock()
 	defer d.mutex.RUnlock()
 	return d.customPaths[key]
@@ -241,11 +241,11 @@ func (d *Directable) SetCustomPath(key, path string) {
 }
 
 /**
- * GetAllCustomPaths returns all custom directory paths.
+ * AllCustomPaths returns all custom directory paths.
  *
  * @return map[string]string A copy of all custom paths
  */
-func (d *Directable) GetAllCustomPaths() map[string]string {
+func (d *Directable) AllCustomPaths() map[string]string {
 	d.mutex.RLock()
 	defer d.mutex.RUnlock()
 
@@ -264,6 +264,94 @@ func (d *Directable) ClearCustomPaths() {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 	d.customPaths = make(map[string]string)
+}
+
+/**
+ * LogsPath returns the path to the logs directory.
+ * This is an alias for LogPath for better Laravel compatibility.
+ *
+ * @return string The absolute path to the logs directory
+ */
+func (d *Directable) LogsPath() string {
+	return d.LogPath()
+}
+
+/**
+ * ResourcesPath returns the path to the resources directory.
+ *
+ * @return string The absolute path to the resources directory
+ */
+func (d *Directable) ResourcesPath() string {
+	d.mutex.RLock()
+	defer d.mutex.RUnlock()
+
+	if customPath, exists := d.customPaths["resources"]; exists {
+		return customPath
+	}
+	return filepath.Join(d.basePath, constants.DirectoryResources)
+}
+
+/**
+ * SetResourcesPath sets a custom resources directory path.
+ *
+ * @param path string The custom resources directory path
+ */
+func (d *Directable) SetResourcesPath(path string) {
+	d.mutex.Lock()
+	defer d.mutex.Unlock()
+	d.customPaths["resources"] = path
+}
+
+/**
+ * BootstrapPath returns the path to the bootstrap directory.
+ *
+ * @return string The absolute path to the bootstrap directory
+ */
+func (d *Directable) BootstrapPath() string {
+	d.mutex.RLock()
+	defer d.mutex.RUnlock()
+
+	if customPath, exists := d.customPaths["bootstrap"]; exists {
+		return customPath
+	}
+	return filepath.Join(d.basePath, constants.DirectoryBootstrap)
+}
+
+/**
+ * SetBootstrapPath sets a custom bootstrap directory path.
+ *
+ * @param path string The custom bootstrap directory path
+ */
+func (d *Directable) SetBootstrapPath(path string) {
+	d.mutex.Lock()
+	defer d.mutex.Unlock()
+	d.customPaths["bootstrap"] = path
+}
+
+/**
+ * DatabasePath returns the path to the database directory.
+ *
+ * @return string The absolute path to the database directory
+ */
+func (d *Directable) DatabasePath() string {
+	d.mutex.RLock()
+	defer d.mutex.RUnlock()
+
+	if customPath, exists := d.customPaths["database"]; exists {
+		return customPath
+	}
+	return filepath.Join(d.basePath, constants.DirectoryDatabase)
+}
+
+/**
+ * SetDatabasePath sets a custom database directory path.
+ *
+ * @param path string The custom database directory path
+ */
+func (d *Directable) SetDatabasePath(path string) {
+	d.mutex.Lock()
+	defer d.mutex.Unlock()
+	d.customPaths["database"] = path
 }
 
 /**

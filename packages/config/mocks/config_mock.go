@@ -3,7 +3,7 @@ package mocks
 import (
 	"time"
 
-	"govel/packages/config/interfaces"
+	"govel/types/src/interfaces/config"
 )
 
 /**

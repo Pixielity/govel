@@ -1,0 +1,102 @@
+{
+  "name": "@govel/cookie",
+  "version": "1.0.0",
+  "description": "Laravel-compatible cookie management package for GoVel framework",
+  "main": "src/jar.go",
+  "author": "GoVel Framework Team",
+  "license": "MIT",
+  "keywords": [
+    "go", 
+    "golang", 
+    "cookie", 
+    "laravel", 
+    "govel", 
+    "framework", 
+    "module",
+    "http", 
+    "web",
+    "csrf",
+    "security",
+    "encryption",
+    "samesite"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/govel-framework/govel.git",
+    "directory": "packages/cookie"
+  },
+  "bugs": {
+    "url": "https://github.com/govel-framework/govel/issues"
+  },
+  "homepage": "https://github.com/govel-framework/govel/tree/main/packages/cookie#readme",
+  "dependencies": {
+    "@govel/support": "^1.0.0",
+    "@govel/interfaces": "^1.0.0",
+    "@govel/encryption": "^1.0.0"
+  },
+  "devDependencies": {
+    "@govel/testing": "^1.0.0"
+  },
+  "peerDependencies": {
+    "@govel/container": "^1.0.0",
+    "@govel/config": "^1.0.0"
+  },
+  "scripts": {
+    "test": "go test -v ./...",
+    "test:coverage": "go test -v -cover ./...",
+    "test:race": "go test -v -race ./...",
+    "build": "go build ./...",
+    "lint": "golangci-lint run",
+    "fmt": "go fmt ./...",
+    "vet": "go vet ./...",
+    "mod:tidy": "go mod tidy",
+    "mod:verify": "go mod verify",
+    "clean": "go clean -cache -testcache -modcache"
+  },
+  "engines": {
+    "go": ">=1.19"
+  },
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE",
+    "go.mod",
+    "go.sum"
+  ],
+  "govel": {
+    "type": "package",
+    "category": "web",
+    "provides": [
+      "cookie.jar",
+      "cookie.csrf",
+      "cookie.samesite",
+      "cookie.encryption",
+      "cookie.middleware"
+    ],
+    "facades": [
+      "Cookie"
+    ],
+    "middleware": [
+      "EncryptCookies",
+      "AddQueuedCookiesToResponse"
+    ],
+    "providers": [
+      "CookieServiceProvider"
+    ],
+    "config": {
+      "publishes": {
+        "cookie.php": "config/cookie.php"
+      }
+    },
+    "laravel_compatibility": {
+      "version": "10.x",
+      "features": [
+        "cookie_encryption",
+        "cookie_queuing",
+        "csrf_protection",
+        "samesite_policies",
+        "cookie_facade"
+      ]
+    }
+  }
+}

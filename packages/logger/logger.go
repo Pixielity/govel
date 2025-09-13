@@ -16,7 +16,7 @@ import (
 	"os"
 	"sync"
 
-	"govel/packages/logger/interfaces"
+	"govel/types/src/interfaces/logger"
 )
 
 // LogLevel represents the logging level.

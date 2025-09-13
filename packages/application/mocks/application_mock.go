@@ -2,14 +2,16 @@ package mocks
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
-	applicationInterfaces "govel/packages/application/interfaces/application"
-	"govel/packages/application/types"
-	configMocks "govel/packages/config/mocks"
-	containerMocks "govel/packages/container/mocks"
-	loggerMocks "govel/packages/logger/mocks"
+	"govel/application/providers"
+	"govel/types/src/types/application"
+	configMocks "govel/config/mocks"
+	containerMocks "govel/container/mocks"
+	applicationInterfaces "govel/types/src/interfaces/application"
+	loggerMocks "govel/logger/mocks"
 )
 
 /**
@@ -54,7 +56,7 @@ func NewMockApplication() *MockApplication {
 
 // ApplicationInterface Implementation
 
-// ApplicationIdentityInterface Methods
+// HasIdentityInterface Methods
 func (m *MockApplication) GetName() string     { return m.NameValue }
 func (m *MockApplication) SetName(name string) { m.NameValue = name }
 func (m *MockApplication) Name() string        { return m.NameValue }
@@ -62,18 +64,18 @@ func (m *MockApplication) GetVersion() string  { return m.VersionValue }
 func (m *MockApplication) SetVersion(v string) { m.VersionValue = v }
 func (m *MockApplication) Version() string     { return m.VersionValue }
 
-// ApplicationRuntimeInterface Methods
+// HasRuntimeInterface Methods
 func (m *MockApplication) IsRunningInConsole() bool   { return m.RunningInConsoleValue }
 func (m *MockApplication) SetRunningInConsole(b bool) { m.RunningInConsoleValue = b }
 func (m *MockApplication) IsRunningUnitTests() bool   { return m.RunningUnitTestsValue }
 func (m *MockApplication) SetRunningUnitTests(b bool) { m.RunningUnitTestsValue = b }
 
-// ApplicationTimingInterface Methods
+// HasTimingInterface Methods
 func (m *MockApplication) GetStartTime() time.Time  { return m.StartTimeValue }
 func (m *MockApplication) SetStartTime(t time.Time) { m.StartTimeValue = t }
 func (m *MockApplication) GetUptime() time.Duration { return time.Since(m.StartTimeValue) }
 
-// ApplicationInfoInterface Methods
+// HasInfonterface Methods
 func (m *MockApplication) GetApplicationInfo() map[string]interface{} {
 	info := map[string]interface{}{
 		"name":               m.NameValue,
@@ -100,23 +102,30 @@ func (m *MockApplication) GetApplicationInfo() map[string]interface{} {
 }
 
 // DirectableInterface Methods
-func (m *MockApplication) GetBasePath() string             { return "/mock/path" }
-func (m *MockApplication) SetBasePath(path string)         {}
-func (m *MockApplication) PublicPath() string              { return "/mock/path/public" }
-func (m *MockApplication) SetPublicPath(path string)       {}
-func (m *MockApplication) StoragePath() string             { return "/mock/path/storage" }
-func (m *MockApplication) SetStoragePath(path string)      {}
-func (m *MockApplication) ConfigPath() string              { return "/mock/path/config" }
-func (m *MockApplication) SetConfigPath(path string)       {}
-func (m *MockApplication) LogPath() string                 { return "/mock/path/log" }
-func (m *MockApplication) SetLogPath(path string)          {}
-func (m *MockApplication) CachePath() string               { return "/mock/path/cache" }
-func (m *MockApplication) SetCachePath(path string)        {}
-func (m *MockApplication) ViewPath() string                { return "/mock/path/views" }
-func (m *MockApplication) SetViewPath(path string)         {}
-func (m *MockApplication) GetCustomPath(key string) string { return "/mock/path/" + key }
-func (m *MockApplication) SetCustomPath(key, path string)  {}
-func (m *MockApplication) GetAllCustomPaths() map[string]string {
+func (m *MockApplication) BasePath() string               { return "/mock/path" }
+func (m *MockApplication) SetBasePath(path string)        {}
+func (m *MockApplication) PublicPath() string             { return "/mock/path/public" }
+func (m *MockApplication) SetPublicPath(path string)      {}
+func (m *MockApplication) StoragePath() string            { return "/mock/path/storage" }
+func (m *MockApplication) SetStoragePath(path string)     {}
+func (m *MockApplication) ConfigPath() string             { return "/mock/path/config" }
+func (m *MockApplication) SetConfigPath(path string)      {}
+func (m *MockApplication) LogPath() string                { return "/mock/path/log" }
+func (m *MockApplication) SetLogPath(path string)         {}
+func (m *MockApplication) LogsPath() string               { return "/mock/path/log" }
+func (m *MockApplication) CachePath() string              { return "/mock/path/cache" }
+func (m *MockApplication) SetCachePath(path string)       {}
+func (m *MockApplication) ViewPath() string               { return "/mock/path/views" }
+func (m *MockApplication) SetViewPath(path string)        {}
+func (m *MockApplication) ResourcesPath() string          { return "/mock/path/resources" }
+func (m *MockApplication) SetResourcesPath(path string)   {}
+func (m *MockApplication) BootstrapPath() string          { return "/mock/path/bootstrap" }
+func (m *MockApplication) SetBootstrapPath(path string)   {}
+func (m *MockApplication) DatabasePath() string           { return "/mock/path/database" }
+func (m *MockApplication) SetDatabasePath(path string)    {}
+func (m *MockApplication) CustomPath(key string) string   { return "/mock/path/" + key }
+func (m *MockApplication) SetCustomPath(key, path string) {}
+func (m *MockApplication) AllCustomPaths() map[string]string {
 	return map[string]string{"mock": "/mock/path"}
 }
 func (m *MockApplication) ClearCustomPaths()                       {}
@@ -185,6 +194,7 @@ func (m *MockApplication) SetStopped(stopped bool)           {}
 func (m *MockApplication) Restart(ctx context.Context) error { return nil }
 func (m *MockApplication) GetState() string                  { return "running" }
 func (m *MockApplication) IsState(state string) bool         { return state == "running" }
+func (m *MockApplication) SetState(state string)             {}
 func (m *MockApplication) GetLifecycleInfo() map[string]interface{} {
 	return map[string]interface{}{
 		"is_booted":  true,
@@ -234,6 +244,8 @@ func (m *MockApplication) AddAllowedPath(path string) error                     
 func (m *MockApplication) RemoveAllowedPath(path string) error                    { return nil }
 func (m *MockApplication) SetMaintenanceData(key string, value interface{}) error { return nil }
 func (m *MockApplication) GetMaintenanceData(key string) interface{}              { return nil }
+func (m *MockApplication) IsInMaintenanceMode() bool                              { return false }
+func (m *MockApplication) IsMaintenanceModeOff() bool                             { return true }
 func (m *MockApplication) GetMaintenanceInfo() map[string]interface{} {
 	return map[string]interface{}{
 		"is_down":          false,
@@ -308,6 +320,131 @@ func (m *MockApplication) GetMockLogger() *loggerMocks.MockLogger {
 	return nil
 }
 
+// LifecycleableInterface callback methods
+func (m *MockApplication) Booting(callback func(interface{}))                 {}
+func (m *MockApplication) Booted(callback func(interface{}))                  {}
+func (m *MockApplication) Starting(callback func(interface{}))                {}
+func (m *MockApplication) Started(callback func(interface{}))                 {}
+func (m *MockApplication) Stopping(callback func(interface{}))                {}
+func (m *MockApplication) Stopped(callback func(interface{}))                 {}
+func (m *MockApplication) Terminating(callback func(interface{})) interface{} { return m }
+func (m *MockApplication) Terminate(ctx context.Context) error                { return nil }
+func (m *MockApplication) IsTerminated() bool                                 { return false }
+func (m *MockApplication) SetTerminated(terminated bool)                      {}
+func (m *MockApplication) Terminated(callback func(interface{}))              {}
+
+// ApplicationCacheInterface Methods
+func (m *MockApplication) GetCachedServicesPath() string {
+	return "/mock/path/cache/services.json"
+}
+
+func (m *MockApplication) GetCachedPackagesPath() string {
+	return "/mock/path/cache/packages.json"
+}
+
+func (m *MockApplication) GetCachedConfigPath() string {
+	return "/mock/path/cache/config.json"
+}
+
+func (m *MockApplication) GetCachedRoutesPath() string {
+	return "/mock/path/cache/routes-v1.json"
+}
+
+func (m *MockApplication) GetCachedEventsPath() string {
+	return "/mock/path/cache/events.json"
+}
+
+func (m *MockApplication) ConfigurationIsCached() bool {
+	return false // Mock returns false for simplicity
+}
+
+func (m *MockApplication) RoutesAreCached() bool {
+	return false // Mock returns false for simplicity
+}
+
+func (m *MockApplication) EventsAreCached() bool {
+	return false // Mock returns false for simplicity
+}
+
+func (m *MockApplication) ServicesAreCached() bool {
+	return false // Mock returns false for simplicity
+}
+
+func (m *MockApplication) PackagesAreCached() bool {
+	return false // Mock returns false for simplicity
+}
+
+// ApplicationHTTPExceptionInterface Methods
+func (m *MockApplication) Abort(code int, message string, headers map[string]string) error {
+	return &MockHTTPException{Code: code, Message: message, Headers: headers}
+}
+
+func (m *MockApplication) AbortIf(condition bool, code int, message string, headers map[string]string) error {
+	if condition {
+		return m.Abort(code, message, headers)
+	}
+	return nil
+}
+
+func (m *MockApplication) AbortUnless(condition bool, code int, message string, headers map[string]string) error {
+	if !condition {
+		return m.Abort(code, message, headers)
+	}
+	return nil
+}
+
+// ApplicationRequestHandlingInterface Methods
+func (m *MockApplication) HandleRequest(request interface{}) (interface{}, error) {
+	// Mock implementation - return a simple mock response
+	return map[string]interface{}{"status": "ok", "mock": true}, nil
+}
+
+func (m *MockApplication) HandleCommand(input interface{}) (int, error) {
+	// Mock implementation - return success exit code
+	return 0, nil
+}
+
+func (m *MockApplication) RunningConsoleCommand(commands ...string) bool {
+	// Mock implementation - return the console state
+	return m.RunningInConsoleValue
+}
+
+// ApplicationLaravelProviderInterface Methods
+func (m *MockApplication) GetLoadedProvidersMap() map[string]bool {
+	return map[string]bool{
+		"MockProvider1": true,
+		"MockProvider2": false,
+	}
+}
+
+func (m *MockApplication) ProviderIsLoaded(provider string) bool {
+	return provider == "MockProvider1" // Only MockProvider1 is loaded in mock
+}
+
+func (m *MockApplication) GetDeferredServices() map[string]string {
+	return map[string]string{
+		"redis":    "MockRedisProvider",
+		"database": "MockDatabaseProvider",
+	}
+}
+
+func (m *MockApplication) SetDeferredServices(services map[string]string) {
+	// Mock implementation - just accept the services
+}
+
+func (m *MockApplication) IsDeferredService(service string) bool {
+	return service == "redis" || service == "database" // Mock deferred services
+}
+
+func (m *MockApplication) AddDeferredServices(services map[string]string) {
+	// Mock implementation - just accept the services
+}
+
+// IsDownForMaintenance method (Laravel compatibility)
+func (m *MockApplication) IsDownForMaintenance() bool {
+	return false // Mock always returns false for simplicity
+}
+
 // ApplicationProviderInterface Methods
 func (m *MockApplication) RegisterProvider(provider interface{}) error {
 	if m.ShouldFailRegister {
@@ -316,7 +453,7 @@ func (m *MockApplication) RegisterProvider(provider interface{}) error {
 	return nil
 }
 
-func (m *MockApplication) RegisterProviders(providers []interface{}) error {
+func (m *MockApplication) RegisterProviders(providers []providers.ServiceProvider) error {
 	if m.ShouldFailRegister {
 		return &MockError{Message: "register providers failed"}
 	}
@@ -374,6 +511,20 @@ type MockError struct {
 
 func (e *MockError) Error() string {
 	return "mock error: " + e.Message
+}
+
+// MockHTTPException represents a mock HTTP exception for testing
+type MockHTTPException struct {
+	Code    int
+	Message string
+	Headers map[string]string
+}
+
+func (e *MockHTTPException) Error() string {
+	if e.Message != "" {
+		return fmt.Sprintf("Mock HTTP %d: %s", e.Code, e.Message)
+	}
+	return fmt.Sprintf("Mock HTTP %d", e.Code)
 }
 
 // Compile-time interface compliance check

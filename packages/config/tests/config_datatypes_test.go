@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"govel/packages/config"
+	"govel/config"
 )
 
 // TestConfigIntegerValues tests integer configuration values

@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"govel/packages/application"
+	"govel/application"
 )
 
 // TestApplicationContainer tests container functionality via delegation

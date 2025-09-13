@@ -11,6 +11,7 @@ package container
 
 import (
 	"fmt"
+	"govel/types/src/types"
 	"sync"
 )
 
@@ -82,15 +83,16 @@ func New() *ServiceContainer {
 //	})
 //
 //	container.Bind("config", &ConfigStruct{})
-func (c *ServiceContainer) Bind(abstract string, concrete interface{}) error {
+func (c *ServiceContainer) Bind(abstract types.ServiceIdentifier, concrete interface{}) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	if abstract == "" {
+	key := types.ToKey(abstract)
+	if key == "" {
 		return fmt.Errorf("abstract service name cannot be empty")
 	}
 
-	c.bindings[abstract] = concrete
+	c.bindings[key] = concrete
 	return nil
 }
 
@@ -112,16 +114,17 @@ func (c *ServiceContainer) Bind(abstract string, concrete interface{}) error {
 //	container.Singleton("logger", func() interface{} {
 //	    return &Logger{level: "info"}
 //	})
-func (c *ServiceContainer) Singleton(abstract string, concrete interface{}) error {
+func (c *ServiceContainer) Singleton(abstract types.ServiceIdentifier, concrete interface{}) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	if abstract == "" {
+	key := types.ToKey(abstract)
+	if key == "" {
 		return fmt.Errorf("abstract service name cannot be empty")
 	}
 
 	// Mark as singleton by prefixing the key
-	c.bindings["singleton:"+abstract] = concrete
+	c.bindings["singleton:"+key] = concrete
 	return nil
 }
 
@@ -145,21 +148,22 @@ func (c *ServiceContainer) Singleton(abstract string, concrete interface{}) erro
 //	    return err
 //	}
 //	log := logger.(*Logger)
-func (c *ServiceContainer) Make(abstract string) (interface{}, error) {
+func (c *ServiceContainer) Make(abstract types.ServiceIdentifier) (interface{}, error) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	if abstract == "" {
+	key := types.ToKey(abstract)
+	if key == "" {
 		return nil, fmt.Errorf("abstract service name cannot be empty")
 	}
 
 	// Check for singleton first
-	singletonKey := "singleton:" + abstract
+	singletonKey := "singleton:" + key
 	if concrete, exists := c.bindings[singletonKey]; exists {
 		// Check if instance is cached
-		if instance, cached := c.singletonInstances[abstract]; cached {
+		if instance, cached := c.singletonInstances[key]; cached {
 			// Track resolution
-			c.resolutionCount[abstract]++
+			c.resolutionCount[key]++
 			c.totalResolutions++
 			return instance, nil
 		}
@@ -170,26 +174,26 @@ func (c *ServiceContainer) Make(abstract string) (interface{}, error) {
 			return nil, err
 		}
 
-		c.singletonInstances[abstract] = instance
+		c.singletonInstances[key] = instance
 		// Track resolution
-		c.resolutionCount[abstract]++
+		c.resolutionCount[key]++
 		c.totalResolutions++
 		return instance, nil
 	}
 
 	// Check for regular binding
-	if concrete, exists := c.bindings[abstract]; exists {
+	if concrete, exists := c.bindings[key]; exists {
 		instance, err := c.resolveService(concrete)
 		if err != nil {
 			return nil, err
 		}
 		// Track resolution
-		c.resolutionCount[abstract]++
+		c.resolutionCount[key]++
 		c.totalResolutions++
 		return instance, nil
 	}
 
-	return nil, fmt.Errorf("service '%s' not found in container", abstract)
+	return nil, fmt.Errorf("service '%s' not found in container", key)
 }
 
 // IsBound checks if a service is registered in the container.
@@ -207,21 +211,22 @@ func (c *ServiceContainer) Make(abstract string) (interface{}, error) {
 //	if container.IsBound("logger") {
 //	    logger, _ := container.Make("logger")
 //	}
-func (c *ServiceContainer) IsBound(abstract string) bool {
+func (c *ServiceContainer) IsBound(abstract types.ServiceIdentifier) bool {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
-	if abstract == "" {
+	key := types.ToKey(abstract)
+	if key == "" {
 		return false
 	}
 
 	// Check for singleton
-	if _, exists := c.bindings["singleton:"+abstract]; exists {
+	if _, exists := c.bindings["singleton:"+key]; exists {
 		return true
 	}
 
 	// Check for regular binding
-	_, exists := c.bindings[abstract]
+	_, exists := c.bindings[key]
 	return exists
 }
 
@@ -240,15 +245,16 @@ func (c *ServiceContainer) IsBound(abstract string) bool {
 //	if container.IsSingleton("logger") {
 //	    // Logger will be reused across requests
 //	}
-func (c *ServiceContainer) IsSingleton(abstract string) bool {
+func (c *ServiceContainer) IsSingleton(abstract types.ServiceIdentifier) bool {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
-	if abstract == "" {
+	key := types.ToKey(abstract)
+	if key == "" {
 		return false
 	}
 
-	_, exists := c.bindings["singleton:"+abstract]
+	_, exists := c.bindings["singleton:"+key]
 	return exists
 }
 
@@ -263,20 +269,21 @@ func (c *ServiceContainer) IsSingleton(abstract string) bool {
 //
 //	container.Forget("logger")
 //	// Logger service is no longer available
-func (c *ServiceContainer) Forget(abstract string) {
+func (c *ServiceContainer) Forget(abstract types.ServiceIdentifier) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	if abstract == "" {
+	key := types.ToKey(abstract)
+	if key == "" {
 		return
 	}
 
 	// Remove regular binding
-	delete(c.bindings, abstract)
+	delete(c.bindings, key)
 
 	// Remove singleton binding and cached instance
-	delete(c.bindings, "singleton:"+abstract)
-	delete(c.singletonInstances, abstract)
+	delete(c.bindings, "singleton:"+key)
+	delete(c.singletonInstances, key)
 }
 
 // Flush removes all service bindings and cached instances.
@@ -313,7 +320,7 @@ func (c *ServiceContainer) Count() int {
 	// Count unique service names (excluding singleton: prefix)
 	services := make(map[string]bool)
 	for key := range c.bindings {
-		if key[:10] == "singleton:" {
+		if len(key) > 10 && key[:10] == "singleton:" {
 			services[key[10:]] = true
 		} else {
 			services[key] = true
@@ -541,3 +548,4 @@ func (c *ServiceContainer) resolveService(concrete interface{}) (interface{}, er
 	// Return the concrete instance directly
 	return concrete, nil
 }
+

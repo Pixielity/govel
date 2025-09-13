@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"govel/packages/config"
-	"govel/packages/config/mocks"
+	"govel/config"
+	"govel/config/mocks"
 )
 
 // BenchmarkConfigSet benchmarks configuration setting operations

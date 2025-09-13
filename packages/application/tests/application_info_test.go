@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"govel/packages/application"
+	"govel/application"
 )
 
 // TestApplicationInfo tests comprehensive application information

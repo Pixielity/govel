@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"govel/packages/application/builders"
-	"govel/packages/container"
+	"govel/application/builders"
+	"govel/container"
 )
 
 // BenchmarkAppBuilderSimple benchmarks simple builder usage

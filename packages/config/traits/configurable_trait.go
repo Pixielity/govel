@@ -3,8 +3,9 @@ package traits
 import (
 	"sync"
 
-	"govel/packages/config"
-	"govel/packages/config/interfaces"
+	"govel/application/helpers"
+	"govel/config"
+	"govel/types/src/interfaces/config"
 )
 
 /**
@@ -44,13 +45,29 @@ func NewConfigurable(configInstance *config.Config) *Configurable {
 
 /**
  * NewConfigurableWithEnvironment creates a new Configurable instance with environment-specific config.
+ * If no environment is provided, it will be read from environment variables.
  *
- * @param environment string The environment to configure for
+ * @param environment string Optional environment to configure for (variadic, first value used if provided)
  * @return *Configurable The newly created trait instance
+ *
+ * Example:
+ *   // Using environment from env vars
+ *   config := NewConfigurableWithEnvironment()
+ *   // Providing explicit environment
+ *   config := NewConfigurableWithEnvironment("production")
  */
-func NewConfigurableWithEnvironment(environment string) *Configurable {
+func NewConfigurableWithEnvironment(environment ...string) *Configurable {
+	// Get helper instance
+	envHelper := helpers.NewEnvHelper()
+
+	// Use provided environment or fallback to environment helper
+	appEnv := envHelper.GetAppEnvironment() // Default from environment
+	if len(environment) > 0 && environment[0] != "" {
+		appEnv = environment[0]
+	}
+
 	return &Configurable{
-		Config: config.NewWithEnvironment(environment),
+		Config: config.NewWithEnvironment(appEnv),
 	}
 }
 

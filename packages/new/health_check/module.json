@@ -1,0 +1,51 @@
+{
+  "name": "healthcheck",
+  "version": "1.0.0",
+  "description": "Health check module for GoVel framework - Monitor the health of your application with configurable checks and notifications",
+  "main": "health.go",
+  "author": "GoVel Framework Team",
+  "license": "MIT",
+  "keywords": [
+    "go", 
+    "golang", 
+    "healthcheck", 
+    "health", 
+    "monitoring", 
+    "framework", 
+    "govel",
+    "diagnostics",
+    "uptime",
+    "status"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/govel/govel-healthcheck.git"
+  },
+  "bugs": {
+    "url": "https://github.com/govel/govel-healthcheck/issues"
+  },
+  "homepage": "https://github.com/govel/govel-healthcheck#readme",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "go test ./...",
+    "build": "go build",
+    "lint": "golangci-lint run",
+    "fmt": "go fmt ./...",
+    "vet": "go vet ./...",
+    "mod": "go mod tidy"
+  },
+  "engines": {
+    "go": ">=1.19"
+  },
+  "features": [
+    "Registry pattern for health checks",
+    "Multiple check types (database, redis, filesystem, etc.)",
+    "HTTP endpoints for health status",
+    "Configurable timeouts and thresholds",
+    "Rich result metadata",
+    "Notification channels",
+    "Background job support",
+    "Multiple result storage backends"
+  ]
+}

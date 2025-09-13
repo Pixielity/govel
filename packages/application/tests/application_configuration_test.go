@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"govel/packages/application"
+	"govel/application"
 )
 
 // TestApplicationConfiguration tests configuration functionality via delegation

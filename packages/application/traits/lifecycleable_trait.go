@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"govel/packages/application/constants"
-	traitInterfaces "govel/packages/application/interfaces/traits"
+	"govel/types/src/enums/application"
+	traitInterfaces "govel/types/src/interfaces/application/traits"
 )
 
 /**
@@ -34,9 +34,26 @@ type Lifecycleable struct {
 	stopped bool
 
 	/**
+	 * terminated indicates whether the application has been terminated
+	 */
+	terminated bool
+
+	/**
 	 * state stores the current lifecycle state
 	 */
-	state string
+	state enums.LifecycleState
+
+	/**
+	 * lifecycle callbacks
+	 */
+	bootingCallbacks     []func(interface{})
+	bootedCallbacks      []func(interface{})
+	startingCallbacks    []func(interface{})
+	startedCallbacks     []func(interface{})
+	stoppingCallbacks    []func(interface{})
+	stoppedCallbacks     []func(interface{})
+	terminatingCallbacks []func(interface{})
+	terminatedCallbacks  []func(interface{})
 }
 
 /**
@@ -46,10 +63,11 @@ type Lifecycleable struct {
  */
 func NewLifecycleable() *Lifecycleable {
 	return &Lifecycleable{
-		booted:  false,
-		started: false,
-		stopped: false,
-		state:   constants.StateInitializing,
+		booted:     false,
+		started:    false,
+		stopped:    false,
+		terminated: false,
+		state:      enums.StateInitializing,
 	}
 }
 
@@ -67,10 +85,31 @@ func (t *Lifecycleable) Boot(ctx context.Context) error {
 		return nil // Already booted
 	}
 
+	// Set booting state
+	t.state = enums.StateBooting
+
+	// Execute booting callbacks
+	t.executeCallbacks(t.bootingCallbacks, t)
+
 	// Boot logic would go here
 	t.booted = true
-	t.state = constants.StateBooted
+	t.state = enums.StateBooted
+
+	// Execute booted callbacks
+	t.executeCallbacks(t.bootedCallbacks, t)
+
 	return nil
+}
+
+/**
+ * Booting registers a callback to be executed before providers are booted.
+ *
+ * @param callback func(interface{}) The function to execute before booting
+ */
+func (t *Lifecycleable) Booting(callback func(interface{})) {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+	t.bootingCallbacks = append(t.bootingCallbacks, callback)
 }
 
 /**
@@ -96,10 +135,32 @@ func (t *Lifecycleable) SetBooted(booted bool) {
 
 	t.booted = booted
 	if booted {
-		t.state = constants.StateBooted
+		t.state = enums.StateBooted
 	} else {
-		t.state = constants.StateInitializing
+		t.state = enums.StateInitializing
 	}
+}
+
+/**
+ * Booted registers a callback to be executed after providers have been booted.
+ *
+ * @param callback func(interface{}) The function to execute after booting
+ */
+func (t *Lifecycleable) Booted(callback func(interface{})) {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+	t.bootedCallbacks = append(t.bootedCallbacks, callback)
+}
+
+/**
+ * Starting registers a callback to be executed before application starts.
+ *
+ * @param callback func(interface{}) The function to execute before starting
+ */
+func (t *Lifecycleable) Starting(callback func(interface{})) {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+	t.startingCallbacks = append(t.startingCallbacks, callback)
 }
 
 /**
@@ -114,18 +175,43 @@ func (t *Lifecycleable) Start(ctx context.Context) error {
 
 	if !t.booted {
 		// Auto-boot if not already booted
+		t.state = enums.StateBooting
+		t.executeCallbacks(t.bootingCallbacks, t)
 		t.booted = true
+		t.state = enums.StateBooted
+		t.executeCallbacks(t.bootedCallbacks, t)
 	}
 
 	if t.started {
 		return nil // Already started
 	}
 
+	// Set starting state
+	t.state = enums.StateStarting
+
+	// Execute starting callbacks
+	t.executeCallbacks(t.startingCallbacks, t)
+
 	// Start logic would go here
 	t.started = true
 	t.stopped = false
-	t.state = constants.StateRunning
+	t.state = enums.StateRunning
+
+	// Execute started callbacks
+	t.executeCallbacks(t.startedCallbacks, t)
+
 	return nil
+}
+
+/**
+ * Started registers a callback to be executed after application has started.
+ *
+ * @param callback func(interface{}) The function to execute after starting
+ */
+func (t *Lifecycleable) Started(callback func(interface{})) {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+	t.startedCallbacks = append(t.startedCallbacks, callback)
 }
 
 /**
@@ -151,9 +237,36 @@ func (t *Lifecycleable) SetStarted(started bool) {
 
 	t.started = started
 	if started {
-		t.state = constants.StateRunning
+		t.state = enums.StateRunning
 		t.stopped = false
 	}
+}
+
+/**
+ * Restart restarts the application (stop then start).
+ *
+ * @param ctx context.Context The context for the restart operation
+ * @return error Any error that occurred during restart
+ */
+func (t *Lifecycleable) Restart(ctx context.Context) error {
+	// Stop first
+	if err := t.Stop(ctx); err != nil {
+		return err
+	}
+
+	// Then start
+	return t.Start(ctx)
+}
+
+/**
+ * Stopping registers a callback to be executed before application stops.
+ *
+ * @param callback func(interface{}) The function to execute before stopping
+ */
+func (t *Lifecycleable) Stopping(callback func(interface{})) {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+	t.stoppingCallbacks = append(t.stoppingCallbacks, callback)
 }
 
 /**
@@ -170,11 +283,32 @@ func (t *Lifecycleable) Stop(ctx context.Context) error {
 		return nil // Already stopped
 	}
 
+	// Set stopping state
+	t.state = enums.StateStopping
+
+	// Execute stopping callbacks
+	t.executeCallbacks(t.stoppingCallbacks, t)
+
 	// Stop logic would go here
 	t.started = false
 	t.stopped = true
-	t.state = constants.StateStopped
+	t.state = enums.StateStopped
+
+	// Execute stopped callbacks
+	t.executeCallbacks(t.stoppedCallbacks, t)
+
 	return nil
+}
+
+/**
+ * Stopped registers a callback to be executed after application has stopped.
+ *
+ * @param callback func(interface{}) The function to execute after stopping
+ */
+func (t *Lifecycleable) Stopped(callback func(interface{})) {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+	t.stoppedCallbacks = append(t.stoppedCallbacks, callback)
 }
 
 /**
@@ -200,25 +334,93 @@ func (t *Lifecycleable) SetStopped(stopped bool) {
 
 	t.stopped = stopped
 	if stopped {
-		t.state = constants.StateStopped
+		t.state = enums.StateStopped
 		t.started = false
 	}
 }
 
 /**
- * Restart restarts the application (stop then start).
+ * Terminating registers a callback to be executed during application termination.
  *
- * @param ctx context.Context The context for the restart operation
- * @return error Any error that occurred during restart
+ * @param callback func(interface{}) The function to execute during termination
+ * @return interface{} Returns the trait instance for method chaining
  */
-func (t *Lifecycleable) Restart(ctx context.Context) error {
-	// Stop first
-	if err := t.Stop(ctx); err != nil {
-		return err
+func (t *Lifecycleable) Terminating(callback func(interface{})) interface{} {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+	t.terminatingCallbacks = append(t.terminatingCallbacks, callback)
+	return t
+}
+
+/**
+ * Terminate terminates the application completely.
+ *
+ * @param ctx context.Context The context for the terminate operation
+ * @return error Any error that occurred during termination
+ */
+func (t *Lifecycleable) Terminate(ctx context.Context) error {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+
+	if t.terminated {
+		return nil // Already terminated
 	}
 
-	// Then start
-	return t.Start(ctx)
+	// Set terminating state
+	t.state = enums.StateTerminating
+
+	// Execute terminating callbacks
+	t.executeCallbacks(t.terminatingCallbacks, t)
+
+	// Terminate logic would go here
+	t.terminated = true
+	t.started = false
+	t.stopped = true
+	t.state = enums.StateTerminated
+
+	// Execute terminated callbacks
+	t.executeCallbacks(t.terminatedCallbacks, t)
+
+	return nil
+}
+
+/**
+ * IsTerminated returns whether the application has been terminated.
+ *
+ * @return bool true if the application is terminated
+ */
+func (t *Lifecycleable) IsTerminated() bool {
+	t.mutex.RLock()
+	defer t.mutex.RUnlock()
+	return t.terminated
+}
+
+/**
+ * SetTerminated sets the terminated state of the application.
+ *
+ * @param terminated bool Whether the application is terminated
+ */
+func (t *Lifecycleable) SetTerminated(terminated bool) {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+
+	t.terminated = terminated
+	if terminated {
+		t.state = enums.StateTerminated
+		t.started = false
+		t.stopped = true
+	}
+}
+
+/**
+ * Terminated registers a callback to be executed after application has terminated.
+ *
+ * @param callback func(interface{}) The function to execute after termination
+ */
+func (t *Lifecycleable) Terminated(callback func(interface{})) {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+	t.terminatedCallbacks = append(t.terminatedCallbacks, callback)
 }
 
 /**
@@ -227,6 +429,18 @@ func (t *Lifecycleable) Restart(ctx context.Context) error {
  * @return string The current lifecycle state
  */
 func (t *Lifecycleable) GetState() string {
+	t.mutex.RLock()
+	defer t.mutex.RUnlock()
+
+	return t.state.String()
+}
+
+/**
+ * GetStateEnum returns the current lifecycle state as an enum.
+ *
+ * @return enums.LifecycleState The current lifecycle state enum
+ */
+func (t *Lifecycleable) GetStateEnum() enums.LifecycleState {
 	t.mutex.RLock()
 	defer t.mutex.RUnlock()
 
@@ -256,8 +470,9 @@ func (t *Lifecycleable) GetLifecycleInfo() map[string]interface{} {
 		"booted":     t.booted,
 		"started":    t.started,
 		"stopped":    t.stopped,
+		"terminated": t.terminated,
 		"state":      t.state,
-		"is_running": t.started && !t.stopped,
+		"is_running": t.started && !t.stopped && !t.terminated,
 	}
 }
 
@@ -267,28 +482,84 @@ func (t *Lifecycleable) GetLifecycleInfo() map[string]interface{} {
  * @param state string The state to set
  */
 func (t *Lifecycleable) SetState(state string) {
+	// Convert string to enum and call SetStateEnum
+	stateEnum, valid := enums.FromString(state)
+	if !valid {
+		// Default to error state if invalid
+		stateEnum = enums.StateError
+	}
+	t.SetStateEnum(stateEnum)
+}
+
+/**
+ * SetStateEnum sets the current lifecycle state using an enum.
+ *
+ * @param state enums.LifecycleState The state enum to set
+ */
+func (t *Lifecycleable) SetStateEnum(state enums.LifecycleState) {
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
+
+	if !state.IsValid() {
+		// Default to error state if invalid
+		state = enums.StateError
+	}
 
 	t.state = state
 
 	// Update other states based on the new state
 	switch state {
-	case constants.StateInitializing:
+	case enums.StateInitializing:
 		t.booted = false
 		t.started = false
 		t.stopped = false
-	case constants.StateBooted:
+		t.terminated = false
+	case enums.StateBooting:
+		// During boot process - no changes to boolean flags yet
+	case enums.StateBooted:
 		t.booted = true
 		t.started = false
 		t.stopped = false
-	case constants.StateRunning:
+	case enums.StateStarting:
+		// During start process - booted should already be true
+		t.booted = true
+	case enums.StateRunning:
 		t.booted = true
 		t.started = true
 		t.stopped = false
-	case constants.StateStopped:
+	case enums.StateStopping:
+		// During stop process - no changes to boolean flags yet
+	case enums.StateStopped:
 		t.started = false
 		t.stopped = true
+	case enums.StateTerminating:
+		// During terminate process - no changes to boolean flags yet
+	case enums.StateTerminated:
+		t.terminated = true
+		t.started = false
+		t.stopped = true
+	// No explicit cases for StateMaintenance, StateError, StateShuttingDown
+	// as they don't directly map to boolean state changes
+	}
+}
+
+/**
+ * executeCallbacks safely executes a slice of callbacks with panic recovery.
+ *
+ * @param callbacks []func(interface{}) The callbacks to execute
+ * @param app interface{} The application instance to pass to callbacks
+ */
+func (t *Lifecycleable) executeCallbacks(callbacks []func(interface{}), app interface{}) {
+	for _, callback := range callbacks {
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					// Log panic but don't crash the application
+					// In a real implementation, you might want to use a proper logger
+				}
+			}()
+			callback(app)
+		}()
 	}
 }
 

@@ -2,10 +2,10 @@ package providers
 
 import (
 	"fmt"
-	applicationInterfaces "govel/packages/application/interfaces/application"
-	serviceProviders "govel/packages/application/providers"
-	"govel/packages/config"
-	configInterfaces "govel/packages/config/interfaces"
+	serviceProviders "govel/application/providers"
+	"govel/config"
+	applicationInterfaces "govel/types/src/interfaces/application"
+	configInterfaces "govel/types/src/interfaces/config"
 	"os"
 )
 
@@ -128,20 +128,20 @@ func (p *ConfigServiceProvider) Register(application applicationInterfaces.Appli
 	}
 
 	// Register the configuration service as a singleton
-	// This binds the "config" abstract to the ConfigInterface implementation
-	if err := application.Singleton("config", p.configFactory(environment)); err != nil {
+	// This binds the config token to the ConfigInterface implementation
+	if err := application.Singleton(configInterfaces.CONFIG_TOKEN, p.configFactory(environment)); err != nil {
 		return fmt.Errorf("failed to register config singleton: %w", err)
 	}
 
 	// Register configuration factory for creating additional config instances
 	// This allows for environment-specific or scoped configuration instances
-	if err := application.Bind("config.factory", p.configFactoryMethod()); err != nil {
+	if err := application.Bind(configInterfaces.CONFIG_FACTORY_TOKEN, p.configFactoryMethod()); err != nil {
 		return fmt.Errorf("failed to register config factory: %w", err)
 	}
 
 	// Register environment-specific configuration resolver
 	// This provides access to the current environment configuration
-	if err := application.Bind("config.environment", func() interface{} {
+	if err := application.Bind(configInterfaces.CONFIG_ENVIRONMENT_TOKEN, func() interface{} {
 		return environment
 	}); err != nil {
 		return fmt.Errorf("failed to register config environment: %w", err)
@@ -236,7 +236,7 @@ func (p *ConfigServiceProvider) Boot(application applicationInterfaces.Applicati
 	}
 
 	// Resolve the configuration service from the container
-	configService, err := application.Make("config")
+	configService, err := application.Make(configInterfaces.CONFIG_TOKEN)
 	if err != nil {
 		return fmt.Errorf("failed to resolve config service during boot: %w", err)
 	}

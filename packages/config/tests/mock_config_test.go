@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"govel/packages/config/mocks"
+	"govel/config/mocks"
 )
 
 // TestMockConfig tests the mock config implementation

@@ -3,8 +3,8 @@ package traits
 import (
 	"sync"
 
-	"govel/packages/container"
-	"govel/packages/container/interfaces"
+	"govel/container"
+	"govel/types/src/interfaces/container"
 )
 
 /**

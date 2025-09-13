@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"govel/packages/application/constants"
-	"govel/packages/application/enums"
+	"govel/types/src/constants/application"
+	"govel/types/src/enums/application"
 )
 
 // EnvHelper provides utilities for reading environment variables
@@ -104,14 +104,14 @@ func (e *EnvHelper) GetRunningUnitTests() bool {
 }
 
 // GetShutdownTimeout returns the shutdown timeout as time.Duration from APP_SHUTDOWN_TIMEOUT env var,
-// falling back to the default enum timeout
+// falling back to the default constant timeout
 func (e *EnvHelper) GetShutdownTimeout() time.Duration {
 	if timeout := os.Getenv("APP_SHUTDOWN_TIMEOUT"); timeout != "" {
 		if parsed, err := strconv.Atoi(timeout); err == nil && parsed > 0 {
 			return time.Duration(parsed) * time.Second
 		}
 	}
-	return enums.GetDefaultTimeout(enums.TimeoutShutdown).Duration()
+	return constants.DefaultShutdownTimeout
 }
 
 // parseBool parses common boolean representations with a fallback

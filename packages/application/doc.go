@@ -80,8 +80,8 @@
 //	    "log"
 //	    "time"
 //
-//	    "govel/packages/application"
-//	    "govel/packages/application/builders"
+//	    "govel/application"
+//	    "govel/application/builders"
 //	)
 //
 //	func main() {

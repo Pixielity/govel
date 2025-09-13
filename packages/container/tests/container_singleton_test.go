@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"govel/packages/container"
+	"govel/container"
 )
 
 // TestContainerSingleton tests singleton service registration and resolution

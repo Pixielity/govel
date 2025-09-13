@@ -2,10 +2,10 @@ package providers
 
 import (
 	"fmt"
-	applicationInterfaces "govel/packages/application/interfaces/application"
-	serviceProviders "govel/packages/application/providers"
-	"govel/packages/container"
-	containerInterfaces "govel/packages/container/interfaces"
+	serviceProviders "govel/application/providers"
+	"govel/container"
+	applicationInterfaces "govel/types/src/interfaces/application"
+	containerInterfaces "govel/types/src/interfaces/container"
 )
 
 /**
@@ -118,19 +118,19 @@ func (p *ContainerServiceProvider) Register(application applicationInterfaces.Ap
 
 	// Register the container service as a singleton
 	// This creates a self-referential binding where the container can resolve itself
-	if err := application.Singleton("container", p.createContainerFactory()); err != nil {
+	if err := application.Singleton(containerInterfaces.CONTAINER_TOKEN, p.createContainerFactory()); err != nil {
 		return fmt.Errorf("failed to register container singleton: %w", err)
 	}
 
 	// Register container factory for creating scoped or temporary containers
-	if err := application.Bind("container.factory", p.createContainerFactoryMethod()); err != nil {
+	if err := application.Bind(containerInterfaces.CONTAINER_FACTORY_TOKEN, p.createContainerFactoryMethod()); err != nil {
 		return fmt.Errorf("failed to register container factory: %w", err)
 	}
 
 	// Register container utilities for introspection and debugging
-	if err := application.Bind("container.bindings", func() interface{} {
+	if err := application.Bind(containerInterfaces.CONTAINER_BINDINGS_TOKEN, func() interface{} {
 		// Resolve the container and call its GetBindings method
-		containerService, err := application.Make("container")
+		containerService, err := application.Make(containerInterfaces.CONTAINER_TOKEN)
 		if err != nil {
 			return map[string]interface{}{"error": "failed to resolve container"}
 		}
@@ -141,9 +141,9 @@ func (p *ContainerServiceProvider) Register(application applicationInterfaces.Ap
 	}
 
 	// Register container statistics for monitoring
-	if err := application.Bind("container.stats", func() interface{} {
+	if err := application.Bind(containerInterfaces.CONTAINER_STATS_TOKEN, func() interface{} {
 		// Resolve the container and call its GetStatistics method
-		containerService, err := application.Make("container")
+		containerService, err := application.Make(containerInterfaces.CONTAINER_TOKEN)
 		if err != nil {
 			return map[string]interface{}{"error": "failed to resolve container"}
 		}

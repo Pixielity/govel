@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"govel/packages/logger/mocks"
+	"govel/logger/mocks"
 )
 
 // TestMockLogger tests the mock logger implementation

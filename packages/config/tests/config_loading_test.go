@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"govel/packages/config"
+	"govel/config"
 )
 
 // TestConfigEnvironmentVariables tests environment variable integration

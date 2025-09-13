@@ -21,7 +21,7 @@ import (
 	"sync"
 	"time"
 
-	"govel/packages/config/interfaces"
+	"govel/types/src/interfaces/config"
 )
 
 // Config represents a configuration manager that handles loading,

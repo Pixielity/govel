@@ -1,7 +1,8 @@
 package mocks
 
 import (
-	containerInterfaces "govel/packages/container/interfaces"
+	containerInterfaces "govel/types/src/interfaces/container"
+	"govel/types/src/types"
 )
 
 /**
@@ -77,53 +78,56 @@ func NewMockContainer() *MockContainer {
 
 // ContainerInterface Implementation
 
-func (m *MockContainer) Bind(abstract string, concrete interface{}) error {
+func (m *MockContainer) Bind(abstract types.ServiceIdentifier, concrete interface{}) error {
+	key := types.ToKey(abstract)
 	operation := BindOperation{
-		Abstract: abstract,
+		Abstract: key,
 		Concrete: concrete,
 		Success:  !m.ShouldFailBind,
 	}
 	m.BindHistory = append(m.BindHistory, operation)
 
 	if m.ShouldFailBind {
-		return &MockContainerError{Message: "mock bind failure", Abstract: abstract}
+		return &MockContainerError{Message: "mock bind failure", Abstract: key}
 	}
 
-	m.Bindings[abstract] = concrete
+	m.Bindings[key] = concrete
 	return nil
 }
 
-func (m *MockContainer) Singleton(abstract string, concrete interface{}) error {
+func (m *MockContainer) Singleton(abstract types.ServiceIdentifier, concrete interface{}) error {
+	key := types.ToKey(abstract)
 	operation := SingletonOperation{
-		Abstract: abstract,
+		Abstract: key,
 		Concrete: concrete,
 		Success:  !m.ShouldFailSingleton,
 	}
 	m.SingletonHistory = append(m.SingletonHistory, operation)
 
 	if m.ShouldFailSingleton {
-		return &MockContainerError{Message: "mock singleton failure", Abstract: abstract}
+		return &MockContainerError{Message: "mock singleton failure", Abstract: key}
 	}
 
-	m.Bindings[abstract] = concrete
-	m.SingletonBindings[abstract] = true
+	m.Bindings[key] = concrete
+	m.SingletonBindings[key] = true
 	return nil
 }
 
-func (m *MockContainer) Make(abstract string) (interface{}, error) {
+func (m *MockContainer) Make(abstract types.ServiceIdentifier) (interface{}, error) {
+	key := types.ToKey(abstract)
 	var result interface{}
 	var err error
 	success := !m.ShouldFailMake
 
 	if m.ShouldFailMake {
-		err = &MockContainerError{Message: "mock make failure", Abstract: abstract}
+		err = &MockContainerError{Message: "mock make failure", Abstract: key}
 	} else {
-		result, err = m.makeInternal(abstract)
+		result, err = m.makeInternal(key)
 		success = err == nil
 	}
 
 	operation := MakeOperation{
-		Abstract: abstract,
+		Abstract: key,
 		Result:   result,
 		Success:  success,
 		Error:    err,
@@ -172,17 +176,19 @@ func (m *MockContainer) makeInternal(abstract string) (interface{}, error) {
 	return instance, nil
 }
 
-func (m *MockContainer) IsBound(abstract string) bool {
-	_, exists := m.Bindings[abstract]
+func (m *MockContainer) IsBound(abstract types.ServiceIdentifier) bool {
+	key := types.ToKey(abstract)
+	_, exists := m.Bindings[key]
 	return exists
 }
 
-func (m *MockContainer) Forget(abstract string) {
-	m.ForgetHistory = append(m.ForgetHistory, abstract)
+func (m *MockContainer) Forget(abstract types.ServiceIdentifier) {
+	key := types.ToKey(abstract)
+	m.ForgetHistory = append(m.ForgetHistory, key)
 
-	delete(m.Bindings, abstract)
-	delete(m.Singletons, abstract)
-	delete(m.SingletonBindings, abstract)
+	delete(m.Bindings, key)
+	delete(m.Singletons, key)
+	delete(m.SingletonBindings, key)
 }
 
 func (m *MockContainer) FlushContainer() {
@@ -391,15 +397,17 @@ func (m *MockContainer) GetSingletonCount() int {
 /**
  * IsSingleton checks if a service is registered as a singleton
  */
-func (m *MockContainer) IsSingleton(abstract string) bool {
-	return m.SingletonBindings[abstract]
+func (m *MockContainer) IsSingleton(abstract types.ServiceIdentifier) bool {
+	key := types.ToKey(abstract)
+	return m.SingletonBindings[key]
 }
 
 /**
  * HasSingletonInstance checks if a singleton instance exists
  */
-func (m *MockContainer) HasSingletonInstance(abstract string) bool {
-	_, exists := m.Singletons[abstract]
+func (m *MockContainer) HasSingletonInstance(abstract types.ServiceIdentifier) bool {
+	key := types.ToKey(abstract)
+	_, exists := m.Singletons[key]
 	return exists
 }
 

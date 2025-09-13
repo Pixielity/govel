@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" class="{{.Theme}}">
+<!--
+{{.ErrorType}}: {{.ErrorMessage}}
+-->
+<head>
+    <!-- Hide dumps asap -->
+    <style>
+        pre.sf-dump {
+            display: none !important;
+        }
+    </style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="robots" content="noindex, nofollow">
+
+    <title>{{.ErrorMessage}} - Ignition</title>
+
+    <script>
+        document.documentElement.classList.add('{{.Theme}}');
+        if (document.documentElement.classList.contains('auto') && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+    <style>{{.CSS}}</style>
+
+    {{.CustomHead}}
+
+</head>
+<body class="scrollbar-lg antialiased bg-center bg-dots-darker dark:bg-dots-lighter">
+
+<script>
+    window.data = {{.ReportJSON}};
+</script>
+
+<!-- The noscript representation is for HTTP client like Postman that have JS disabled. -->
+<noscript>
+    <pre>{{.ErrorType}}: {{.ErrorMessage}}
+{{range .StackFrames}}{{.Function}}
+    {{.File}}:{{.Line}}
+{{end}}</pre>
+</noscript>
+
+<div id="app"></div>
+
+<script>
+    {{.JavaScript}}
+</script>
+
+<!-- Load RequireJS for GoVel modules -->
+<script>
+    {{.RequireJS}}
+</script>
+
+<!-- GoVel AMD Modules -->
+<script>
+    // Only configure RequireJS if it's loaded
+    if (typeof require !== 'undefined') {
+        require.config({
+            baseUrl: '/assets/js/',
+            waitSeconds: 15,
+            paths: {
+                // No need to specify .js extension, RequireJS handles it
+            }
+        });
+        console.log('🗫 RequireJS configured for GoVel modules');
+    } else {
+        console.log('⚠️ RequireJS not loaded - GoVel customizations will not be available');
+    }
+</script>
+
+<script>    
+    setTimeout(function() {
+        if (typeof window.ignite === 'function') {
+            try {
+                window.ignite(window.data);
+                console.log('🔥 Ignition loaded successfully');
+                
+                // Load GoVel UI customizations if RequireJS is available
+                if (typeof require !== 'undefined') {
+                    setTimeout(function() {
+                        require(['govel/govel'], function(GovelMain) {
+                            if (GovelMain && GovelMain.init) {
+                                GovelMain.init();
+                                console.log('🐹 GoVel customizations loaded successfully');
+                            } else {
+                                console.log('🐹 GoVel module loaded but no init function found');
+                            }
+                        }, function(error) {
+                            console.log('🐹 GoVel modules failed to load:', error.message || error);
+                            console.log('This is normal if GoVel assets are not available');
+                        });
+                    }, 300); // Give Ignition time to fully render
+                } else {
+                    console.log('🐹 RequireJS not available - skipping GoVel customizations');
+                }
+                
+            } catch (e) {
+                console.error('Ignition error:', e);
+                console.log('Falling back to basic display');
+                showBasicError();
+            }
+        } else {
+            console.error('window.ignite not found');
+            showBasicError();
+        }
+    }, 100);
+    
+    function showBasicError() {
+        var app = document.getElementById('app');
+        if (app) {
+            app.innerHTML = '<div class="p-8"><h1 class="text-2xl font-bold mb-4">🔥 Ignition Error</h1><div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"><strong>{{.ErrorType}}:</strong> {{.ErrorMessage}}</div><div class="text-sm text-gray-600">JavaScript interface failed to load. Basic error information shown above.</div></div>';
+        }
+    }
+</script>
+
+{{.CustomBody}}
+
+<!--
+{{.ErrorType}}: {{.ErrorMessage}}
+-->
+</body>
+</html>

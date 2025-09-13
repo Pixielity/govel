@@ -2,11 +2,13 @@ package providers
 
 import (
 	"fmt"
-	applicationInterfaces "govel/packages/application/interfaces/application"
-	serviceProviders "govel/packages/application/providers"
-	"govel/packages/logger"
-	loggerInterfaces "govel/packages/logger/interfaces"
 	"os"
+
+	serviceProviders "govel/application/providers"
+	applicationInterfaces "govel/types/src/interfaces/application"
+	interfaces "govel/types/src/interfaces/logger"
+	loggerInterfaces "govel/types/src/interfaces/logger"
+	"govel/logger"
 )
 
 /**
@@ -106,18 +108,18 @@ func (p *LoggerServiceProvider) Register(application applicationInterfaces.Appli
 	}
 
 	// Register the logging service as a singleton
-	// This binds the "logger" abstract to the LoggerInterface implementation
-	if err := application.Singleton("logger", p.createLoggerFactory()); err != nil {
+	// This binds the logger token to the LoggerInterface implementation
+	if err := application.Singleton(interfaces.LOGGER_TOKEN, p.createLoggerFactory()); err != nil {
 		return fmt.Errorf("failed to register logger singleton: %w", err)
 	}
 
 	// Register logger factory for creating context-specific logger instances
-	if err := application.Bind("logger.factory", p.createLoggerFactoryMethod()); err != nil {
+	if err := application.Bind(interfaces.LOGGER_FACTORY_TOKEN, p.createLoggerFactoryMethod()); err != nil {
 		return fmt.Errorf("failed to register logger factory: %w", err)
 	}
 
 	// Register current log level resolver for debugging and monitoring
-	if err := application.Bind("logger.level", func() interface{} {
+	if err := application.Bind(interfaces.LOGGER_LEVEL_TOKEN, func() interface{} {
 		return p.getConfiguredLogLevel()
 	}); err != nil {
 		return fmt.Errorf("failed to register logger level resolver: %w", err)

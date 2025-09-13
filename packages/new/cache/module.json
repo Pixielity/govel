@@ -1,0 +1,28 @@
+{
+  "name": "application",
+  "version": "1.0.0",
+  "description": "application module for Go framework",
+  "main": "application.go",
+  "author": "Go Framework Team",
+  "license": "MIT",
+  "keywords": ["go", "golang", "application", "framework", "module"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/go-framework-application.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/go-framework-application/issues"
+  },
+  "homepage": "https://github.com/yourusername/go-framework-application#readme",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "go test ./...",
+    "build": "go build",
+    "lint": "golangci-lint run",
+    "fmt": "go fmt ./..."
+  },
+  "engines": {
+    "go": ">=1.19"
+  }
+}

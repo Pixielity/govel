@@ -3,10 +3,11 @@ package builders
 import (
 	"time"
 
-	"govel/packages/application"
-	"govel/packages/application/enums"
-	"govel/packages/application/helpers"
-	"govel/packages/container"
+	"govel/application"
+	"govel/types/src/enums/application"
+	"govel/application/helpers"
+	"govel/container"
+	applicationInterfaces "govel/types/src/interfaces/application"
 )
 
 // app_builder.go implements the Builder pattern for GoVel application creation.
@@ -61,7 +62,7 @@ type AppBuilder struct {
 	customContainer *container.ServiceContainer
 
 	// serviceProviders holds service providers to register with the application
-	serviceProviders []interface{}
+	serviceProviders []applicationInterfaces.ServiceProviderInterface
 }
 
 // NewApp creates a new AppBuilder with sensible defaults.
@@ -371,12 +372,12 @@ func (b *AppBuilder) ForTesting() *AppBuilder {
 //
 // Example:
 //
-//	providers := []interface{}{
+//	providers := []providerInterfaces.ServiceProviderInterface{
 //	    userProviders.NewUserServiceProvider(),
 //	    productProviders.NewProductServiceProvider(),
 //	}
 //	application := NewApp().WithServiceProviders(providers).Build()
-func (b *AppBuilder) WithServiceProviders(providers []interface{}) *AppBuilder {
+func (b *AppBuilder) WithServiceProviders(providers []applicationInterfaces.ServiceProviderInterface) *AppBuilder {
 	b.serviceProviders = providers
 	return b
 }
@@ -418,9 +419,12 @@ func (b *AppBuilder) Build() *application.Application {
 
 	// Register service providers if any were provided
 	if len(b.serviceProviders) > 0 {
-		if err := app.RegisterProviders(b.serviceProviders); err != nil {
-			// Log the error but don't panic - let the application start
-			app.GetLogger().Error("Failed to register service providers during build: %v", err)
+		// Convert interface{} slice to individual provider registrations
+		for _, provider := range b.serviceProviders {
+			if err := app.RegisterProvider(provider); err != nil {
+				// Log the error but don't panic - let the application start
+				app.GetLogger().Error("Failed to register service provider %T during build: %v", provider, err)
+			}
 		}
 	}
 

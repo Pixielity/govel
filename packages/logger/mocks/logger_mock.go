@@ -3,7 +3,7 @@ package mocks
 import (
 	"time"
 
-	loggerInterfaces "govel/packages/logger/interfaces"
+	loggerInterfaces "govel/types/src/interfaces/logger"
 )
 
 /**

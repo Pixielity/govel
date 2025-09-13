@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"govel/packages/application/builders"
+	"govel/application/builders"
 )
 
 // TestAppBuilderCreation tests basic AppBuilder creation

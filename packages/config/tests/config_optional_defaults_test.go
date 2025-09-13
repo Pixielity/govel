@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"govel/packages/config"
+	"govel/config"
 )
 
 // TestConfigOptionalDefaultValues tests that all Get* methods work correctly

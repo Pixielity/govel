@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"govel/packages/application/builders"
+	"govel/application/builders"
 )
 
 // TestAppBuilderForProduction tests the ForProduction convenience method

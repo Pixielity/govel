@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"govel/packages/logger"
-	"govel/packages/logger/mocks"
+	"govel/logger"
+	"govel/logger/mocks"
 )
 
 // BenchmarkLoggerInfo benchmarks info level logging
