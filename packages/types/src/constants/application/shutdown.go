@@ -8,11 +8,6 @@ import "time"
  */
 
 /**
- * DefaultShutdownTimeout is the default timeout for graceful shutdown operations.
- */
-const DefaultShutdownTimeout = 30 * time.Second
-
-/**
  * MinShutdownTimeout is the minimum allowed shutdown timeout.
  */
 const MinShutdownTimeout = 1 * time.Second

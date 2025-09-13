@@ -1,19 +1,22 @@
 package interfaces
 
+import "govel/packages/support/src/symbol"
+
+
 // Standard tokens for cache package
-const (
+var (
 	// CACHE_TOKEN is the main service token for cache
-	CACHE_TOKEN = "govel.cache"
+	CACHE_TOKEN = symbol.For("govel.cache")
 
 	// CACHE_FACTORY_TOKEN is the factory token for cache
-	CACHE_FACTORY_TOKEN = "govel.cache.factory"
+	CACHE_FACTORY_TOKEN = symbol.For("govel.cache.factory")
 
 	// CACHE_MANAGER_TOKEN is the manager token for cache
-	CACHE_MANAGER_TOKEN = "govel.cache.manager"
+	CACHE_MANAGER_TOKEN = symbol.For("govel.cache.manager")
 
 	// CACHE_INTERFACE_TOKEN is the interface token for cache
-	CACHE_INTERFACE_TOKEN = "govel.cache.interface"
+	CACHE_INTERFACE_TOKEN = symbol.For("govel.cache.interface")
 
 	// CACHE_CONFIG_TOKEN is the config token for cache
-	CACHE_CONFIG_TOKEN = "govel.cache.config"
+	CACHE_CONFIG_TOKEN = symbol.For("govel.cache.config")
 )

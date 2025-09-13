@@ -1,25 +1,28 @@
 package interfaces
 
+import "govel/packages/support/src/symbol"
+
+
 // Standard tokens for webserver package
-const (
+var (
 	// WEBSERVER_TOKEN is the main service token for webserver
-	WEBSERVER_TOKEN = "govel.webserver"
+	WEBSERVER_TOKEN = symbol.For("govel.webserver")
 	
 	// WEBSERVER_FACTORY_TOKEN is the factory token for webserver
-	WEBSERVER_FACTORY_TOKEN = "govel.webserver.factory"
+	WEBSERVER_FACTORY_TOKEN = symbol.For("govel.webserver.factory")
 	
 	// WEBSERVER_MANAGER_TOKEN is the manager token for webserver
-	WEBSERVER_MANAGER_TOKEN = "govel.webserver.manager"
+	WEBSERVER_MANAGER_TOKEN = symbol.For("govel.webserver.manager")
 	
 	// WEBSERVER_INTERFACE_TOKEN is the interface token for webserver
-	WEBSERVER_INTERFACE_TOKEN = "govel.webserver.interface"
+	WEBSERVER_INTERFACE_TOKEN = symbol.For("govel.webserver.interface")
 	
 	// WEBSERVER_CONFIG_TOKEN is the config token for webserver
-	WEBSERVER_CONFIG_TOKEN = "govel.webserver.config"
+	WEBSERVER_CONFIG_TOKEN = symbol.For("govel.webserver.config")
 )
 
 // Specific webserver service tokens
-const (
+var (
 	// WEBSERVER_MAIN_FACTORY_TOKEN is the main webserver factory
 	WEBSERVER_MAIN_FACTORY_TOKEN = "webserver.factory"
 	

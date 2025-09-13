@@ -1,25 +1,28 @@
 package interfaces
 
+import "govel/packages/support/src/symbol"
+
+
 // Standard tokens for application package
-const (
+var (
 	// APPLICATION_TOKEN is the main service token for application
-	APPLICATION_TOKEN = "govel.application"
+	APPLICATION_TOKEN = symbol.For("govel.application")
 
 	// APPLICATION_FACTORY_TOKEN is the factory token for application
-	APPLICATION_FACTORY_TOKEN = "govel.application.factory"
+	APPLICATION_FACTORY_TOKEN = symbol.For("govel.application.factory")
 
 	// APPLICATION_MANAGER_TOKEN is the manager token for application
-	APPLICATION_MANAGER_TOKEN = "govel.application.manager"
+	APPLICATION_MANAGER_TOKEN = symbol.For("govel.application.manager")
 
 	// APPLICATION_INTERFACE_TOKEN is the interface token for application
-	APPLICATION_INTERFACE_TOKEN = "govel.application.interface"
+	APPLICATION_INTERFACE_TOKEN = symbol.For("govel.application.interface")
 
 	// APPLICATION_CONFIG_TOKEN is the config token for application
-	APPLICATION_CONFIG_TOKEN = "govel.application.config"
+	APPLICATION_CONFIG_TOKEN = symbol.For("govel.application.config")
 )
 
 // Path-related tokens used by PathsServiceProvider
-const (
+var (
 	// PATHS_BASE_TOKEN is the token for base path
 	PATHS_BASE_TOKEN = "paths.base"
 
