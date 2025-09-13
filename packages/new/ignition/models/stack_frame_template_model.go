@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"govel/ignition/constants"
+	"govel/packages/ignition/constants"
 )
 
 // StackFrameTemplate represents a stack frame for template rendering

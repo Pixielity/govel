@@ -1,11 +1,11 @@
 package encryption
 
 import (
-	"govel/encryption/src/encrypters"
-	"govel/types/src/enums/encryption"
-	containerInterfaces "govel/types/src/interfaces/container"
-	encrypterInterfaces "govel/types/src/interfaces/encryption"
-	support "govel/support/src"
+	"govel/packages/encryption/src/encrypters"
+	enums "govel/packages/types/src/enums/encryption"
+	containerInterfaces "govel/packages/types/src/interfaces/container"
+	encrypterInterfaces "govel/packages/types/src/interfaces/encryption"
+	support "govel/packages/support/src"
 )
 
 // EncryptionManager provides centralized encryption management with multiple algorithm support.

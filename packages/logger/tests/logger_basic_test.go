@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"govel/logger"
+	"govel/packages/logger"
 )
 
 // TestLoggerCreation tests basic logger creation

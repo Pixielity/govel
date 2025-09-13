@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"govel/healthcheck/src/interfaces"
+	"govel/packages/healthcheck/src/interfaces"
 )
 
 // HealthController handles HTTP requests for health check endpoints.

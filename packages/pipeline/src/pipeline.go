@@ -18,9 +18,9 @@ import (
 	"sync"
 	"time"
 
-	interfaces "govel/types/src/interfaces/pipeline"
+	interfaces "govel/packages/types/src/interfaces/pipeline"
 
-	containerInterfaces "govel/types/src/interfaces/container"
+	containerInterfaces "govel/packages/types/src/interfaces/container"
 )
 
 // ErrNilContainer is returned when attempting to use container functionality without a container

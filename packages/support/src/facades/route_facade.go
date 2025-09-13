@@ -1,8 +1,10 @@
 package facades
+
 import (
-	routeInterfaces "govel/types/src/interfaces/route"
-	facade "govel/support/src"
+	routeInterfaces "govel/packages/types/src/interfaces/route"
+	facade "govel/packages/support/src"
 )
+
 // Route provides a clean, static-like interface to the application's routing service.
 //
 // This facade implements the facade pattern, providing global access to the routing

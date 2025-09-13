@@ -6,12 +6,11 @@ import (
 	"os"
 	"time"
 
-	"govel/application/providers"
-	"govel/types/src/types/application"
-	configMocks "govel/config/mocks"
-	containerMocks "govel/container/mocks"
-	applicationInterfaces "govel/types/src/interfaces/application"
-	loggerMocks "govel/logger/mocks"
+	"govel/packages/application/providers"
+	containerMocks "govel/packages/container/mocks"
+	loggerMocks "govel/packages/logger/mocks"
+	configMocks "govel/packages/config/mocks"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
 )
 
 /**

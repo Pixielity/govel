@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"govel/exceptions"
-	"govel/exceptions/solutions"
+	"govel/packages/exceptions"
+	"govel/packages/exceptions/solutions"
 )
 
 // Test BaseSolution implementation

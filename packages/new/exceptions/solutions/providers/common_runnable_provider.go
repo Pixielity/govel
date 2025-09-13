@@ -4,8 +4,8 @@ import (
 	"os"
 	"strings"
 
-	solutionInterface "govel/exceptions/interfaces/solution"
-	"govel/exceptions/solutions/runnable"
+	solutionInterface "govel/packages/exceptions/interfaces/solution"
+	"govel/packages/exceptions/solutions/runnable"
 )
 
 // CommonRunnableSolutionsProvider provides runnable solutions for common development issues

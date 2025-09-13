@@ -11,8 +11,9 @@ package container
 
 import (
 	"fmt"
-	"govel/types/src/types"
 	"sync"
+
+	types "govel/packages/types/src/types/container"
 )
 
 // ServiceContainer represents a service container for dependency injection.
@@ -548,4 +549,3 @@ func (c *ServiceContainer) resolveService(concrete interface{}) (interface{}, er
 	// Return the concrete instance directly
 	return concrete, nil
 }
-

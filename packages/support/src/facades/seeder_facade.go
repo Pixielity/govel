@@ -1,8 +1,8 @@
 package facades
 
 import (
-	seederInterfaces "govel/types/src/interfaces/seeder"
-	facade "govel/support/src"
+	seederInterfaces "govel/packages/types/src/interfaces/seeder"
+	facade "govel/packages/support/src"
 )
 
 // Seeder provides a clean, static-like interface to the application's database seeding service.

@@ -3,7 +3,7 @@ package solution
 import (
 	"sync"
 
-	solutionInterface "govel/exceptions/interfaces/solution"
+	solutionInterface "govel/packages/exceptions/interfaces/solution"
 )
 
 // SolutionProviderRepository manages solution providers and provides solutions for errors.

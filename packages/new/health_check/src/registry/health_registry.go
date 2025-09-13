@@ -8,10 +8,10 @@ import (
 	"sync"
 	"time"
 
-	"govel/healthcheck/src/checks"
-	"govel/healthcheck/src/enums"
-	"govel/healthcheck/src/interfaces"
-	"govel/healthcheck/src/types"
+	"govel/packages/healthcheck/src/checks"
+	"govel/packages/healthcheck/src/enums"
+	"govel/packages/healthcheck/src/interfaces"
+	"govel/packages/healthcheck/src/types"
 )
 
 // HealthRegistry is the central registry for managing health checks.

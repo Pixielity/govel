@@ -3,8 +3,8 @@ package pipeline_test
 import (
 	"testing"
 
-	containerMocks "govel/container/mocks"
-	"govel/new/pipeline/src"
+	containerMocks "govel/packages/container/mocks"
+	"govel/packages/new/pipeline/src"
 )
 
 // TestNewPipeline tests the NewPipeline constructor function

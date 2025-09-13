@@ -1,8 +1,8 @@
 package facades
 
 import (
-	langInterfaces "govel/types/src/interfaces/lang"
-	facade "govel/support/src"
+	langInterfaces "govel/packages/types/src/interfaces/lang"
+	facade "govel/packages/support/src"
 )
 
 // Lang provides a clean, static-like interface to the application's localization service.

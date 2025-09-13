@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"govel/ignition/interfaces"
-	"govel/ignition/models"
+	"govel/packages/ignition/interfaces"
+	"govel/packages/ignition/models"
 )
 
 // BadMethodCallSolutionProvider provides solutions for method-related errors

@@ -7,9 +7,8 @@ import (
 	"path/filepath"
 	"time"
 
-	containerInterfaces "govel/types/src/interfaces/container"
-	"govel/types/src/constants/application"
-	"govel/types/src/types/application"
+	constants "govel/packages/types/src/constants/application"
+	containerInterfaces "govel/packages/types/src/interfaces/container"
 )
 
 // MaintenanceManager handles maintenance mode operations including
@@ -515,9 +514,9 @@ func (mm *MaintenanceManager) GetMaintenanceInfo() map[string]interface{} {
 	mode := mm.MaintenanceMode()
 	if mode == nil {
 		return map[string]interface{}{
-			"active":              false,
-			"maintenance_file":    mm.maintenanceFile,
-			"file_exists":         false,
+			"active":           false,
+			"maintenance_file": mm.maintenanceFile,
+			"file_exists":      false,
 		}
 	}
 

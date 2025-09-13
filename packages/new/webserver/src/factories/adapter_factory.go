@@ -22,9 +22,9 @@ package factories
 import (
 	"fmt"
 
-	"govel/new/webserver/src/adapters"
-	"govel/new/webserver/src/enums"
-	"govel/new/webserver/src/interfaces"
+	"govel/packages/new/webserver/src/adapters"
+	"govel/packages/new/webserver/src/enums"
+	"govel/packages/new/webserver/src/interfaces"
 )
 
 // AdapterFactory provides methods for creating HTTP framework adapter instances.

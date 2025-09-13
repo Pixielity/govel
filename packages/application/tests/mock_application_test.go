@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"govel/application/mocks"
+	"govel/packages/application/mocks"
 )
 
 // TestMockApplication tests our MockApplication implementation

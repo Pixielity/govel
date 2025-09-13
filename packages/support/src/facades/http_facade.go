@@ -1,8 +1,8 @@
 package facades
 
 import (
-	httpInterfaces "govel/types/src/interfaces/http"
-	facade "govel/support/src"
+	httpInterfaces "govel/packages/types/src/interfaces/http"
+	facade "govel/packages/support/src"
 )
 
 // HTTP provides a clean, static-like interface to the application's HTTP client service.

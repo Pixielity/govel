@@ -3,8 +3,8 @@ package tests
 import (
 	"testing"
 
-	"govel/container"
-	"govel/container/mocks"
+	"govel/packages/container"
+	"govel/packages/container/mocks"
 )
 
 // BenchmarkContainerBind benchmarks container binding operations

@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"govel/types/src/constants/application"
-	"govel/types/src/enums/application"
+	constants "govel/packages/types/src/constants/application"
+	enums "govel/packages/types/src/enums/application"
 )
 
 // EnvHelper provides utilities for reading environment variables

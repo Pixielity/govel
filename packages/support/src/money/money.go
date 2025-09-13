@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"govel/support/src/number"
+	"govel/packages/support/src/number"
 
 	"github.com/shopspring/decimal"
 )

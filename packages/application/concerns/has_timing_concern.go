@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	applicationInterfaces "govel/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
 )
 
 /**

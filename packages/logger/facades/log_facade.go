@@ -1,8 +1,8 @@
 package facades
 
 import (
-	loggerInterfaces "govel/types/src/interfaces/logger"
-	facade "govel/support/src"
+	facade "govel/packages/support/src"
+	loggerInterfaces "govel/packages/types/src/interfaces/logger"
 )
 
 // Log provides a clean, static-like interface to the application's logging service.
@@ -172,7 +172,7 @@ func Log() loggerInterfaces.LoggerInterface {
 	// - Caches the result for subsequent calls
 	// - Panics with descriptive error if resolution fails
 	// - Thread-safe with optimized locking
-	return facade.Resolve[loggerInterfaces.LoggerInterface]("log")
+	return facade.Resolve[loggerInterfaces.LoggerInterface](loggerInterfaces.LOGGER_TOKEN)
 }
 
 // LogWithError provides error-safe access to the logger service.
@@ -213,5 +213,5 @@ func LogWithError() (loggerInterfaces.LoggerInterface, error) {
 	// - Caches the result for subsequent calls
 	// - Returns detailed error information instead of panicking
 	// - Thread-safe with optimized locking
-	return facade.TryResolve[loggerInterfaces.LoggerInterface]("log")
+	return facade.TryResolve[loggerInterfaces.LoggerInterface](loggerInterfaces.LOGGER_TOKEN)
 }

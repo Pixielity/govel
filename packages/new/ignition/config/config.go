@@ -1,7 +1,7 @@
 package config
 
 import (
-	"govel/ignition/enums"
+	"govel/packages/ignition/enums"
 )
 
 // Config holds the Ignition configuration

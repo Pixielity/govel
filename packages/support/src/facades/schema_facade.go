@@ -1,8 +1,10 @@
 package facades
+
 import (
-	schemaInterfaces "govel/types/src/interfaces/schema"
-	facade "govel/support/src"
+	schemaInterfaces "govel/packages/types/src/interfaces/schema"
+	facade "govel/packages/support/src"
 )
+
 // Schema provides a clean, static-like interface to the application's database schema management service.
 //
 // This facade implements the facade pattern, providing global access to the schema
@@ -318,7 +320,7 @@ import (
 //	    config := schema.Config{
 //	        // Database connection
 //	        Connection: facades.DB().Connection("default"),
-//	        
+//
 //	        // Schema configuration
 //	        DefaultStringLength: 255,
 //	        DefaultDecimalPrecision: 8,

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"govel/container"
+	"govel/packages/container"
 )
 
 // TestContainerErrorHandling tests error scenarios

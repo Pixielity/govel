@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"govel/container/mocks"
+	"govel/packages/container/mocks"
 )
 
 // TestMockContainer tests the mock container implementation

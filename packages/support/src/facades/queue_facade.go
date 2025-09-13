@@ -1,8 +1,8 @@
 package facades
 
 import (
-	queueInterfaces "govel/types/src/interfaces/queue"
-	facade "govel/support/src"
+	queueInterfaces "govel/packages/types/src/interfaces/queue"
+	facade "govel/packages/support/src"
 )
 
 // Queue provides a clean, static-like interface to the application's job queue service.

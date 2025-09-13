@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"govel/ignition/config"
-	"govel/ignition/enums"
+	"govel/packages/ignition/config"
+	"govel/packages/ignition/enums"
 )
 
 // SourceCodeExtractor handles extracting source code around error lines

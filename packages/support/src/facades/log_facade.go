@@ -1,8 +1,8 @@
 package facades
 
 import (
-	loggerInterfaces "govel/types/src/interfaces/logger"
-	facade "govel/support/src"
+	loggerInterfaces "govel/packages/types/src/interfaces/logger"
+	facade "govel/packages/support/src"
 )
 
 // Log provides a clean, static-like interface to the application's logging service.

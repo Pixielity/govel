@@ -29,10 +29,10 @@ import (
 	"context"
 	"time"
 
-	"govel/healthcheck/src/http/controllers"
-	"govel/healthcheck/src/interfaces"
-	"govel/healthcheck/src/registry"
-	"govel/healthcheck/src/types"
+	"govel/packages/healthcheck/src/http/controllers"
+	"govel/packages/healthcheck/src/interfaces"
+	"govel/packages/healthcheck/src/registry"
+	"govel/packages/healthcheck/src/types"
 )
 
 // Health is the main facade for the health check system.

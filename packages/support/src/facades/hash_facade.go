@@ -1,8 +1,8 @@
 package facades
 
 import (
-	hashInterfaces "govel/types/src/interfaces/hashing"
-	facade "govel/support/src"
+	hashInterfaces "govel/packages/types/src/interfaces/hashing"
+	facade "govel/packages/support/src"
 )
 
 // Hash provides a clean, static-like interface to the application's cryptographic hashing service.

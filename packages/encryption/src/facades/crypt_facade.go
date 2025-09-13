@@ -1,8 +1,8 @@
 package facades
 
 import (
-	interfaces "govel/types/src/interfaces/encryption"
-	facade "govel/support/src"
+	interfaces "govel/packages/types/src/interfaces/encryption"
+	facade "govel/packages/support/src"
 )
 
 // Crypt provides a clean, static-like interface to the application's cryptography service.

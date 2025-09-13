@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"govel/application"
+	"govel/packages/application"
 )
 
 // TestApplicationRuntime tests application runtime state methods

@@ -1,6 +1,6 @@
 package interfaces
 
-import "govel/exceptions/interfaces/solution"
+import "govel/packages/exceptions/interfaces/solution"
 
 // Solutionable defines the interface for exceptions that can provide or be associated with solutions.
 // This interface follows the Interface Segregation Principle (ISP) by focusing

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"govel/hashing/src"
+	"govel/packages/hashing/src"
 )
 
 // MockContainer implements a simple container for testing

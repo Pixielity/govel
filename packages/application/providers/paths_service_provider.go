@@ -2,7 +2,7 @@ package providers
 
 import (
 	"fmt"
-	applicationInterfaces "govel/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
 )
 
 /**

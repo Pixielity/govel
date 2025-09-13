@@ -1,7 +1,6 @@
 package cookie
 
 import (
-	"govel/types/src/types/cookie"
 	"net/http"
 	"time"
 )

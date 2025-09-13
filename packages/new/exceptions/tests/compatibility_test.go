@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"govel/exceptions"
+	"govel/packages/exceptions"
 )
 
 // TestBackwardCompatibility tests that the old API still works

@@ -40,12 +40,11 @@ import (
 	"reflect"
 	"sync"
 
-	configInterfaces "govel/types/src/interfaces/config"
-	containerInterfaces "govel/types/src/interfaces/container"
+	configInterfaces "govel/packages/types/src/interfaces/config"
+	containerInterfaces "govel/packages/types/src/interfaces/container"
 
-	"govel/support/src/str"
-	"govel/support/src/traits"
-	"govel/types/src/types/support"
+	"govel/packages/support/src/str"
+	"govel/packages/support/src/traits"
 )
 
 // Manager provides the base implementation for Laravel-style driver management.

@@ -7,9 +7,9 @@ import (
 	"regexp"
 	"strconv"
 
-	"govel/healthcheck/src/checks"
-	"govel/healthcheck/src/enums"
-	"govel/healthcheck/src/interfaces"
+	"govel/packages/healthcheck/src/checks"
+	"govel/packages/healthcheck/src/enums"
+	"govel/packages/healthcheck/src/interfaces"
 )
 
 // UsedDiskSpaceCheck monitors disk space usage and alerts on configurable thresholds.

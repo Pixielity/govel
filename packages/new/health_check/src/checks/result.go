@@ -5,7 +5,7 @@ package checks
 import (
 	"time"
 
-	"govel/healthcheck/src/interfaces"
+	"govel/packages/healthcheck/src/interfaces"
 )
 
 // Result represents the outcome of a health check execution.

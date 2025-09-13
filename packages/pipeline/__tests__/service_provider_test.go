@@ -3,8 +3,8 @@ package pipeline_test
 import (
 	"testing"
 
-	applicationMocks "govel/application/mocks"
-	"govel/new/pipeline/src/providers"
+	applicationMocks "govel/packages/application/mocks"
+	"govel/packages/new/pipeline/src/providers"
 )
 
 // TestNewPipelineServiceProvider tests the service provider constructor

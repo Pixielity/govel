@@ -1,8 +1,8 @@
 package facades
 
 import (
-	cacheInterfaces "govel/types/src/interfaces/cache"
-	facade "govel/support/src"
+	cacheInterfaces "govel/packages/types/src/interfaces/cache"
+	facade "govel/packages/support/src"
 )
 
 // Cache provides a clean, static-like interface to the application's caching service.

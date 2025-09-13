@@ -3,11 +3,11 @@ package ignition
 import (
 	"net/http"
 
-	"govel/ignition/config"
-	"govel/ignition/enums"
-	"govel/ignition/handlers"
-	"govel/ignition/interfaces"
-	"govel/ignition/views"
+	"govel/packages/ignition/config"
+	"govel/packages/ignition/enums"
+	"govel/packages/ignition/handlers"
+	"govel/packages/ignition/interfaces"
+	"govel/packages/ignition/views"
 )
 
 // Ignition is the main facade that provides a clean API for error handling

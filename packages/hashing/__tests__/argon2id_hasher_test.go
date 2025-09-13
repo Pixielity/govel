@@ -4,9 +4,9 @@ import (
 	"strings"
 	"testing"
 
-	configMocks "govel/config/mocks"
-	containerMocks "govel/container/mocks"
-	"govel/hashing/src"
+	containerMocks "govel/packages/container/mocks"
+	"govel/packages/hashing/src"
+	configMocks "govel/packages/config/mocks"
 )
 
 func TestArgon2idHasher_BasicFunctionality(t *testing.T) {

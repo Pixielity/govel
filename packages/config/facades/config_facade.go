@@ -1,7 +1,8 @@
 package facades
 
 import (
-	facade "govel/support/src"
+	facade "govel/packages/support/src"
+	configInterfaces "govel/packages/types/src/interfaces/config"
 )
 
 // Config provides a clean, static-like interface to the application's configuration service.
@@ -249,14 +250,14 @@ import (
 //
 //	    return config
 //	})
-func Config() interface{} {
+func Config() configInterfaces.ConfigInterface {
 	// Use facade.Resolve() for clean facade implementation:
-	// - Resolves "config" service from the dependency injection container
+	// - Resolves config service using type-safe token from the dependency injection container
 	// - Performs type assertion to ConfigInterface
 	// - Caches the result for subsequent calls
 	// - Panics with descriptive error if resolution fails
 	// - Thread-safe with optimized locking
-	return facade.Resolve[interface{}]("config")
+	return facade.Resolve[configInterfaces.ConfigInterface](configInterfaces.CONFIG_TOKEN)
 }
 
 // ConfigWithError provides error-safe access to the configuration service.
@@ -293,12 +294,12 @@ func Config() interface{} {
 //	        setupAdvancedLogging()
 //	    }
 //	}
-func ConfigWithError() (interface{}, error) {
+func ConfigWithError() (configInterfaces.ConfigInterface, error) {
 	// Use facade.TryResolve() for error-return behavior:
-	// - Resolves "config" service from the dependency injection container
+	// - Resolves config service using type-safe token from the dependency injection container
 	// - Performs type assertion with error handling
 	// - Caches the result for subsequent calls
 	// - Returns detailed error information instead of panicking
 	// - Thread-safe with optimized locking
-	return facade.TryResolve[interface{}]("config")
+	return facade.TryResolve[configInterfaces.ConfigInterface](configInterfaces.CONFIG_TOKEN)
 }

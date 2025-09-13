@@ -6,9 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"govel/types/src/enums/hashing"
-	"govel/hashing/src/exceptions"
-	"govel/types/src/types/hashing"
+	"govel/packages/hashing/src/exceptions"
+	enums "govel/packages/types/src/enums/hashing"
 )
 
 // BaseHasher provides common functionality and utilities shared across all hasher implementations.

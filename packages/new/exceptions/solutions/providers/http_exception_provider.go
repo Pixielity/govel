@@ -3,8 +3,8 @@ package providers
 import (
 	"strings"
 
-	solutionInterface "govel/exceptions/interfaces/solution"
-	httpSolutions "govel/exceptions/solutions/http"
+	solutionInterface "govel/packages/exceptions/interfaces/solution"
+	httpSolutions "govel/packages/exceptions/solutions/http"
 )
 
 // HTTPExceptionProvider provides solutions for common HTTP exceptions.

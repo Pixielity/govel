@@ -3,8 +3,8 @@ package concerns
 import (
 	"sync"
 
-	"govel/application/helpers"
-	applicationInterfaces "govel/types/src/interfaces/application"
+	"govel/packages/application/helpers"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
 )
 
 /**

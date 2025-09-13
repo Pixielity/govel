@@ -5,7 +5,7 @@ package webserver
 
 import (
 	"encoding/json"
-	"govel/new/webserver/src/interfaces"
+	"govel/packages/new/webserver/src/interfaces"
 	"io"
 	"net/http"
 )

@@ -1,14 +1,3 @@
-// Package config provides configuration management functionality for the GoVel framework.
-// This package implements a flexible configuration system that supports multiple
-// sources, environments, and data types with dot notation access.
-//
-// The config system supports:
-// - Environment-based configurations
-// - Multiple file formats (JSON, YAML, TOML planned)
-// - Dot notation for nested values (e.g., "database.host")
-// - Type-safe value retrieval
-// - Thread-safe operations
-// - Default value fallbacks
 package config
 
 import (
@@ -21,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"govel/types/src/interfaces/config"
+	interfaces "govel/packages/types/src/interfaces/config"
 )
 
 // Config represents a configuration manager that handles loading,
@@ -742,6 +731,5 @@ func (c *Config) copyMap(src, dst map[string]interface{}) {
 	}
 }
 
-// Compile-time interface compliance check
-// This ensures that Config implements the ConfigInterface
+// Compile-time interface compliance check removed for now
 var _ interfaces.ConfigInterface = (*Config)(nil)

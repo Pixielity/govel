@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"govel/exceptions/core"
-	"govel/exceptions/interfaces"
-	httpSolutions "govel/exceptions/solutions/http"
+	"govel/packages/exceptions/core"
+	"govel/packages/exceptions/interfaces"
+	httpSolutions "govel/packages/exceptions/solutions/http"
 )
 
 // ServiceUnavailableException represents a 503 Service Unavailable error.

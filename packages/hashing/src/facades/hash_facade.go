@@ -1,6 +1,9 @@
 package facades
 
-import facade "govel/support/src"
+import (
+	facade "govel/packages/support/src"
+	hashInterfaces "govel/packages/types/src/interfaces/hashing"
+)
 
 // Hash provides a clean, static-like interface to the application's cryptographic hashing service.
 //
@@ -328,14 +331,14 @@ import facade "govel/support/src"
 //
 //	    return hasher.NewHasher(config)
 //	})
-func Hash() interface{} {
+func Hash() hashInterfaces.HasherInterface {
 	// Use facade.Resolve() for clean facade implementation:
 	// - Resolves "hash" service from the dependency injection container
-	// - Performs type assertion to HashInterface
+	// - Performs type assertion to HasherInterface
 	// - Caches the result for subsequent calls
 	// - Panics with descriptive error if resolution fails
 	// - Thread-safe with optimized locking
-	return facade.Resolve[interface{}]("hash")
+	return facade.Resolve[hashInterfaces.HasherInterface](hashInterfaces.HASHING_TOKEN)
 }
 
 // HashWithError provides error-safe access to the cryptographic hashing service.
@@ -370,12 +373,12 @@ func Hash() interface{} {
 //	    token := hasher.GenerateToken(32)
 //	    // Use token for session management
 //	}
-func HashWithError() (interface{}, error) {
+func HashWithError() (hashInterfaces.HasherInterface, error) {
 	// Use facade.TryResolve() for error-return behavior:
 	// - Resolves "hash" service from the dependency injection container
 	// - Performs type assertion with error handling
 	// - Caches the result for subsequent calls
 	// - Returns detailed error information instead of panicking
 	// - Thread-safe with optimized locking
-	return facade.TryResolve[interface{}]("hash")
+	return facade.TryResolve[hashInterfaces.HasherInterface](hashInterfaces.HASHING_TOKEN)
 }

@@ -2,10 +2,10 @@ package providers
 
 import (
 	"fmt"
-	serviceProviders "govel/application/providers"
-	"govel/config"
-	applicationInterfaces "govel/types/src/interfaces/application"
-	configInterfaces "govel/types/src/interfaces/config"
+	serviceProviders "govel/packages/application/providers"
+	"govel/packages/config"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	configInterfaces "govel/packages/types/src/interfaces/config"
 	"os"
 )
 

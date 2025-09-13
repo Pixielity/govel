@@ -8,8 +8,8 @@ import (
 	"os"
 	"path/filepath"
 
-	baseProviders "govel/application/providers"
-	applicationInterfaces "govel/types/src/interfaces/application"
+	baseProviders "govel/packages/application/providers"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
 )
 
 // ProviderManifest represents the provider manifest structure.

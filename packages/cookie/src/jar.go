@@ -5,8 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"govel/cookie/src/interfaces"
-	"govel/types/src/types/cookie"
+	"govel/packages/cookie/src/interfaces"
 )
 
 // CookieJar implements Laravel-style cookie management with queuing support.

@@ -6,10 +6,10 @@ package providers
 import (
 	"fmt"
 
-	"govel/application/providers"
-	applicationInterfaces "govel/types/src/interfaces/application"
-	"govel/new/webserver/src/enums"
-	"govel/new/webserver/src/factories"
+	"govel/packages/application/providers"
+	"govel/packages/new/webserver/src/enums"
+	"govel/packages/new/webserver/src/factories"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
 )
 
 // WebserverServiceProvider provides webserver services through the container.

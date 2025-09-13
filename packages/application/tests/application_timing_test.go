@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"govel/application"
+	"govel/packages/application"
 )
 
 // TestApplicationTiming tests application timing functionality

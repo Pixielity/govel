@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sync"
 
-	applicationInterfaces "govel/types/src/interfaces/application"
-	providerInterfaces "govel/types/src/interfaces/application/providers"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	providerInterfaces "govel/packages/types/src/interfaces/application/providers"
 )
 
 // Serviceable trait provides service provider management functionality.

@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	carbon "govel/support/src/carbon"
-	"govel/support/src/traits"
+	carbon "govel/packages/support/src/carbon"
+	"govel/packages/support/src/traits"
 )
 
 // SleepDuration represents a duration with different time units

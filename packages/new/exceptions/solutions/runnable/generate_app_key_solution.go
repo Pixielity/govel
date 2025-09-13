@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/exec"
 
-	"govel/exceptions/core/solution"
-	solutionInterface "govel/exceptions/interfaces/solution"
+	"govel/packages/exceptions/core/solution"
+	solutionInterface "govel/packages/exceptions/interfaces/solution"
 )
 
 // GenerateAppKeySolution provides a runnable solution for missing application keys

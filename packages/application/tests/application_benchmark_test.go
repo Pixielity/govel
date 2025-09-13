@@ -3,8 +3,8 @@ package tests
 import (
 	"testing"
 
-	"govel/application"
-	"govel/application/mocks"
+	"govel/packages/application"
+	"govel/packages/application/mocks"
 )
 
 // BenchmarkApplicationCreation benchmarks application creation

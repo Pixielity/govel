@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"govel/exceptions"
+	"govel/packages/exceptions"
 )
 
 func TestNewException(t *testing.T) {

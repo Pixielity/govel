@@ -3,7 +3,7 @@ package mocks
 
 import (
 	"context"
-	"govel/new/webserver/src/interfaces"
+	"govel/packages/new/webserver/src/interfaces"
 )
 
 type WebserverMock struct {

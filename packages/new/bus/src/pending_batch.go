@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"govel/bus/src/interfaces"
+	"govel/packages/bus/src/interfaces"
 )
 
 // PendingBatch represents a batch of jobs waiting to be dispatched

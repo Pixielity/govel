@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"time"
 
-	"govel/new/webserver/src/enums"
-	"govel/new/webserver/src/factories"
-	"govel/new/webserver/src/helpers"
-	"govel/new/webserver/src/interfaces"
+	"govel/packages/new/webserver/src/enums"
+	"govel/packages/new/webserver/src/factories"
+	"govel/packages/new/webserver/src/helpers"
+	"govel/packages/new/webserver/src/interfaces"
 )
 
 // WebserverBuilder implements the builder pattern for constructing webserver instances.

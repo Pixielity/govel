@@ -52,10 +52,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 
-	"govel/new/webserver/src/adapters"
-	"govel/new/webserver/src/enums"
-	"govel/new/webserver/src/interfaces"
-	webserver "govel/new/webserver/src"
+	"govel/packages/new/webserver/src/adapters"
+	"govel/packages/new/webserver/src/enums"
+	"govel/packages/new/webserver/src/interfaces"
+	webserver "govel/packages/new/webserver/src"
 )
 
 // GoFiberAdapter provides integration between the Govel webserver interface and GoFiber framework.

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	serviceProviders "govel/application/providers"
-	applicationInterfaces "govel/types/src/interfaces/application"
-	interfaces "govel/types/src/interfaces/logger"
-	loggerInterfaces "govel/types/src/interfaces/logger"
-	"govel/logger"
+	serviceProviders "govel/packages/application/providers"
+	"govel/packages/logger"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	interfaces "govel/packages/types/src/interfaces/logger"
+	loggerInterfaces "govel/packages/types/src/interfaces/logger"
 )
 
 /**

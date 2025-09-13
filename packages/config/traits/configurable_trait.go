@@ -3,9 +3,9 @@ package traits
 import (
 	"sync"
 
-	"govel/application/helpers"
-	"govel/config"
-	"govel/types/src/interfaces/config"
+	"govel/packages/application/helpers"
+	"govel/packages/config"
+	interfaces "govel/packages/types/src/interfaces/config"
 )
 
 /**

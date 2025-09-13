@@ -1,8 +1,10 @@
 package facades
+
 import (
-	containerInterfaces "govel/types/src/interfaces/container"
-	facade "govel/support/src"
+	containerInterfaces "govel/packages/types/src/interfaces/container"
+	facade "govel/packages/support/src"
 )
+
 // Container provides a clean, static-like interface to the application's dependency injection container service.
 //
 // This facade implements the facade pattern, providing global access to the container
@@ -138,7 +140,7 @@ import (
 //	    return func(userData map[string]interface{}) *User {
 //	        validator := facades.Container().Make("validator")
 //	        hasher := facades.Container().Make("hash")
-//	        
+//
 //	        return &User{
 //	            Name:     userData["name"].(string),
 //	            Email:    userData["email"].(string),
@@ -191,7 +193,7 @@ import (
 //	// Multi-tenant container scoping
 //	func GetTenantContainer(tenantID string) ContainerInterface {
 //	    tenantContainer := facades.Container().Child()
-//	    
+//
 //	    tenantContainer.Instance("tenant_id", tenantID)
 //	    tenantContainer.Bind("database", func() interface{} {
 //	        return &TenantDatabase{
@@ -199,7 +201,7 @@ import (
 //	            connection: facades.Container().Make("base_database"),
 //	        }
 //	    })
-//	    
+//
 //	    return tenantContainer
 //	}
 //
@@ -245,7 +247,7 @@ import (
 //	        config := facades.Config().Get("database")
 //	        return newDatabase(config)
 //	    })
-//	    
+//
 //	    container.Bind("user_repository", func() interface{} {
 //	        return &UserRepository{
 //	            db: container.Make("database"),
@@ -264,7 +266,7 @@ import (
 //	    facades.Container().Singleton("config", func() interface{} {
 //	        return loadConfiguration()
 //	    })
-//	    
+//
 //	    facades.Container().Singleton("logger", func() interface{} {
 //	        return &Logger{
 //	            level: facades.Config().GetString("logging.level"),
@@ -276,7 +278,7 @@ import (
 //	    facades.Container().Singleton("database", func() interface{} {
 //	        return newDatabaseConnection()
 //	    })
-//	    
+//
 //	    facades.Container().Bind("user_repository", func() interface{} {
 //	        return &UserRepository{db: facades.Container().Make("database")}
 //	    })
@@ -284,7 +286,7 @@ import (
 //
 //	func RegisterCacheServices() {
 //	    cacheDriver := facades.Config().GetString("cache.driver")
-//	    
+//
 //	    switch cacheDriver {
 //	    case "redis":
 //	        facades.Container().Singleton("cache", func() interface{} {
@@ -367,19 +369,19 @@ import (
 //	        EnableCircularDependencyDetection: true,
 //	        MaxResolutionDepth: 50,
 //	        EnableServiceCaching: true,
-//	        
+//
 //	        // Lifecycle configuration
 //	        EnableLifecycleCallbacks: true,
 //	        EnableMiddleware: true,
-//	        
+//
 //	        // Performance settings
 //	        ConcurrentResolution: true,
 //	        ResolutionTimeout: 30 * time.Second,
-//	        
+//
 //	        // Debugging
 //	        EnableDebugMode: facades.App().IsLocal(),
 //	        LogResolutions: facades.Config().GetBool("container.log_resolutions"),
-//	        
+//
 //	        // Service providers
 //	        Providers: []ServiceProvider{
 //	            &CoreServiceProvider{},

@@ -3,9 +3,9 @@ package pipeline_test
 import (
 	"testing"
 
-	containerMocks "govel/container/mocks"
-	"govel/new/pipeline/src"
-	"govel/new/pipeline/src/interfaces"
+	containerMocks "govel/packages/container/mocks"
+	"govel/packages/new/pipeline/src"
+	"govel/packages/new/pipeline/src/interfaces"
 )
 
 // TestNewHub tests the NewHub constructor function

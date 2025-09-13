@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"govel/exceptions"
+	"govel/packages/exceptions"
 )
 
 func TestAllHTTPExceptions(t *testing.T) {

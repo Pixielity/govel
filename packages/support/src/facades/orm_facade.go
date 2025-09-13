@@ -1,8 +1,8 @@
 package facades
 
 import (
-	ormInterfaces "govel/types/src/interfaces/orm"
-	facade "govel/support/src"
+	ormInterfaces "govel/packages/types/src/interfaces/orm"
+	facade "govel/packages/support/src"
 )
 
 // ORM provides a clean, static-like interface to the application's Object-Relational Mapping service.

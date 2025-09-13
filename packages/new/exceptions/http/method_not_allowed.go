@@ -3,9 +3,9 @@ package http
 import (
 	"net/http"
 
-	"govel/exceptions/core"
-	"govel/exceptions/interfaces"
-	httpSolutions "govel/exceptions/solutions/http"
+	"govel/packages/exceptions/core"
+	"govel/packages/exceptions/interfaces"
+	httpSolutions "govel/packages/exceptions/solutions/http"
 )
 
 // MethodNotAllowedException represents a 405 Method Not Allowed error.

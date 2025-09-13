@@ -9,8 +9,8 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	interfaces "govel/types/src/interfaces/support"
-	"govel/support/src/str"
+	interfaces "govel/packages/types/src/interfaces/support"
+	"govel/packages/support/src/str"
 )
 
 // StringableImpl implements the Stringable interface with all Laravel-style string manipulation methods.

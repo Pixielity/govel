@@ -1,8 +1,8 @@
 package facades
 
 import (
-	appInterfaces "govel/types/src/interfaces/application"
-	facade "govel/support/src"
+	appInterfaces "govel/packages/types/src/interfaces/application"
+	facade "govel/packages/support/src"
 )
 
 // App provides a clean, static-like interface to the application's core service.

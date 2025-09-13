@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/exec"
 
-	"govel/exceptions/core/solution"
-	solutionInterface "govel/exceptions/interfaces/solution"
+	"govel/packages/exceptions/core/solution"
+	solutionInterface "govel/packages/exceptions/interfaces/solution"
 )
 
 // CreateDirectorySolution provides a runnable solution for creating missing directories

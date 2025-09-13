@@ -3,8 +3,8 @@ package http
 import (
 	"strconv"
 
-	"govel/exceptions/core/solution"
-	solutionInterface "govel/exceptions/interfaces/solution"
+	"govel/packages/exceptions/core/solution"
+	solutionInterface "govel/packages/exceptions/interfaces/solution"
 )
 
 // MethodNotAllowedSolution provides specific guidance for 405 Method Not Allowed errors

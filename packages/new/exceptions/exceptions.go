@@ -6,15 +6,15 @@ package exceptions
 
 // Re-export core interfaces for backward compatibility and ease of use
 import (
-	"govel/exceptions/core"
-	"govel/exceptions/core/solution"
-	"govel/exceptions/helpers"
-	httpExceptions "govel/exceptions/http"
-	"govel/exceptions/interfaces"
-	solutionInterface "govel/exceptions/interfaces/solution"
-	httpSolutions "govel/exceptions/solutions/http"
-	"govel/exceptions/solutions/runnable"
-	"govel/exceptions/solutions/providers"
+	"govel/packages/exceptions/core"
+	"govel/packages/exceptions/core/solution"
+	"govel/packages/exceptions/helpers"
+	httpExceptions "govel/packages/exceptions/http"
+	"govel/packages/exceptions/interfaces"
+	solutionInterface "govel/packages/exceptions/interfaces/solution"
+	httpSolutions "govel/packages/exceptions/solutions/http"
+	"govel/packages/exceptions/solutions/runnable"
+	"govel/packages/exceptions/solutions/providers"
 )
 
 // =============================================================================

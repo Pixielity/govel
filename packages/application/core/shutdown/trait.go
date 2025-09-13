@@ -6,9 +6,8 @@ import (
 	"os"
 	"time"
 
-	"govel/types/src/types/application"
-	applicationInterfaces "govel/types/src/interfaces/application"
-	providerInterfaces "govel/types/src/interfaces/application/providers"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	providerInterfaces "govel/packages/types/src/interfaces/application/providers"
 )
 
 // Shutdownable provides shutdown functionality using the ShutdownManager.

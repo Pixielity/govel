@@ -1,8 +1,8 @@
 package facades
 
 import (
-	configInterfaces "govel/types/src/interfaces/config"
-	facade "govel/support/src"
+	configInterfaces "govel/packages/types/src/interfaces/config"
+	facade "govel/packages/support/src"
 )
 
 // Config provides a clean, static-like interface to the application's configuration service.

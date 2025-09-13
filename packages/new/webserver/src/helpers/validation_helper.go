@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"govel/new/webserver/src/enums"
+	"govel/packages/new/webserver/src/enums"
 )
 
 // ValidationHelper provides utilities for webserver configuration validation.

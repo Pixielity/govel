@@ -1,8 +1,8 @@
 package mocks
 
 import (
-	containerInterfaces "govel/types/src/interfaces/container"
-	"govel/types/src/types"
+	containerInterfaces "govel/packages/types/src/interfaces/container"
+	types "govel/packages/types/src/types/container"
 )
 
 /**
@@ -403,6 +403,24 @@ func (m *MockContainer) IsSingleton(abstract types.ServiceIdentifier) bool {
 }
 
 /**
+ * Count returns the total number of registered services
+ */
+func (m *MockContainer) Count() int {
+	return len(m.Bindings)
+}
+
+/**
+ * RegisteredServices returns a list of all registered service names
+ */
+func (m *MockContainer) RegisteredServices() []string {
+	services := make([]string, 0, len(m.Bindings))
+	for key := range m.Bindings {
+		services = append(services, key)
+	}
+	return services
+}
+
+/**
  * HasSingletonInstance checks if a singleton instance exists
  */
 func (m *MockContainer) HasSingletonInstance(abstract types.ServiceIdentifier) bool {
@@ -451,18 +469,13 @@ func NewMockContainable() *MockContainable {
 
 // ContainableInterface Implementation
 
-func (m *MockContainable) Container() containerInterfaces.ContainerInterface {
+func (m *MockContainable) GetContainer() containerInterfaces.ContainerInterface {
 	return m.ContainerInstance
 }
 
-func (m *MockContainable) SetContainer(container interface{}) {
-	if ctr, ok := container.(containerInterfaces.ContainerInterface); ok {
-		m.ContainerInstance = ctr
-		m.HasContainerValue = true
-	} else if ctr, ok := container.(*MockContainer); ok {
-		m.ContainerInstance = ctr
-		m.HasContainerValue = true
-	}
+func (m *MockContainable) SetContainer(container containerInterfaces.ContainerInterface) {
+	m.ContainerInstance = container
+	m.HasContainerValue = container != nil
 }
 
 func (m *MockContainable) HasContainer() bool {

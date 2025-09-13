@@ -5,9 +5,9 @@ import (
 	"crypto/cipher"
 	"fmt"
 
-	"govel/types/src/enums/encryption"
-	"govel/encryption/src/exceptions"
-	encryptionInterfaces "govel/types/src/interfaces/encryption"
+	"govel/packages/encryption/src/exceptions"
+	enums "govel/packages/types/src/enums/encryption"
+	encryptionInterfaces "govel/packages/types/src/interfaces/encryption"
 )
 
 // AESGCMEncrypter implements AES encryption in GCM (Galois/Counter Mode) mode.

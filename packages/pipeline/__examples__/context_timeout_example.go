@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"govel/new/pipeline/src"
+	"govel/packages/new/pipeline/src"
 )
 
 // Task represents a task to be processed

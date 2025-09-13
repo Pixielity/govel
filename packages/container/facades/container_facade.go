@@ -1,6 +1,9 @@
 package facades
 
-import facade "govel/support/src"
+import (
+	facade "govel/packages/support/src"
+	containerInterfaces "govel/packages/types/src/interfaces/container"
+)
 
 // Container provides a clean, static-like interface to the application's dependency injection container service.
 //
@@ -137,7 +140,7 @@ import facade "govel/support/src"
 //	    return func(userData map[string]interface{}) *User {
 //	        validator := facades.Container().Make("validator")
 //	        hasher := facades.Container().Make("hash")
-//	        
+//
 //	        return &User{
 //	            Name:     userData["name"].(string),
 //	            Email:    userData["email"].(string),
@@ -190,7 +193,7 @@ import facade "govel/support/src"
 //	// Multi-tenant container scoping
 //	func GetTenantContainer(tenantID string) ContainerInterface {
 //	    tenantContainer := facades.Container().Child()
-//	    
+//
 //	    tenantContainer.Instance("tenant_id", tenantID)
 //	    tenantContainer.Bind("database", func() interface{} {
 //	        return &TenantDatabase{
@@ -198,7 +201,7 @@ import facade "govel/support/src"
 //	            connection: facades.Container().Make("base_database"),
 //	        }
 //	    })
-//	    
+//
 //	    return tenantContainer
 //	}
 //
@@ -244,7 +247,7 @@ import facade "govel/support/src"
 //	        config := facades.Config().Get("database")
 //	        return newDatabase(config)
 //	    })
-//	    
+//
 //	    container.Bind("user_repository", func() interface{} {
 //	        return &UserRepository{
 //	            db: container.Make("database"),
@@ -263,7 +266,7 @@ import facade "govel/support/src"
 //	    facades.Container().Singleton("config", func() interface{} {
 //	        return loadConfiguration()
 //	    })
-//	    
+//
 //	    facades.Container().Singleton("logger", func() interface{} {
 //	        return &Logger{
 //	            level: facades.Config().GetString("logging.level"),
@@ -275,7 +278,7 @@ import facade "govel/support/src"
 //	    facades.Container().Singleton("database", func() interface{} {
 //	        return newDatabaseConnection()
 //	    })
-//	    
+//
 //	    facades.Container().Bind("user_repository", func() interface{} {
 //	        return &UserRepository{db: facades.Container().Make("database")}
 //	    })
@@ -283,7 +286,7 @@ import facade "govel/support/src"
 //
 //	func RegisterCacheServices() {
 //	    cacheDriver := facades.Config().GetString("cache.driver")
-//	    
+//
 //	    switch cacheDriver {
 //	    case "redis":
 //	        facades.Container().Singleton("cache", func() interface{} {
@@ -366,19 +369,19 @@ import facade "govel/support/src"
 //	        EnableCircularDependencyDetection: true,
 //	        MaxResolutionDepth: 50,
 //	        EnableServiceCaching: true,
-//	        
+//
 //	        // Lifecycle configuration
 //	        EnableLifecycleCallbacks: true,
 //	        EnableMiddleware: true,
-//	        
+//
 //	        // Performance settings
 //	        ConcurrentResolution: true,
 //	        ResolutionTimeout: 30 * time.Second,
-//	        
+//
 //	        // Debugging
 //	        EnableDebugMode: facades.App().IsLocal(),
 //	        LogResolutions: facades.Config().GetBool("container.log_resolutions"),
-//	        
+//
 //	        // Service providers
 //	        Providers: []ServiceProvider{
 //	            &CoreServiceProvider{},
@@ -389,14 +392,14 @@ import facade "govel/support/src"
 //
 //	    return container.NewContainer(config)
 //	})
-func Container() interface{} {
+func Container() containerInterfaces.ContainerInterface {
 	// Use facade.Resolve() for clean facade implementation:
 	// - Resolves "container" service from the dependency injection container
 	// - Performs type assertion to ContainerInterface
 	// - Caches the result for subsequent calls
 	// - Panics with descriptive error if resolution fails
 	// - Thread-safe with optimized locking
-	return facade.Resolve[interface{}]("container")
+	return facade.Resolve[containerInterfaces.ContainerInterface](containerInterfaces.CONTAINER_TOKEN)
 }
 
 // ContainerWithError provides error-safe access to the dependency injection container service.
@@ -432,12 +435,12 @@ func Container() interface{} {
 //	        return &OptionalService{}
 //	    })
 //	}
-func ContainerWithError() (interface{}, error) {
+func ContainerWithError() (containerInterfaces.ContainerInterface, error) {
 	// Use facade.TryResolve() for error-return behavior:
 	// - Resolves "container" service from the dependency injection container
 	// - Performs type assertion with error handling
 	// - Caches the result for subsequent calls
 	// - Returns detailed error information instead of panicking
 	// - Thread-safe with optimized locking
-	return facade.TryResolve[interface{}]("container")
+	return facade.TryResolve[containerInterfaces.ContainerInterface](containerInterfaces.CONTAINER_TOKEN)
 }

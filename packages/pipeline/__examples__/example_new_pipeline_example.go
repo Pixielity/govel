@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"govel/new/pipeline/src"
+	"govel/packages/new/pipeline/src"
 )
 
 // ExampleNewPipeline demonstrates creating a new Pipeline instance.

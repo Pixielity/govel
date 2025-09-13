@@ -3,8 +3,8 @@ package routing
 
 import (
 	"fmt"
-	"govel/new/webserver/src/enums"
-	"govel/new/webserver/src/interfaces"
+	"govel/packages/new/webserver/src/enums"
+	"govel/packages/new/webserver/src/interfaces"
 )
 
 // Route represents a single route definition with all its associated metadata.

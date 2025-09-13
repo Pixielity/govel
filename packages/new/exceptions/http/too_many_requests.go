@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"govel/exceptions/core"
-	"govel/exceptions/interfaces"
-	httpSolutions "govel/exceptions/solutions/http"
+	"govel/packages/exceptions/core"
+	"govel/packages/exceptions/interfaces"
+	httpSolutions "govel/packages/exceptions/solutions/http"
 )
 
 // TooManyRequestsException represents a 429 Too Many Requests error.

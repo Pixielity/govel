@@ -3,7 +3,7 @@ package models
 import (
 	"strings"
 
-	"govel/ignition/interfaces"
+	"govel/packages/ignition/interfaces"
 )
 
 // Solution represents a suggested fix for an error matching Laravel Ignition format

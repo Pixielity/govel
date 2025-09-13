@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"govel/bus/src/interfaces"
+	"govel/packages/bus/src/interfaces"
 )
 
 // BatchDispatchedEvent is fired when a batch is dispatched

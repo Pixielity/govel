@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"govel/container"
+	"govel/packages/container"
 )
 
 // TestContainerBinding tests basic service binding

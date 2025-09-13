@@ -18,10 +18,9 @@ import (
 	"sync"
 	"time"
 
-	"govel/types/src/constants/application"
-	providerInterfaces "govel/types/src/interfaces/application/providers"
-	"govel/types/src/types/application"
-	"govel/logger"
+	"govel/packages/logger"
+	constants "govel/packages/types/src/constants/application"
+	providerInterfaces "govel/packages/types/src/interfaces/application/providers"
 )
 
 // ShutdownManager handles the graceful shutdown process for the application.

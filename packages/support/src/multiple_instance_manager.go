@@ -11,12 +11,11 @@ import (
 	"reflect"
 	"sync"
 
-	applicationInterfaces "govel/types/src/interfaces/application"
-	configInterfaces "govel/types/src/interfaces/config"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	configInterfaces "govel/packages/types/src/interfaces/config"
 
-	"govel/support/src/str"
-	"govel/support/src/traits"
-	"govel/types/src/types/support"
+	"govel/packages/support/src/str"
+	"govel/packages/support/src/traits"
 )
 
 // MultipleInstanceManager provides Laravel-style management of multiple named instances.

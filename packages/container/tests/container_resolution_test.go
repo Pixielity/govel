@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"govel/container"
+	"govel/packages/container"
 )
 
 // TestContainerResolution tests service resolution

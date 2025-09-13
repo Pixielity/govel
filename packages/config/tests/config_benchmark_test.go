@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"testing"
 
-	"govel/config"
-	"govel/config/mocks"
+	"govel/packages/config"
+	"govel/packages/config/mocks"
 )
 
 // BenchmarkConfigSet benchmarks configuration setting operations
 func BenchmarkConfigSet(b *testing.B) {
 	cfg := config.New()
-	
+
 	for i := 0; i < b.N; i++ {
 		cfg.Set("benchmark.key", i)
 	}
@@ -21,7 +21,7 @@ func BenchmarkConfigSet(b *testing.B) {
 func BenchmarkConfigGetString(b *testing.B) {
 	cfg := config.New()
 	cfg.Set("benchmark.key", "benchmark_value")
-	
+
 	for i := 0; i < b.N; i++ {
 		_ = cfg.GetString("benchmark.key", "default")
 	}
@@ -31,7 +31,7 @@ func BenchmarkConfigGetString(b *testing.B) {
 func BenchmarkConfigGetInt(b *testing.B) {
 	cfg := config.New()
 	cfg.Set("benchmark.number", 12345)
-	
+
 	for i := 0; i < b.N; i++ {
 		_ = cfg.GetInt("benchmark.number", 0)
 	}
@@ -41,7 +41,7 @@ func BenchmarkConfigGetInt(b *testing.B) {
 func BenchmarkConfigGetBool(b *testing.B) {
 	cfg := config.New()
 	cfg.Set("benchmark.flag", true)
-	
+
 	for i := 0; i < b.N; i++ {
 		_ = cfg.GetBool("benchmark.flag", false)
 	}
@@ -51,7 +51,7 @@ func BenchmarkConfigGetBool(b *testing.B) {
 func BenchmarkConfigHasKey(b *testing.B) {
 	cfg := config.New()
 	cfg.Set("benchmark.key", "value")
-	
+
 	for i := 0; i < b.N; i++ {
 		_ = cfg.HasKey("benchmark.key")
 	}
@@ -60,12 +60,12 @@ func BenchmarkConfigHasKey(b *testing.B) {
 // BenchmarkConfigAllConfig benchmarks getting all configuration
 func BenchmarkConfigAllConfig(b *testing.B) {
 	cfg := config.New()
-	
+
 	// Setup some config values
 	for i := 0; i < 100; i++ {
 		cfg.Set(fmt.Sprintf("key%d", i), fmt.Sprintf("value%d", i))
 	}
-	
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = cfg.AllConfig()
@@ -75,7 +75,7 @@ func BenchmarkConfigAllConfig(b *testing.B) {
 // BenchmarkMockConfigOperations benchmarks mock config operations
 func BenchmarkMockConfigOperations(b *testing.B) {
 	mockCfg := mocks.NewMockConfig()
-	
+
 	for i := 0; i < b.N; i++ {
 		mockCfg.Set("benchmark.key", i)
 		_ = mockCfg.GetString("benchmark.key", "default")
@@ -85,12 +85,12 @@ func BenchmarkMockConfigOperations(b *testing.B) {
 // BenchmarkConfigMixedOperations benchmarks mixed config operations
 func BenchmarkConfigMixedOperations(b *testing.B) {
 	cfg := config.New()
-	
+
 	for i := 0; i < b.N; i++ {
 		cfg.Set("mixed.string", "test")
 		cfg.Set("mixed.int", i)
 		cfg.Set("mixed.bool", i%2 == 0)
-		
+
 		_ = cfg.GetString("mixed.string", "")
 		_ = cfg.GetInt("mixed.int", 0)
 		_ = cfg.GetBool("mixed.bool", false)

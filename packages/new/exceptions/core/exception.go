@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"govel/exceptions/interfaces"
-	solutionInterface "govel/exceptions/interfaces/solution"
+	"govel/packages/exceptions/interfaces"
+	solutionInterface "govel/packages/exceptions/interfaces/solution"
 )
 
 // Exception is the base exception struct that implements ExceptionInterface.

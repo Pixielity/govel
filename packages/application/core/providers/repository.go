@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"sort"
 
-	applicationInterfaces "govel/types/src/interfaces/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
 )
 
 // ProviderRepository handles the registration and management of service providers.

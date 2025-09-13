@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"govel/new/webserver/src/interfaces"
+	"govel/packages/new/webserver/src/interfaces"
 	"io"
 	"mime/multipart"
 	"net/http"

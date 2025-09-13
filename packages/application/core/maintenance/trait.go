@@ -3,9 +3,8 @@ package maintenance
 import (
 	"time"
 
-	"govel/types/src/types/application"
-	applicationInterfaces "govel/types/src/interfaces/application"
-	containerInterfaces "govel/types/src/interfaces/container"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	containerInterfaces "govel/packages/types/src/interfaces/container"
 )
 
 /**

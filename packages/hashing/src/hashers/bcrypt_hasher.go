@@ -1,9 +1,9 @@
 package hashers
 
 import (
-	"govel/hashing/src/exceptions"
-	interfaces "govel/types/src/interfaces/hashing"
-	"govel/support/src/number"
+	"govel/packages/hashing/src/exceptions"
+	interfaces "govel/packages/types/src/interfaces/hashing"
+	"govel/packages/support/src/number"
 
 	"golang.org/x/crypto/bcrypt"
 )

@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"strings"
 
-	"govel/types/src/enums/encryption"
-	"govel/types/src/types/encryption"
-	encryptionInterfaces "govel/types/src/interfaces/encryption"
+	enums "govel/packages/types/src/enums/encryption"
+	encryptionInterfaces "govel/packages/types/src/interfaces/encryption"
+	types "govel/packages/types/src"
 )
 
 // BaseEncrypter provides common functionality for all encrypter implementations.

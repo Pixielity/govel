@@ -6,11 +6,11 @@ package providers
 import (
 	"fmt"
 
-	providers "govel/application/providers"
-	applicationInterfaces "govel/types/src/interfaces/application"
+	providers "govel/packages/application/providers"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
 
-	cookie "govel/cookie/src"
-	cookieInterfaces "govel/cookie/src/interfaces"
+	cookie "govel/packages/cookie/src"
+	cookieInterfaces "govel/packages/cookie/src/interfaces"
 )
 
 // CookieServiceProvider implements a Laravel-compatible service provider

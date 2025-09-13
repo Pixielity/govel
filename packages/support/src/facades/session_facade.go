@@ -1,8 +1,8 @@
 package facades
 
 import (
-	sessionInterfaces "govel/types/src/interfaces/session"
-	facade "govel/support/src"
+	sessionInterfaces "govel/packages/types/src/interfaces/session"
+	facade "govel/packages/support/src"
 )
 
 // Session provides a clean, static-like interface to the application's session management service.

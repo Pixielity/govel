@@ -16,7 +16,7 @@ import (
 	"os"
 	"sync"
 
-	"govel/types/src/interfaces/logger"
+	interfaces "govel/packages/types/src/interfaces/logger"
 )
 
 // LogLevel represents the logging level.
@@ -458,3 +458,8 @@ func (l *Logger) FlushLogger() error {
 	}
 	return nil
 }
+
+// Compile-time interface compliance checks
+// These ensure Logger properly implements required interfaces
+// Prevents runtime errors from missing method implementations
+var _ interfaces.LoggerInterface = (*Logger)(nil) // Direct logging operations

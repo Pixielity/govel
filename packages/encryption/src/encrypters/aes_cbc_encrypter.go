@@ -5,9 +5,9 @@ import (
 	"crypto/cipher"
 	"fmt"
 
-	"govel/types/src/enums/encryption"
-	"govel/encryption/src/exceptions"
-	encryptionInterfaces "govel/types/src/interfaces/encryption"
+	"govel/packages/encryption/src/exceptions"
+	enums "govel/packages/types/src/enums/encryption"
+	encryptionInterfaces "govel/packages/types/src/interfaces/encryption"
 )
 
 // AESCBCEncrypter implements AES encryption in CBC (Cipher Block Chaining) mode.
@@ -304,14 +304,14 @@ func pkcs7Pad(data []byte, blockSize int) []byte {
 	// Calculate padding length needed to reach block boundary
 	// Padding is always 1-blockSize bytes, never 0
 	padding := blockSize - (len(data) % blockSize)
-	
+
 	// Create padding bytes, each containing the padding length
 	// This allows unambiguous padding detection during removal
 	padText := make([]byte, padding)
 	for i := range padText {
 		padText[i] = byte(padding)
 	}
-	
+
 	// Append padding to original data
 	return append(data, padText...)
 }

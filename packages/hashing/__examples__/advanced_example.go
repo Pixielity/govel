@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"govel/hashing/src"
-	"govel/hashing/src/exceptions"
+	"govel/packages/hashing/src"
+	"govel/packages/hashing/src/exceptions"
 )
 
 // AdvancedContainer provides more sophisticated configuration

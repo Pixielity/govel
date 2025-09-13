@@ -3,8 +3,8 @@ package traits
 import (
 	"sync"
 
-	"govel/container"
-	"govel/types/src/interfaces/container"
+	"govel/packages/container"
+	interfaces "govel/packages/types/src/interfaces/container"
 )
 
 /**
@@ -71,7 +71,7 @@ func (t *Containable) GetContainer() interfaces.ContainerInterface {
  *
  * @param containerInterface interface{} The container instance to set
  */
-func (t *Containable) SetContainer(containerInterface interface{}) {
+func (t *Containable) SetContainer(containerInterface interfaces.ContainerInterface) {
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
 

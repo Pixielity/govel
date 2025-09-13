@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"govel/new/pipeline/src"
+	"govel/packages/new/pipeline/src"
 )
 
 // TestNewPipelineContext tests the NewPipelineContext constructor function

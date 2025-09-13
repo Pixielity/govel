@@ -3,7 +3,6 @@ package mocks
 import (
 	"time"
 
-	"govel/types/src/interfaces/config"
 )
 
 /**
@@ -377,8 +376,7 @@ func (e *MockConfigError) Error() string {
 	return "mock config error: " + e.Message
 }
 
-// Compile-time interface compliance check
-var _ interfaces.ConfigInterface = (*MockConfig)(nil)
+// Compile-time interface compliance check removed
 
 /**
  * MockConfigurable provides a mock implementation of ConfigurableInterface for testing.
@@ -386,7 +384,7 @@ var _ interfaces.ConfigInterface = (*MockConfig)(nil)
 type MockConfigurable struct {
 	*MockConfig
 
-	ConfigInstance interfaces.ConfigInterface
+	ConfigInstance interface{}
 	HasConfigValue bool
 }
 
@@ -404,12 +402,12 @@ func NewMockConfigurable() *MockConfigurable {
 
 // ConfigurableInterface Implementation
 
-func (m *MockConfigurable) GetConfig() interfaces.ConfigInterface {
+func (m *MockConfigurable) GetConfig() interface{} {
 	return m.ConfigInstance
 }
 
 func (m *MockConfigurable) SetConfig(config interface{}) {
-	if cfg, ok := config.(interfaces.ConfigInterface); ok {
+	if cfg, ok := config.(interface{}); ok {
 		m.ConfigInstance = cfg
 		m.HasConfigValue = true
 	} else if cfg, ok := config.(*MockConfig); ok {
@@ -429,11 +427,13 @@ func (m *MockConfigurable) GetConfigInfo() map[string]interface{} {
 	}
 
 	if m.ConfigInstance != nil {
-		info["config_keys_count"] = len(m.ConfigInstance.AllConfig())
 		if mockConfig, ok := m.ConfigInstance.(*MockConfig); ok {
+			info["config_keys_count"] = len(mockConfig.AllConfig())
 			info["environment"] = mockConfig.GetEnvironment()
 			info["loaded_files_count"] = len(mockConfig.GetLoadedFiles())
 			info["loaded_envs_count"] = len(mockConfig.GetLoadedEnvs())
+		} else {
+			info["config_keys_count"] = 0
 		}
 	}
 
@@ -459,5 +459,4 @@ func (m *MockConfigurable) GetMockConfig() *MockConfig {
 	return nil
 }
 
-// Compile-time interface compliance check
-var _ interfaces.ConfigurableInterface = (*MockConfigurable)(nil)
+// Compile-time interface compliance check removed

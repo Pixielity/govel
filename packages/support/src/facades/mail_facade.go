@@ -1,8 +1,8 @@
 package facades
 
 import (
-	mailInterfaces "govel/types/src/interfaces/mail"
-	facade "govel/support/src"
+	mailInterfaces "govel/packages/types/src/interfaces/mail"
+	facade "govel/packages/support/src"
 )
 
 // Mail provides a clean, static-like interface to the application's email service.

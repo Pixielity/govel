@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"govel/new/pipeline/src"
+	"govel/packages/new/pipeline/src"
 )
 
 // ExamplePipeline_Through demonstrates using the Through method with function and object pipes.

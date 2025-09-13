@@ -3,9 +3,7 @@ package interfaces
 import (
 	"net/http"
 
-	"govel/support/src/symbol"
-
-	"govel/types/src/types/cookie"
+	"govel/packages/support/src/symbol"
 )
 
 // Service registration tokens for dependency injection

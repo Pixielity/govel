@@ -7,9 +7,8 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"govel/types/src/enums/encryption"
-	"govel/types/src/types/encryption"
-	encryptionInterfaces "govel/types/src/interfaces/encryption"
+	enums "govel/packages/types/src/enums/encryption"
+	encryptionInterfaces "govel/packages/types/src/interfaces/encryption"
 	"hash"
 )
 
@@ -77,13 +76,13 @@ func NewAESCTREncrypter(key []byte, cipher string) (*AESCTREncrypter, error) {
 //   - Support for both serialized and direct data encryption
 //
 // CTR mode encryption process:
-//   1. Serialize value if requested (JSON or direct conversion)
-//   2. Generate cryptographically secure random IV
-//   3. Initialize AES cipher with encryption key
-//   4. Create CTR mode stream cipher with IV
-//   5. XOR plaintext with cipher stream to produce ciphertext
-//   6. Compute HMAC-SHA256 MAC over IV and ciphertext
-//   7. Create base64-encoded JSON payload
+//  1. Serialize value if requested (JSON or direct conversion)
+//  2. Generate cryptographically secure random IV
+//  3. Initialize AES cipher with encryption key
+//  4. Create CTR mode stream cipher with IV
+//  5. XOR plaintext with cipher stream to produce ciphertext
+//  6. Compute HMAC-SHA256 MAC over IV and ciphertext
+//  7. Create base64-encoded JSON payload
 //
 // Returns base64-encoded JSON payload or error if any encryption step fails.
 func (e *AESCTREncrypter) Encrypt(value interface{}, serialize bool) (string, error) {
@@ -156,13 +155,13 @@ func (e *AESCTREncrypter) EncryptString(value string) (string, error) {
 //   - Protection against chosen-ciphertext attacks through MAC verification
 //
 // CTR mode decryption process:
-//   1. Parse and validate base64-encoded JSON payload structure
-//   2. Verify HMAC-SHA256 MAC for authentication and integrity
-//   3. Decode base64-encoded IV and ciphertext components
-//   4. Validate IV length matches cipher requirements
-//   5. Initialize AES cipher and CTR mode stream
-//   6. XOR ciphertext with cipher stream to recover plaintext
-//   7. Deserialize result if requested
+//  1. Parse and validate base64-encoded JSON payload structure
+//  2. Verify HMAC-SHA256 MAC for authentication and integrity
+//  3. Decode base64-encoded IV and ciphertext components
+//  4. Validate IV length matches cipher requirements
+//  5. Initialize AES cipher and CTR mode stream
+//  6. XOR ciphertext with cipher stream to recover plaintext
+//  7. Deserialize result if requested
 //
 // Returns decrypted value or error if validation or decryption fails.
 func (e *AESCTREncrypter) Decrypt(payload string, unserialize bool) (interface{}, error) {

@@ -1,8 +1,8 @@
 package facades
 
 import (
-	testingInterfaces "govel/types/src/interfaces/testing"
-	facade "govel/support/src"
+	testingInterfaces "govel/packages/types/src/interfaces/testing"
+	facade "govel/packages/support/src"
 )
 
 // Testing provides a clean, static-like interface to the application's testing utilities service.

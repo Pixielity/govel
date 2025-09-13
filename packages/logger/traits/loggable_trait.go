@@ -3,8 +3,8 @@ package traits
 import (
 	"sync"
 
-	"govel/logger"
-	"govel/types/src/interfaces/logger"
+	"govel/packages/logger"
+	"govel/packages/types/src/interfaces/logger"
 )
 
 /**

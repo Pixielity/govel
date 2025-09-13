@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"govel/application/mocks"
+	"govel/packages/application/mocks"
 )
 
 // TestApplicationLifecycle tests application lifecycle methods

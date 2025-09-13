@@ -1,8 +1,8 @@
 package helpers
 
 import (
-	"govel/exceptions/core"
-	"govel/exceptions/interfaces"
+	"govel/packages/exceptions/core"
+	"govel/packages/exceptions/interfaces"
 )
 
 // Abort creates and returns a new exception with the given status code and message.

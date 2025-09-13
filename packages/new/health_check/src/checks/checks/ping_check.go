@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	"govel/healthcheck/src/checks"
-	"govel/healthcheck/src/enums"
-	"govel/healthcheck/src/interfaces"
+	"govel/packages/healthcheck/src/checks"
+	"govel/packages/healthcheck/src/enums"
+	"govel/packages/healthcheck/src/interfaces"
 )
 
 // PingCheck performs HTTP connectivity checks to verify endpoint availability.

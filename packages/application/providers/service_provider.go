@@ -4,9 +4,8 @@
 package providers
 
 import (
-	"govel/types/src/types/application"
-	applicationInterfaces "govel/types/src/interfaces/application"
-	providerInterfaces "govel/types/src/interfaces/application/providers"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
+	providerInterfaces "govel/packages/types/src/interfaces/application/providers"
 )
 
 // ServiceProvider provides a base implementation for service providers.

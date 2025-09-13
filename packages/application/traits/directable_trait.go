@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"sync"
 
-	"govel/types/src/constants/application"
-	traitInterfaces "govel/types/src/interfaces/application"
+	constants "govel/packages/types/src/constants/application"
+	traitInterfaces "govel/packages/types/src/interfaces/application"
 )
 
 /**

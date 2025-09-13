@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"sync"
 
-	"govel/bus/src/interfaces"
+	"govel/packages/bus/src/interfaces"
 )
 
 // Dispatcher is the main command dispatcher implementation

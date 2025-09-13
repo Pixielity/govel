@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"govel/types/src/enums/application"
-	traitInterfaces "govel/types/src/interfaces/application/traits"
+	enums "govel/packages/types/src/enums/application"
+	traitInterfaces "govel/packages/types/src/interfaces/application/traits"
 )
 
 /**
@@ -538,8 +538,8 @@ func (t *Lifecycleable) SetStateEnum(state enums.LifecycleState) {
 		t.terminated = true
 		t.started = false
 		t.stopped = true
-	// No explicit cases for StateMaintenance, StateError, StateShuttingDown
-	// as they don't directly map to boolean state changes
+		// No explicit cases for StateMaintenance, StateError, StateShuttingDown
+		// as they don't directly map to boolean state changes
 	}
 }
 

@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"govel/config"
+	"govel/packages/config"
 )
 
 // TestConfigCreation tests basic config creation

@@ -3,11 +3,11 @@ package builders
 import (
 	"time"
 
-	"govel/application"
-	"govel/types/src/enums/application"
-	"govel/application/helpers"
-	"govel/container"
-	applicationInterfaces "govel/types/src/interfaces/application"
+	"govel/packages/application"
+	"govel/packages/application/helpers"
+	"govel/packages/container"
+	enums "govel/packages/types/src/enums/application"
+	applicationInterfaces "govel/packages/types/src/interfaces/application"
 )
 
 // app_builder.go implements the Builder pattern for GoVel application creation.

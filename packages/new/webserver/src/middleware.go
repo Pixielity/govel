@@ -3,7 +3,7 @@
 package webserver
 
 import (
-	"govel/new/webserver/src/interfaces"
+	"govel/packages/new/webserver/src/interfaces"
 )
 
 // BaseMiddleware provides default implementations for all middleware methods.

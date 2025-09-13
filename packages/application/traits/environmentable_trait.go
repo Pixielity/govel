@@ -3,9 +3,9 @@ package traits
 import (
 	"sync"
 
-	"govel/types/src/enums/application"
-	"govel/application/helpers"
-	traitInterfaces "govel/types/src/interfaces/application/traits"
+	"govel/packages/application/helpers"
+	enums "govel/packages/types/src/enums/application"
+	traitInterfaces "govel/packages/types/src/interfaces/application/traits"
 )
 
 /**
@@ -120,12 +120,12 @@ func (e *Environmentable) SetEnvironment(env string) {
 func (e *Environmentable) SetEnvironmentEnum(env enums.Environment) {
 	e.mutex.Lock()
 	defer e.mutex.Unlock()
-	
+
 	if !env.IsValid() {
 		// Default to development if invalid
 		env = enums.EnvironmentDevelopment
 	}
-	
+
 	e.environment = env
 
 	// Automatically disable debug in production
@@ -225,13 +225,13 @@ func (e *Environmentable) GetEnvironmentInfo() map[string]interface{} {
 	defer e.mutex.RUnlock()
 
 	return map[string]interface{}{
-		"environment":    e.environment.String(),
+		"environment":      e.environment.String(),
 		"environment_enum": e.environment,
-		"debug":          e.debug,
-		"is_production":  e.environment.IsProduction(),
-		"is_development": e.environment.IsDevelopment(),
-		"is_testing":     e.environment.IsTesting(),
-		"is_staging":     e.environment.IsStaging(),
+		"debug":            e.debug,
+		"is_production":    e.environment.IsProduction(),
+		"is_development":   e.environment.IsDevelopment(),
+		"is_testing":       e.environment.IsTesting(),
+		"is_staging":       e.environment.IsStaging(),
 	}
 }
 

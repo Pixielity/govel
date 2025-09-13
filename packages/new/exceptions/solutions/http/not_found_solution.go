@@ -1,8 +1,8 @@
 package http
 
 import (
-	"govel/exceptions/core/solution"
-	solutionInterface "govel/exceptions/interfaces/solution"
+	"govel/packages/exceptions/core/solution"
+	solutionInterface "govel/packages/exceptions/interfaces/solution"
 )
 
 // NotFoundSolution provides specific guidance for 404 Not Found errors

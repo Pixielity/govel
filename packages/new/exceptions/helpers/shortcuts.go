@@ -3,7 +3,7 @@ package helpers
 import (
 	"net/http"
 
-	"govel/exceptions/interfaces"
+	"govel/packages/exceptions/interfaces"
 )
 
 // Abort400 creates a new 400 Bad Request exception.

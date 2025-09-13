@@ -1,8 +1,8 @@
 package facades
 
 import (
-	authInterfaces "govel/types/src/interfaces/auth"
-	facade "govel/support/src"
+	authInterfaces "govel/packages/types/src/interfaces/auth"
+	facade "govel/packages/support/src"
 )
 
 // Auth provides a clean, static-like interface to the application's authentication service.

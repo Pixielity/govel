@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"govel/application/builders"
+	"govel/packages/application/builders"
 )
 
 // TestAppBuilderConfiguration tests all configuration methods
