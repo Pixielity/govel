@@ -1,0 +1,499 @@
+# 🤖 GoVel Framework - Automated Dependency Updates
+#
+# This workflow provides automated dependency management for the GoVel framework.
+# It handles Go module updates, security patches, and version compatibility checks
+# to keep the codebase secure and up-to-date.
+#
+# Features:
+# - 📦 Automated Go module updates
+# - 🔒 Security patch prioritization
+# - 🧪 Automated testing of dependency updates
+# - 📋 Compatibility verification across Go versions
+# - 🔄 Batch updates for related dependencies
+# - 📊 Update impact analysis
+#
+# Triggers:
+# - Scheduled weekly updates (Mondays at 3 AM UTC)
+# - Manual workflow dispatch with custom options
+# - Dependabot integration
+#
+# Author: GoVel Framework Team
+# Version: 1.0.0
+
+name: 🤖 Dependency Updates
+
+on:
+  # 📅 Scheduled dependency updates
+  schedule:
+    - cron: '0 3 * * 1' # Every Monday at 3 AM UTC
+  
+  # 🎛️ Manual dependency updates
+  workflow_dispatch:
+    inputs:
+      update_type:
+        description: '📦 Type of update to perform'
+        required: true
+        default: 'minor'
+        type: choice
+        options:
+          - 'patch'     # Patch updates only (1.2.3 -> 1.2.4)
+          - 'minor'     # Minor updates (1.2.3 -> 1.3.0)
+          - 'major'     # Major updates (1.2.3 -> 2.0.0)
+          - 'security'  # Security updates only
+          - 'all'       # All available updates
+      create_pr:
+        description: '🔀 Create pull request for updates'
+        required: true
+        default: true
+        type: boolean
+      test_updates:
+        description: '🧪 Run tests before creating PR'
+        required: true
+        default: true
+        type: boolean
+
+# 🔒 Security: Required permissions for dependency updates
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  checks: write
+
+# 🌍 Environment variables
+env:
+  GO_VERSION: '1.23'
+  UPDATE_TYPE: ${{ github.event.inputs.update_type || 'minor' }}
+  CREATE_PR: ${{ github.event.inputs.create_pr || 'true' }}
+  TEST_UPDATES: ${{ github.event.inputs.test_updates || 'true' }}
+
+jobs:
+  # 🔍 Check for available updates
+  check-updates:
+    name: 🔍 Check Available Updates
+    runs-on: ubuntu-latest
+    outputs:
+      has-updates: ${{ steps.scan.outputs.has-updates }}
+      update-summary: ${{ steps.scan.outputs.update-summary }}
+      packages-with-updates: ${{ steps.scan.outputs.packages-with-updates }}
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐹 Set up Go ${{ env.GO_VERSION }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: 🔧 Install update tools
+        run: |
+          echo "🔧 Installing Go update tools..."
+          
+          # Install go-mod-outdated for checking outdated dependencies
+          if ! command -v go-mod-outdated >/dev/null 2>&1; then
+            go install github.com/psampaz/go-mod-outdated@latest
+          fi
+          
+          # Install goupdate for automated updates
+          if ! command -v goupdate >/dev/null 2>&1; then
+            go install github.com/oligot/go-mod-upgrade@latest
+          fi
+
+      - name: 🔍 Scan for outdated dependencies
+        id: scan
+        run: |
+          echo "🔍 Scanning for outdated dependencies..."
+          mkdir -p reports/updates
+          
+          # Find all Go packages
+          packages=$(find packages -name "go.mod" -type f | sed 's|/go.mod||' | sort)
+          
+          has_updates=false
+          packages_with_updates=()
+          update_details=""
+          
+          for package in $packages; do
+            if [[ -d "$package" ]]; then
+              echo "📦 Checking updates for $package..."
+              package_name=$(basename "$package")
+              
+              cd "$package"
+              
+              # Check for outdated dependencies
+              outdated_output=""
+              if go list -u -m -json all | go-mod-outdated -update -direct > "../reports/updates/${package_name}-outdated.json" 2>/dev/null; then
+                outdated_count=$(cat "../reports/updates/${package_name}-outdated.json" | jq length 2>/dev/null || echo "0")
+                
+                if [[ "$outdated_count" -gt 0 ]]; then
+                  echo "📦 Found $outdated_count outdated dependencies in $package"
+                  has_updates=true
+                  packages_with_updates+=("$package")
+                  
+                  # Generate human-readable report
+                  {
+                    echo "## Updates available for $package_name"
+                    echo ""
+                    cat "../reports/updates/${package_name}-outdated.json" | jq -r '.[] | "- **\(.module.name)**: \(.current) → \(.latest) (\(.type))"' 2>/dev/null || echo "Error parsing updates"
+                    echo ""
+                  } >> "../reports/updates/summary.md"
+                else
+                  echo "✅ No outdated dependencies in $package"
+                fi
+              else
+                echo "⚠️ Could not check outdated dependencies for $package"
+              fi
+              
+              cd - > /dev/null
+            fi
+          done
+          
+          # Set outputs
+          echo "has-updates=$has_updates" >> $GITHUB_OUTPUT
+          
+          if [[ "$has_updates" == "true" ]]; then
+            printf -v packages_json '%s\n' "${packages_with_updates[@]}" | jq -R . | jq -s .
+            echo "packages-with-updates=$packages_json" >> $GITHUB_OUTPUT
+            
+            if [[ -f "reports/updates/summary.md" ]]; then
+              summary=$(cat reports/updates/summary.md | head -20)
+              echo "update-summary<<EOF" >> $GITHUB_OUTPUT
+              echo "$summary" >> $GITHUB_OUTPUT
+              echo "EOF" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "packages-with-updates=[]" >> $GITHUB_OUTPUT
+            echo "update-summary=No updates available" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📤 Upload update reports
+        if: steps.scan.outputs.has-updates == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: update-scan-reports
+          path: reports/updates/
+          retention-days: 30
+
+  # 📦 Apply dependency updates
+  apply-updates:
+    name: 📦 Apply Updates
+    needs: check-updates
+    if: needs.check-updates.outputs.has-updates == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package: ${{ fromJSON(needs.check-updates.outputs.packages-with-updates) }}
+      fail-fast: false
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🐹 Set up Go ${{ env.GO_VERSION }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: 🔧 Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: 📦 Apply updates to ${{ matrix.package }}
+        run: |
+          echo "📦 Applying updates to ${{ matrix.package }}..."
+          package_name=$(basename "${{ matrix.package }}")
+          
+          cd "${{ matrix.package }}"
+          
+          # Create backup of current go.mod
+          cp go.mod go.mod.backup
+          
+          case "${{ env.UPDATE_TYPE }}" in
+            "patch")
+              echo "🔧 Applying patch updates..."
+              go get -u=patch ./...
+              ;;
+            "minor")
+              echo "🔧 Applying minor updates..."
+              # Update to latest minor versions
+              go list -u -m all | grep -F '[' | cut -d' ' -f1 | while read -r module; do
+                if [[ -n "$module" ]]; then
+                  # Get the latest minor version
+                  latest=$(go list -m -versions "$module" | tr ' ' '\n' | tail -1)
+                  if [[ -n "$latest" ]]; then
+                    go get "$module@$latest" || echo "Failed to update $module"
+                  fi
+                fi
+              done
+              ;;
+            "major")
+              echo "🔧 Applying major updates..."
+              go get -u ./...
+              ;;
+            "security")
+              echo "🔒 Applying security updates..."
+              # This would require integration with vulnerability database
+              go get -u ./...
+              ;;
+            "all")
+              echo "🔧 Applying all available updates..."
+              go get -u ./...
+              ;;
+            *)
+              echo "⚠️ Unknown update type: ${{ env.UPDATE_TYPE }}"
+              go get -u=patch ./...
+              ;;
+          esac
+          
+          # Clean up and tidy
+          go mod tidy
+          
+          # Check if anything changed
+          if ! diff -q go.mod go.mod.backup >/dev/null 2>&1; then
+            echo "✅ Dependencies updated for ${{ matrix.package }}"
+            echo "UPDATES_APPLIED=true" >> $GITHUB_ENV
+            
+            # Show what changed
+            echo "📋 Changes made:"
+            diff -u go.mod.backup go.mod || true
+          else
+            echo "ℹ️ No updates applied to ${{ matrix.package }}"
+            echo "UPDATES_APPLIED=false" >> $GITHUB_ENV
+          fi
+          
+          rm -f go.mod.backup
+          cd - > /dev/null
+
+      - name: 🧪 Test updated dependencies
+        if: env.UPDATES_APPLIED == 'true' && env.TEST_UPDATES == 'true'
+        run: |
+          echo "🧪 Testing updated dependencies for ${{ matrix.package }}..."
+          
+          cd "${{ matrix.package }}"
+          
+          # Download new dependencies
+          go mod download
+          
+          # Run tests
+          if go test -v ./...; then
+            echo "✅ Tests passed with updated dependencies"
+            echo "TESTS_PASSED=true" >> $GITHUB_ENV
+          else
+            echo "❌ Tests failed with updated dependencies"
+            echo "TESTS_PASSED=false" >> $GITHUB_ENV
+            exit 1
+          fi
+          
+          # Run basic build check
+          if go build ./...; then
+            echo "✅ Build successful with updated dependencies"
+          else
+            echo "❌ Build failed with updated dependencies"
+            exit 1
+          fi
+          
+          cd - > /dev/null
+
+      - name: 📝 Generate update report
+        if: env.UPDATES_APPLIED == 'true'
+        run: |
+          echo "📝 Generating update report for ${{ matrix.package }}..."
+          package_name=$(basename "${{ matrix.package }}")
+          
+          mkdir -p reports/applied-updates
+          
+          cd "${{ matrix.package }}"
+          
+          {
+            echo "# Dependency Updates Applied - $package_name"
+            echo ""
+            echo "**Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "**Update Type:** ${{ env.UPDATE_TYPE }}"
+            echo "**Go Version:** ${{ env.GO_VERSION }}"
+            echo ""
+            
+            if [[ "${{ env.TEST_UPDATES }}" == "true" ]]; then
+              if [[ "${{ env.TESTS_PASSED }}" == "true" ]]; then
+                echo "**Tests:** ✅ Passed"
+              else
+                echo "**Tests:** ❌ Failed"
+              fi
+              echo ""
+            fi
+            
+            echo "## Updated Dependencies"
+            echo ""
+            go list -m all | head -20
+            
+            echo ""
+            echo "## Go Module Info"
+            echo ""
+            echo '```'
+            go version -m . 2>/dev/null || go version
+            echo '```'
+            
+          } > "../reports/applied-updates/${package_name}-update-report.md"
+          
+          cd - > /dev/null
+
+      - name: 💾 Commit changes
+        if: env.UPDATES_APPLIED == 'true' && env.CREATE_PR == 'true'
+        run: |
+          echo "💾 Committing dependency updates..."
+          package_name=$(basename "${{ matrix.package }}")
+          
+          # Stage changes
+          git add "${{ matrix.package }}/go.mod" "${{ matrix.package }}/go.sum" 2>/dev/null || true
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "ℹ️ No changes to commit"
+            exit 0
+          fi
+          
+          # Create commit
+          commit_message="🤖 Update dependencies for $package_name
+          
+          - Update type: ${{ env.UPDATE_TYPE }}
+          - Go version: ${{ env.GO_VERSION }}
+          - Tests: ${{ env.TESTS_PASSED == 'true' && 'passed' || 'skipped' }}
+          - Auto-generated by dependency update workflow"
+          
+          git commit -m "$commit_message"
+          
+          # Create branch for this package
+          branch_name="deps/update-${package_name}-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$branch_name"
+          
+          echo "BRANCH_NAME=$branch_name" >> $GITHUB_ENV
+
+      - name: 📤 Push changes and create PR
+        if: env.UPDATES_APPLIED == 'true' && env.CREATE_PR == 'true' && env.BRANCH_NAME != ''
+        run: |
+          echo "📤 Pushing changes and creating pull request..."
+          
+          # Push branch
+          git push origin "${{ env.BRANCH_NAME }}"
+          
+          # Create PR using GitHub CLI
+          package_name=$(basename "${{ matrix.package }}")
+          
+          pr_title="🤖 Automated dependency updates for $package_name"
+          pr_body="## 📦 Dependency Updates
+          
+          This pull request contains automated dependency updates for the **$package_name** package.
+          
+          ### 📋 Update Details
+          - **Update Type:** ${{ env.UPDATE_TYPE }}
+          - **Go Version:** ${{ env.GO_VERSION }}
+          - **Tests Status:** ${{ env.TESTS_PASSED == 'true' && '✅ Passed' || '⚠️ Skipped' }}
+          - **Generated:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+          
+          ### 🔍 What Changed
+          ${{ needs.check-updates.outputs.update-summary }}
+          
+          ### 🧪 Testing
+          ${{ env.TEST_UPDATES == 'true' && 'Automated tests have been run and passed.' || 'Automated testing was skipped.' }}
+          
+          ### 📝 Review Checklist
+          - [ ] Review dependency changes
+          - [ ] Check for breaking changes in updated packages
+          - [ ] Verify test coverage
+          - [ ] Update documentation if needed
+          
+          ---
+          *This PR was automatically generated by the GoVel dependency update workflow.*"
+          
+          # Create the PR
+          gh pr create \
+            --title "$pr_title" \
+            --body "$pr_body" \
+            --head "${{ env.BRANCH_NAME }}" \
+            --base "develop" \
+            --label "dependencies,automated" \
+            || echo "⚠️ Failed to create PR - may already exist"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📤 Upload update artifacts
+        if: env.UPDATES_APPLIED == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: applied-updates-${{ matrix.package }}
+          path: reports/applied-updates/
+          retention-days: 30
+
+  # 📊 Generate update summary
+  update-summary:
+    name: 📊 Update Summary
+    if: always()
+    needs: [check-updates, apply-updates]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📊 Generate final summary
+        run: |
+          echo "📊 Generating dependency update summary..."
+          
+          # Check results
+          has_updates="${{ needs.check-updates.outputs.has-updates }}"
+          apply_result="${{ needs.apply-updates.result }}"
+          
+          {
+            echo "# 🤖 Dependency Update Summary"
+            echo ""
+            echo "**Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "**Update Type:** ${{ env.UPDATE_TYPE }}"
+            echo "**Create PR:** ${{ env.CREATE_PR }}"
+            echo "**Test Updates:** ${{ env.TEST_UPDATES }}"
+            echo ""
+            
+            if [[ "$has_updates" == "true" ]]; then
+              echo "## 📦 Updates Available"
+              echo ""
+              echo "${{ needs.check-updates.outputs.update-summary }}"
+              echo ""
+              
+              if [[ "$apply_result" == "success" ]]; then
+                echo "✅ **Status:** Updates applied successfully"
+                if [[ "${{ env.CREATE_PR }}" == "true" ]]; then
+                  echo "🔀 **Action:** Pull requests created for review"
+                else
+                  echo "💾 **Action:** Changes committed directly"
+                fi
+              elif [[ "$apply_result" == "failure" ]]; then
+                echo "❌ **Status:** Some updates failed"
+                echo "🔍 **Action:** Please review failed updates manually"
+              else
+                echo "⚠️ **Status:** Updates were skipped"
+              fi
+            else
+              echo "✅ **Status:** All dependencies are up to date"
+              echo "🎉 **Action:** No updates needed"
+            fi
+            
+            echo ""
+            echo "---"
+            echo "*Generated by GoVel Dependency Update Pipeline*"
+          } > update-summary.md
+          
+          echo "📄 Update summary:"
+          cat update-summary.md
+
+      - name: 💬 Post summary comment (if PR context)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            if (fs.existsSync('update-summary.md')) {
+              const summary = fs.readFileSync('update-summary.md', 'utf8');
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: summary
+              });
+            }
+

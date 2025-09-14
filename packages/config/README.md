@@ -1,3 +1,421 @@
+# GoVel Configuration Package
+
+The GoVel configuration package provides a powerful, driver-based configuration management system similar to Laravel's configuration system. It supports multiple configuration sources and allows for flexible, runtime configuration management.
+
+## Features
+
+- **Multiple Drivers**: Support for File, Environment, Memory, and Remote configuration sources
+- **Type-Safe Access**: Methods for retrieving configuration values as specific types (string, int, bool, etc.)
+- **Dot Notation**: Access nested configuration values using dot notation (e.g., `database.connections.mysql.host`)
+- **Default Values**: Provide default values for configuration keys that might not exist
+- **Runtime Configuration**: Modify configuration values at runtime
+- **Manager Pattern**: Centralized manager for handling multiple drivers
+- **Repository Pattern**: Underlying storage and retrieval mechanism
+
+## Architecture
+
+### Components
+
+1. **ConfigManager**: Central manager that handles driver creation and management using reflection
+2. **Repository**: Core storage and retrieval mechanism with support for nested keys
+3. **Drivers**: Different implementations for various configuration sources
+4. **ConfigInterface**: Common interface implemented by all drivers
+
+### Available Drivers
+
+- **FileDriver**: Loads configuration from JSON, YAML, TOML files
+- **EnvDriver**: Loads configuration from environment variables
+- **MemoryDriver**: In-memory configuration storage
+- **RemoteDriver**: Loads configuration from remote HTTP endpoints
+
+## Installation
+
+The configuration package is part of the GoVel framework. Ensure you have the proper imports:
+
+```go
+import (
+    configManager "govel/packages/config/src"
+    "govel/packages/config/src/drivers"
+    configEnums "govel/packages/config/types"
+    configInterfaces "govel/types/interfaces/config"
+)
+```
+
+## Usage
+
+### Using the ConfigManager (Recommended)
+
+```go
+package main
+
+import (
+    "fmt"
+    configManager "govel/packages/config/src"
+    configEnums "govel/packages/config/types"
+)
+
+func main() {
+    // Create a ConfigManager instance
+    manager := configManager.NewConfigManager()
+
+    // Get the default driver (file driver by default)
+    config := manager.Config()
+
+    // Get a specific driver
+    fileConfig := manager.Driver(configEnums.FileDriver)
+    envConfig := manager.Driver(configEnums.EnvDriver)
+    memoryConfig := manager.Driver(configEnums.MemoryDriver)
+    remoteConfig := manager.Driver(configEnums.RemoteDriver)
+
+    // Use configuration
+    appName := config.GetString("app.name", "DefaultApp")
+    debug := config.GetBool("app.debug", false)
+    port := config.GetInt("server.port", 8080)
+
+    fmt.Printf("App: %s, Debug: %t, Port: %d\n", appName, debug, port)
+}
+```
+
+### Using Drivers Directly
+
+#### File Driver
+
+```go
+package main
+
+import (
+    "log"
+    "govel/packages/config/src/drivers"
+)
+
+func main() {
+    // Configure file driver
+    fileConfig := map[string]interface{}{
+        "paths":      []string{"./config", "/etc/myapp"},
+        "extensions": []string{".json", ".yaml", ".yml", ".toml"},
+    }
+
+    // Create and use file driver
+    driver := drivers.NewFileDriver(fileConfig)
+    
+    if err := driver.LoadConfiguration(); err != nil {
+        log.Fatalf("Failed to load configuration: %v", err)
+    }
+
+    appName := driver.GetString("app.name", "DefaultApp")
+    fmt.Printf("Application: %s\n", appName)
+}
+```
+
+#### Environment Driver
+
+```go
+package main
+
+import (
+    "govel/packages/config/src/drivers"
+)
+
+func main() {
+    // Configure environment driver
+    envConfig := map[string]interface{}{
+        "prefixes":  []string{"APP_", "MYAPP_"},
+        "auto_load": true, // Automatically load on creation
+    }
+
+    // Create environment driver
+    driver := drivers.NewEnvDriver(envConfig)
+
+    // Environment variables like APP_NAME, APP_DEBUG will be loaded
+    appName := driver.GetString("name", "Unknown")
+    debug := driver.GetBool("debug", false)
+}
+```
+
+#### Memory Driver
+
+```go
+package main
+
+import (
+    "govel/packages/config/src/drivers"
+)
+
+func main() {
+    initialData := map[string]interface{}{
+        "app.name":    "MemoryApp",
+        "app.debug":   true,
+        "server.port": 9090,
+    }
+
+    memoryConfig := map[string]interface{}{
+        "persistent":   true,
+        "initial_data": initialData,
+    }
+
+    driver := drivers.NewMemoryDriver(memoryConfig)
+
+    // Runtime configuration changes
+    driver.Set("app.status", "running")
+    status := driver.GetString("app.status")
+}
+```
+
+#### Remote Driver
+
+```go
+package main
+
+import (
+    "time"
+    "govel/packages/config/src/drivers"
+)
+
+func main() {
+    remoteConfig := map[string]interface{}{
+        "endpoints": []string{
+            "http://config-server:8080/api/config",
+        },
+        "headers": map[string]string{
+            "Authorization": "Bearer your-token",
+        },
+        "timeout":          30 * time.Second,
+        "refresh_interval": 5 * time.Minute,
+        "auto_refresh":     true,
+    }
+
+    driver := drivers.NewRemoteDriver(remoteConfig)
+    
+    if err := driver.LoadConfiguration(); err != nil {
+        log.Printf("Failed to load remote config: %v", err)
+    }
+
+    // Auto-refresh will keep configuration updated
+    driver.StartAutoRefresh()
+}
+```
+
+## Configuration Methods
+
+All drivers implement the `ConfigInterface` with these methods:
+
+### Type-Safe Getters
+- `GetString(key string, defaultValue ...string) string`
+- `GetInt(key string, defaultValue ...int) int`
+- `GetInt64(key string, defaultValue ...int64) int64`
+- `GetFloat64(key string, defaultValue ...float64) float64`
+- `GetBool(key string, defaultValue ...bool) bool`
+- `GetDuration(key string, defaultValue ...time.Duration) time.Duration`
+- `GetStringSlice(key string, defaultValue ...[]string) []string`
+
+### Generic Access
+- `Get(key string) (interface{}, bool)` - Returns raw value and existence flag
+- `Set(key string, value interface{})` - Sets a configuration value
+- `HasKey(key string) bool` - Checks if a key exists
+- `AllConfig() map[string]interface{}` - Returns all configuration
+
+### Loading Methods
+- `LoadFromFile(filePath string) error` - Loads from a specific file
+- `LoadFromEnv(prefix string) error` - Loads from environment variables
+
+## File Format Support
+
+### JSON Configuration
+
+```json
+{
+  "app": {
+    "name": "MyApp",
+    "debug": true,
+    "version": "1.0.0"
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "connections": {
+      "mysql": {
+        "host": "mysql-host",
+        "port": 3306
+      }
+    }
+  }
+}
+```
+
+Access with: `config.GetString("app.name")` or `config.GetString("database.connections.mysql.host")`
+
+## Environment Variable Mapping
+
+Environment variables are automatically converted to dot notation:
+
+- `APP_NAME=MyApp` → `name`
+- `APP_DATABASE_HOST=localhost` → `database.host`  
+- `APP_CACHE_REDIS_PORT=6379` → `cache.redis.port`
+
+## Best Practices
+
+### 1. Use the ConfigManager for Multiple Sources
+
+```go
+manager := configManager.NewConfigManager()
+
+// Load from file first (base configuration)
+fileConfig := manager.Driver(configEnums.FileDriver)
+fileConfig.LoadConfiguration()
+
+// Override with environment variables
+envConfig := manager.Driver(configEnums.EnvDriver)
+envConfig.LoadConfiguration()
+
+// Use memory for runtime configuration
+memoryConfig := manager.Driver(configEnums.MemoryDriver)
+```
+
+### 2. Provide Sensible Defaults
+
+```go
+// Always provide defaults for optional configuration
+timeout := config.GetDuration("server.timeout", 30*time.Second)
+maxConnections := config.GetInt("database.max_connections", 100)
+enableCache := config.GetBool("cache.enabled", false)
+```
+
+### 3. Use Type-Safe Methods
+
+```go
+// Preferred: Type-safe with defaults
+port := config.GetInt("server.port", 8080)
+
+// Avoid: Generic access without type checking
+rawPort, _ := config.Get("server.port")
+port := rawPort.(int) // Could panic if wrong type
+```
+
+### 4. Organize Configuration Files
+
+```
+config/
+├── app.json          # Application settings
+├── database.json     # Database configuration
+├── cache.json        # Cache settings
+└── services.json     # External services
+```
+
+### 5. Environment-Specific Configuration
+
+```go
+env := config.GetString("app.env", "development")
+
+switch env {
+case "production":
+    // Load production-specific config
+case "development":
+    // Load development-specific config
+}
+```
+
+## Advanced Usage
+
+### Custom Driver Configuration
+
+```go
+// File driver with custom settings
+fileConfig := map[string]interface{}{
+    "paths":      []string{"./config", "./config/env/" + env},
+    "extensions": []string{".json", ".yaml"},
+}
+driver := drivers.NewFileDriver(fileConfig)
+```
+
+### Remote Configuration with Auto-Refresh
+
+```go
+remoteConfig := map[string]interface{}{
+    "endpoints":        []string{"http://config-service/api/config"},
+    "refresh_interval": 1 * time.Minute,
+    "auto_refresh":     true,
+    "headers": map[string]string{
+        "Authorization": "Bearer " + token,
+    },
+}
+
+driver := drivers.NewRemoteDriver(remoteConfig)
+driver.StartAutoRefresh()
+```
+
+### Combining Multiple Drivers
+
+```go
+manager := configManager.NewConfigManager()
+
+// Base configuration from files
+fileDriver := manager.Driver(configEnums.FileDriver)
+fileDriver.LoadConfiguration()
+
+// Environment overrides
+envDriver := manager.Driver(configEnums.EnvDriver)
+envDriver.LoadConfiguration()
+
+// Runtime configuration
+memoryDriver := manager.Driver(configEnums.MemoryDriver)
+
+// Use the most appropriate driver for each use case
+baseConfig := fileDriver.GetString("app.name")
+envOverride := envDriver.GetString("app.name", baseConfig)
+runtimeValue := memoryDriver.GetString("app.name", envOverride)
+```
+
+## Error Handling
+
+```go
+// File loading with error handling
+if err := fileDriver.LoadFromFile("./config/app.json"); err != nil {
+    log.Printf("Failed to load config file: %v", err)
+    // Fall back to defaults
+}
+
+// Remote loading with error handling
+if err := remoteDriver.LoadConfiguration(); err != nil {
+    log.Printf("Failed to load remote config, using local cache: %v", err)
+    // Continue with cached/local configuration
+}
+```
+
+## Examples
+
+See the `example/` directory for a complete working example demonstrating all drivers and usage patterns.
+
+```bash
+# Run the example
+cd example
+go run main.go
+```
+
+## Testing
+
+The configuration package includes comprehensive tests for all drivers and functionality:
+
+```bash
+# Run tests
+go test ./...
+
+# Run tests with coverage
+go test -cover ./...
+```
+
+## Contributing
+
+When adding new drivers or functionality:
+
+1. Implement the `ConfigInterface`
+2. Add comprehensive tests
+3. Update this documentation
+4. Add examples demonstrating usage
+
+## License
+
+This package is part of the GoVel framework and follows the same licensing terms.
+
 # GoVel Cookie Package
 
 A Laravel-compatible cookie management package for the GoVel framework, providing comprehensive cookie handling with encryption, CSRF protection, and advanced security features.

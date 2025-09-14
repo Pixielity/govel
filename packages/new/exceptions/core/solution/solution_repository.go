@@ -3,7 +3,7 @@ package solution
 import (
 	"sync"
 
-	solutionInterface "govel/packages/exceptions/interfaces/solution"
+	solutionInterface "govel/exceptions/interfaces/solution"
 )
 
 // SolutionProviderRepository manages solution providers and provides solutions for errors.
@@ -24,7 +24,7 @@ func NewSolutionProviderRepository() *SolutionProviderRepository {
 func (repo *SolutionProviderRepository) RegisterSolutionProviders(providers []solutionInterface.HasSolutionsForThrowable) {
 	repo.mutex.Lock()
 	defer repo.mutex.Unlock()
-	
+
 	repo.providers = append(repo.providers, providers...)
 }
 
@@ -32,7 +32,7 @@ func (repo *SolutionProviderRepository) RegisterSolutionProviders(providers []so
 func (repo *SolutionProviderRepository) RegisterSolutionProvider(provider solutionInterface.HasSolutionsForThrowable) {
 	repo.mutex.Lock()
 	defer repo.mutex.Unlock()
-	
+
 	repo.providers = append(repo.providers, provider)
 }
 
@@ -40,9 +40,9 @@ func (repo *SolutionProviderRepository) RegisterSolutionProvider(provider soluti
 func (repo *SolutionProviderRepository) GetSolutionsForError(err error) []solutionInterface.Solution {
 	repo.mutex.RLock()
 	defer repo.mutex.RUnlock()
-	
+
 	var solutions []solutionInterface.Solution
-	
+
 	// First check if the error itself provides a solution
 	if providesSolution, ok := err.(solutionInterface.ProvidesSolution); ok {
 		solution := providesSolution.GetSolution()
@@ -50,7 +50,7 @@ func (repo *SolutionProviderRepository) GetSolutionsForError(err error) []soluti
 			solutions = append(solutions, solution)
 		}
 	}
-	
+
 	// Then check all registered providers
 	for _, provider := range repo.providers {
 		if provider.CanSolve(err) {
@@ -58,7 +58,7 @@ func (repo *SolutionProviderRepository) GetSolutionsForError(err error) []soluti
 			solutions = append(solutions, providerSolutions...)
 		}
 	}
-	
+
 	return solutions
 }
 
@@ -66,7 +66,7 @@ func (repo *SolutionProviderRepository) GetSolutionsForError(err error) []soluti
 func (repo *SolutionProviderRepository) GetProviders() []solutionInterface.HasSolutionsForThrowable {
 	repo.mutex.RLock()
 	defer repo.mutex.RUnlock()
-	
+
 	// Return a copy to prevent external modification
 	providers := make([]solutionInterface.HasSolutionsForThrowable, len(repo.providers))
 	copy(providers, repo.providers)

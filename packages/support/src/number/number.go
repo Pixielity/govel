@@ -2,7 +2,6 @@ package number
 
 import (
 	"fmt"
-	"govel/hashing/exceptions"
 	"math"
 	"strings"
 
@@ -331,7 +330,7 @@ func Parse(value string) (*Number, error) {
 //
 // Returns:
 //   - uint32: The converted value
-//   - error: ErrInvalidOptions if conversion fails or value is out of bounds
+//   - error: fmt error with details if conversion fails or value is out of bounds
 //
 // Usage:
 //
@@ -345,21 +344,21 @@ func ToUint32(value interface{}) (uint32, error) {
 		return v, nil
 	case int:
 		if v < 0 || v > math.MaxUint32 {
-			return 0, exceptions.ErrInvalidOptions
+			return 0, fmt.Errorf("value %d is out of range for uint32 (0-%d)", v, math.MaxUint32)
 		}
 		return uint32(v), nil
 	case int64:
 		if v < 0 || v > math.MaxUint32 {
-			return 0, exceptions.ErrInvalidOptions
+			return 0, fmt.Errorf("value %d is out of range for uint32 (0-%d)", v, math.MaxUint32)
 		}
 		return uint32(v), nil
 	case float64:
 		if v < 0 || v > math.MaxUint32 || v != float64(int64(v)) {
-			return 0, exceptions.ErrInvalidOptions
+			return 0, fmt.Errorf("value %g is invalid for uint32 conversion (must be integer in range 0-%d)", v, math.MaxUint32)
 		}
 		return uint32(v), nil
 	default:
-		return 0, exceptions.ErrInvalidOptions
+		return 0, fmt.Errorf("unsupported type %T for uint32 conversion", value)
 	}
 }
 
@@ -372,7 +371,7 @@ func ToUint32(value interface{}) (uint32, error) {
 //
 // Returns:
 //   - uint8: The converted value
-//   - error: ErrInvalidOptions if conversion fails or value is out of bounds
+//   - error: fmt error with details if conversion fails or value is out of bounds
 //
 // Usage:
 //
@@ -386,26 +385,26 @@ func ToUint8(value interface{}) (uint8, error) {
 		return v, nil
 	case int:
 		if v < 0 || v > math.MaxUint8 {
-			return 0, exceptions.ErrInvalidOptions
+			return 0, fmt.Errorf("value %d is out of range for uint8 (0-%d)", v, math.MaxUint8)
 		}
 		return uint8(v), nil
 	case int64:
 		if v < 0 || v > math.MaxUint8 {
-			return 0, exceptions.ErrInvalidOptions
+			return 0, fmt.Errorf("value %d is out of range for uint8 (0-%d)", v, math.MaxUint8)
 		}
 		return uint8(v), nil
 	case uint32:
 		if v > math.MaxUint8 {
-			return 0, exceptions.ErrInvalidOptions
+			return 0, fmt.Errorf("value %d is out of range for uint8 (0-%d)", v, math.MaxUint8)
 		}
 		return uint8(v), nil
 	case float64:
 		if v < 0 || v > math.MaxUint8 || v != float64(int64(v)) {
-			return 0, exceptions.ErrInvalidOptions
+			return 0, fmt.Errorf("value %g is invalid for uint8 conversion (must be integer in range 0-%d)", v, math.MaxUint8)
 		}
 		return uint8(v), nil
 	default:
-		return 0, exceptions.ErrInvalidOptions
+		return 0, fmt.Errorf("unsupported type %T for uint8 conversion", value)
 	}
 }
 
@@ -418,7 +417,7 @@ func ToUint8(value interface{}) (uint8, error) {
 //
 // Returns:
 //   - int: The converted value
-//   - error: ErrInvalidOptions if conversion fails or value is out of bounds
+//   - error: fmt error with details if conversion fails or value is out of bounds
 //
 // Usage:
 //
@@ -432,20 +431,20 @@ func ToInt(value interface{}) (int, error) {
 		return v, nil
 	case int64:
 		if v > math.MaxInt || v < math.MinInt {
-			return 0, exceptions.ErrInvalidOptions
+			return 0, fmt.Errorf("value %d is out of range for int (%d to %d)", v, math.MinInt, math.MaxInt)
 		}
 		return int(v), nil
 	case uint32:
 		if uint64(v) > math.MaxInt {
-			return 0, exceptions.ErrInvalidOptions
+			return 0, fmt.Errorf("value %d is out of range for int (max: %d)", v, math.MaxInt)
 		}
 		return int(v), nil
 	case float64:
 		if v > math.MaxInt || v < math.MinInt || v != float64(int64(v)) {
-			return 0, exceptions.ErrInvalidOptions
+			return 0, fmt.Errorf("value %g is invalid for int conversion (must be integer in range %d to %d)", v, math.MinInt, math.MaxInt)
 		}
 		return int(v), nil
 	default:
-		return 0, exceptions.ErrInvalidOptions
+		return 0, fmt.Errorf("unsupported type %T for int conversion", value)
 	}
 }

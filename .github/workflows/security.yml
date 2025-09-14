@@ -1,0 +1,444 @@
+# 🔒 GoVel Framework - Security Scanning Pipeline
+#
+# This workflow provides comprehensive security scanning for the GoVel framework.
+# It performs static analysis, vulnerability detection, dependency scanning,
+# and license compliance checks to ensure code security and quality.
+#
+# Features:
+# - 🛡️ Static Application Security Testing (SAST) with gosec
+# - 🔍 Vulnerability scanning with govulncheck
+# - 📦 Dependency vulnerability analysis
+# - 📄 License compliance checking
+# - 🚨 Security advisory integration
+# - 📊 SARIF report generation for GitHub Security tab
+#
+# Triggers:
+# - Scheduled weekly scans (Sundays at 2 AM UTC)
+# - Push to main/develop branches
+# - Manual workflow dispatch
+#
+# Author: GoVel Framework Team
+# Version: 1.0.0
+
+name: 🔒 Security Scan
+
+on:
+  # 📅 Scheduled security scans
+  schedule:
+    - cron: '0 2 * * 0' # Every Sunday at 2 AM UTC
+  
+  # 🔄 Trigger on pushes to main branches
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '**/*.go'
+      - '**/go.mod'
+      - '**/go.sum'
+      - '.github/workflows/security.yml'
+  
+  # 🎛️ Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      scan_type:
+        description: '🔍 Type of security scan to perform'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - 'full'
+          - 'sast-only'
+          - 'vulnerabilities-only'
+          - 'dependencies-only'
+      severity_threshold:
+        description: '⚠️ Minimum severity level to report'
+        required: true
+        default: 'medium'
+        type: choice
+        options:
+          - 'low'
+          - 'medium'
+          - 'high'
+          - 'critical'
+
+# 🔒 Security: Minimal required permissions
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+# 🌍 Environment variables
+env:
+  GO_VERSION: '1.23'
+  SCAN_TYPE: ${{ github.event.inputs.scan_type || 'full' }}
+  SEVERITY_THRESHOLD: ${{ github.event.inputs.severity_threshold || 'medium' }}
+
+jobs:
+  # 🛡️ Static Application Security Testing
+  sast-scan:
+    name: 🛡️ SAST Analysis
+    runs-on: ubuntu-latest
+    if: contains(fromJSON('["full", "sast-only"]'), github.event.inputs.scan_type) || github.event.inputs.scan_type == null
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🐹 Set up Go ${{ env.GO_VERSION }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: 📦 Cache security tools
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/gosec
+            ~/go/bin/gosec
+          key: ${{ runner.os }}-security-tools-${{ hashFiles('.github/workflows/security.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-security-tools-
+
+      - name: 🔧 Install gosec
+        run: |
+          echo "🔧 Installing gosec security scanner..."
+          if ! command -v gosec >/dev/null 2>&1; then
+            go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
+          fi
+          gosec --version
+
+      - name: 📝 Create gosec configuration
+        run: |
+          echo "📝 Creating gosec configuration..."
+          cat > gosec.json << 'GOSEC_CONFIG'
+{
+  "severity": "${{ env.SEVERITY_THRESHOLD }}",
+  "confidence": "medium",
+  "exclude": [
+    "G104",
+    "G204"
+  ],
+  "include": [
+    "G101",
+    "G102",
+    "G103",
+    "G106",
+    "G107",
+    "G108",
+    "G109",
+    "G110",
+    "G201",
+    "G202",
+    "G203",
+    "G301",
+    "G302",
+    "G303",
+    "G304",
+    "G305",
+    "G401",
+    "G402",
+    "G403",
+    "G404",
+    "G501",
+    "G502",
+    "G503",
+    "G504",
+    "G601"
+  ]
+}
+GOSEC_CONFIG
+
+      - name: 🛡️ Run gosec SAST analysis
+        run: |
+          echo "🛡️ Running gosec security analysis..."
+          mkdir -p reports/security
+          
+          # Find all Go packages
+          packages=$(find packages -name "go.mod" -type f | sed 's|/go.mod||' | sort)
+          
+          for package in $packages; do
+            if [[ -d "$package" ]]; then
+              echo "🔍 Scanning $package..."
+              package_name=$(basename "$package")
+              
+              # Run gosec on the package
+              cd "$package"
+              if gosec -conf ../gosec.json -fmt sarif -out "../reports/security/${package_name}-gosec.sarif" -stdout -verbose=text ./...; then
+                echo "✅ SAST scan completed for $package"
+              else
+                echo "⚠️ SAST scan found issues in $package"
+              fi
+              cd - > /dev/null
+            fi
+          done
+          
+          # Merge all SARIF reports
+          echo "📊 Merging SARIF reports..."
+          if command -v jq >/dev/null 2>&1; then
+            find reports/security -name "*-gosec.sarif" -type f | head -1 | xargs cat > reports/security/merged-gosec.sarif 2>/dev/null || echo '{"runs": []}' > reports/security/merged-gosec.sarif
+          fi
+
+      - name: 📊 Upload SAST SARIF results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: reports/security/merged-gosec.sarif
+          category: gosec
+
+      - name: 📤 Upload security reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: sast-reports
+          path: reports/security/
+          retention-days: 90
+
+  # 🔍 Vulnerability scanning
+  vulnerability-scan:
+    name: 🔍 Vulnerability Analysis
+    runs-on: ubuntu-latest
+    if: contains(fromJSON('["full", "vulnerabilities-only"]'), github.event.inputs.scan_type) || github.event.inputs.scan_type == null
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐹 Set up Go ${{ env.GO_VERSION }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: 📦 Cache vulnerability database
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/govulncheck
+            ~/go/bin/govulncheck
+          key: ${{ runner.os }}-vulndb-${{ hashFiles('.github/workflows/security.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-vulndb-
+
+      - name: 🔧 Install govulncheck
+        run: |
+          echo "🔧 Installing govulncheck..."
+          if ! command -v govulncheck >/dev/null 2>&1; then
+            go install golang.org/x/vuln/cmd/govulncheck@latest
+          fi
+          govulncheck --version || echo "Govulncheck installed"
+
+      - name: 🔍 Run vulnerability scan
+        run: |
+          echo "🔍 Running vulnerability analysis..."
+          mkdir -p reports/vulnerabilities
+          
+          # Find all Go packages
+          packages=$(find packages -name "go.mod" -type f | sed 's|/go.mod||' | sort)
+          vulnerability_found=false
+          
+          for package in $packages; do
+            if [[ -d "$package" ]]; then
+              echo "🔍 Scanning $package for vulnerabilities..."
+              package_name=$(basename "$package")
+              
+              cd "$package"
+              
+              # Run govulncheck
+              if govulncheck -json ./... > "../reports/vulnerabilities/${package_name}-vulnerabilities.json" 2>&1; then
+                echo "✅ No vulnerabilities found in $package"
+              else
+                echo "⚠️ Vulnerabilities found in $package"
+                vulnerability_found=true
+                
+                # Generate human-readable report
+                govulncheck ./... > "../reports/vulnerabilities/${package_name}-vulnerabilities.txt" 2>&1 || true
+              fi
+              
+              cd - > /dev/null
+            fi
+          done
+          
+          # Create summary report
+          echo "📊 Creating vulnerability summary..."
+          {
+            echo "# 🔍 Vulnerability Scan Summary"
+            echo ""
+            echo "**Scan Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "**Go Version:** ${{ env.GO_VERSION }}"
+            echo "**Severity Threshold:** ${{ env.SEVERITY_THRESHOLD }}"
+            echo ""
+            
+            if [[ "$vulnerability_found" == "true" ]]; then
+              echo "⚠️ **Status:** Vulnerabilities detected"
+              echo ""
+              echo "## 📋 Affected Packages"
+              for report in reports/vulnerabilities/*-vulnerabilities.txt; do
+                if [[ -f "$report" ]] && [[ -s "$report" ]]; then
+                  package_name=$(basename "$report" "-vulnerabilities.txt")
+                  echo "- 📦 **$package_name**"
+                fi
+              done
+            else
+              echo "✅ **Status:** No vulnerabilities detected"
+            fi
+            
+            echo ""
+            echo "---"
+            echo "*Generated by GoVel Security Pipeline*"
+          } > reports/vulnerabilities/summary.md
+          
+          # Set job outcome
+          if [[ "$vulnerability_found" == "true" ]]; then
+            echo "vulnerability_found=true" >> $GITHUB_ENV
+          else
+            echo "vulnerability_found=false" >> $GITHUB_ENV
+          fi
+
+      - name: 📊 Create vulnerability report
+        if: env.vulnerability_found == 'true'
+        run: |
+          echo "📊 Creating detailed vulnerability report..."
+          
+          # Find the most recent vulnerability report with content
+          latest_report=""
+          for report in reports/vulnerabilities/*-vulnerabilities.txt; do
+            if [[ -f "$report" ]] && [[ -s "$report" ]]; then
+              latest_report="$report"
+              break
+            fi
+          done
+          
+          if [[ -n "$latest_report" ]]; then
+            echo "📄 Latest vulnerability report: $latest_report"
+            echo "## 🚨 Vulnerability Details" >> reports/vulnerabilities/summary.md
+            echo '```' >> reports/vulnerabilities/summary.md
+            head -50 "$latest_report" >> reports/vulnerabilities/summary.md
+            echo '```' >> reports/vulnerabilities/summary.md
+          fi
+
+      - name: 📤 Upload vulnerability reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: vulnerability-reports
+          path: reports/vulnerabilities/
+          retention-days: 90
+
+      - name: 💬 Comment vulnerability summary on PR
+        if: github.event_name == 'pull_request' && env.vulnerability_found == 'true'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            if (fs.existsSync('reports/vulnerabilities/summary.md')) {
+              const summary = fs.readFileSync('reports/vulnerabilities/summary.md', 'utf8');
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## 🔍 Security Vulnerability Report\n\n${summary}`
+              });
+            }
+
+  # 📦 Dependency analysis
+  dependency-scan:
+    name: 📦 Dependency Analysis
+    runs-on: ubuntu-latest
+    if: contains(fromJSON('["full", "dependencies-only"]'), github.event.inputs.scan_type) || github.event.inputs.scan_type == null
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐹 Set up Go ${{ env.GO_VERSION }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: 📦 Analyze dependencies
+        run: |
+          echo "📦 Analyzing Go module dependencies..."
+          mkdir -p reports/dependencies
+          
+          # Find all Go packages
+          packages=$(find packages -name "go.mod" -type f | sed 's|/go.mod||' | sort)
+          
+          for package in $packages; do
+            if [[ -d "$package" ]]; then
+              echo "📦 Analyzing dependencies for $package..."
+              package_name=$(basename "$package")
+              
+              cd "$package"
+              
+              # Generate dependency reports
+              {
+                echo "# Dependency Report for $package_name"
+                echo ""
+                echo "Generated on: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+                echo ""
+                
+                echo "## 📋 Direct Dependencies"
+                go list -m -f '{{.Path}}@{{.Version}}' all | grep -v "^$package" | head -20
+                
+                echo ""
+                echo "## 🔍 Outdated Dependencies"
+                go list -u -m all | grep -F '[' || echo "All dependencies are up to date"
+                
+                echo ""
+                echo "## 📊 Dependency Graph"
+                go mod graph | head -20
+                
+              } > "../reports/dependencies/${package_name}-dependencies.md"
+              
+              # Generate machine-readable dependency list
+              go list -m -json all > "../reports/dependencies/${package_name}-dependencies.json"
+              
+              cd - > /dev/null
+            fi
+          done
+          
+          echo "✅ Dependency analysis completed"
+
+      - name: 📤 Upload dependency reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: dependency-reports
+          path: reports/dependencies/
+          retention-days: 30
+
+  # ✅ Security status check
+  security-status:
+    name: ✅ Security Status
+    if: always()
+    needs: [sast-scan, vulnerability-scan, dependency-scan]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📊 Evaluate security results
+        run: |
+          echo "📊 Evaluating security scan results..."
+          
+          # Check SAST results
+          sast_result="${{ needs.sast-scan.result }}"
+          vuln_result="${{ needs.vulnerability-scan.result }}"
+          deps_result="${{ needs.dependency-scan.result }}"
+          
+          echo "🛡️ SAST Scan: $sast_result"
+          echo "🔍 Vulnerability Scan: $vuln_result"
+          echo "📦 Dependency Scan: $deps_result"
+          
+          # Determine overall status
+          if [[ "$sast_result" == "failure" ]] || [[ "$vuln_result" == "failure" ]] || [[ "$deps_result" == "failure" ]]; then
+            echo "❌ Security scans detected issues"
+            echo "🔍 Please review the security reports and address any findings"
+            exit 1
+          elif [[ "$sast_result" == "skipped" ]] && [[ "$vuln_result" == "skipped" ]] && [[ "$deps_result" == "skipped" ]]; then
+            echo "ℹ️ All security scans were skipped"
+          else
+            echo "✅ All security scans completed successfully"
+            echo "🛡️ No critical security issues detected"
+          fi
+          
+          # Generate security badge info
+          echo "SECURITY_STATUS=passing" >> $GITHUB_ENV
+

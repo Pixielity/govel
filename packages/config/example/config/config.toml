@@ -1,0 +1,196 @@
+# GoVel Configuration File (TOML Format)
+# This demonstrates TOML configuration support in the GoVel config package
+
+[app]
+name = "GoVel Config Example (TOML)"
+debug = true
+version = "1.0.0"
+env = "development"
+timezone = "UTC"
+locale = "en"
+
+[server]
+host = "localhost"
+port = 8080
+timeout = "30s"
+
+[server.ssl]
+enabled = false
+cert_file = "/path/to/cert.pem"
+key_file = "/path/to/key.pem"
+
+[server.cors]
+enabled = true
+origins = ["http://localhost:3000", "https://example.com"]
+methods = ["GET", "POST", "PUT", "DELETE"]
+headers = ["Content-Type", "Authorization"]
+
+[database]
+default = "mysql"
+
+[database.connections.mysql]
+driver = "mysql"
+host = "localhost"
+port = 3306
+database = "govel_db"
+username = "root"
+password = "secret"
+charset = "utf8mb4"
+collation = "utf8mb4_unicode_ci"
+strict = true
+
+[database.connections.postgres]
+driver = "postgres"
+host = "localhost"
+port = 5432
+database = "govel_db"
+username = "postgres"
+password = "secret"
+sslmode = "prefer"
+timezone = "UTC"
+
+[database.pool]
+max_open_connections = 100
+max_idle_connections = 10
+connection_max_lifetime = "1h"
+
+[cache]
+default = "redis"
+
+[cache.stores.redis]
+driver = "redis"
+host = "localhost"
+port = 6379
+password = ""
+database = 0
+prefix = "govel_cache:"
+ttl = 3600
+
+[cache.stores.memory]
+driver = "memory"
+ttl = 300
+cleanup_interval = "5m"
+
+[logging]
+level = "debug"
+format = "json"
+
+[logging.channels.single]
+driver = "single"
+path = "/var/log/govel.log"
+level = "debug"
+
+[logging.channels.daily]
+driver = "daily"
+path = "/var/log/govel.log"
+level = "debug"
+days = 14
+
+[logging.channels.slack]
+driver = "slack"
+url = "https://hooks.slack.com/services/..."
+username = "GoVel"
+emoji = ":boom:"
+level = "critical"
+
+[mail]
+default = "smtp"
+
+[mail.mailers.smtp]
+driver = "smtp"
+host = "smtp.mailgun.org"
+port = 587
+username = "your-username"
+password = "your-password"
+encryption = "tls"
+
+[mail.mailers.smtp.from]
+address = "noreply@example.com"
+name = "GoVel App"
+
+[mail.mailers.sendgrid]
+driver = "sendgrid"
+api_key = "your-sendgrid-api-key"
+
+[mail.mailers.sendgrid.from]
+address = "noreply@example.com"
+name = "GoVel App"
+
+[filesystems]
+default = "local"
+
+[filesystems.disks.local]
+driver = "local"
+root = "/app/storage/app"
+
+[filesystems.disks.public]
+driver = "local"
+root = "/app/storage/app/public"
+url = "/storage"
+visibility = "public"
+
+[filesystems.disks.s3]
+driver = "s3"
+key = "your-s3-key"
+secret = "your-s3-secret"
+region = "us-east-1"
+bucket = "your-bucket"
+
+[queue]
+default = "redis"
+
+[queue.connections.sync]
+driver = "sync"
+
+[queue.connections.redis]
+driver = "redis"
+connection = "default"
+queue = "default"
+retry_after = 90
+block_for = 0
+
+[queue.connections.sqs]
+driver = "sqs"
+key = "your-sqs-key"
+secret = "your-sqs-secret"
+prefix = "https://sqs.us-east-1.amazonaws.com/your-account-id"
+queue = "default"
+region = "us-east-1"
+
+[queue.failed]
+driver = "database"
+database = "mysql"
+table = "failed_jobs"
+
+[session]
+driver = "redis"
+lifetime = 120
+expire_on_close = false
+encrypt = false
+files = "/app/storage/framework/sessions"
+connection = "default"
+table = "sessions"
+store = "redis"
+lottery = [2, 100]
+cookie = "govel_session"
+path = "/"
+secure = false
+http_only = true
+same_site = "lax"
+
+[broadcasting]
+default = "pusher"
+
+[broadcasting.connections.pusher]
+driver = "pusher"
+key = "your-pusher-key"
+secret = "your-pusher-secret"
+app_id = "your-pusher-app-id"
+
+[broadcasting.connections.pusher.options]
+cluster = "mt1"
+encrypted = true
+
+[broadcasting.connections.redis]
+driver = "redis"
+connection = "default"

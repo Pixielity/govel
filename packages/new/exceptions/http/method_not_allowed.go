@@ -3,9 +3,9 @@ package http
 import (
 	"net/http"
 
-	"govel/packages/exceptions/core"
-	"govel/packages/exceptions/interfaces"
-	httpSolutions "govel/packages/exceptions/solutions/http"
+	"govel/exceptions/core"
+	"govel/exceptions/interfaces"
+	httpSolutions "govel/exceptions/solutions/http"
 )
 
 // MethodNotAllowedException represents a 405 Method Not Allowed error.
@@ -17,11 +17,13 @@ type MethodNotAllowedException struct {
 // NewMethodNotAllowedException creates a new 405 Method Not Allowed exception.
 //
 // Parameters:
-//   message: Optional custom error message
-//   allowedMethods: List of allowed HTTP methods
+//
+//	message: Optional custom error message
+//	allowedMethods: List of allowed HTTP methods
 //
 // Example:
-//   err := http.NewMethodNotAllowedException("Method not allowed", "GET", "POST")
+//
+//	err := http.NewMethodNotAllowedException("Method not allowed", "GET", "POST")
 func NewMethodNotAllowedException(message string, allowedMethods ...string) *MethodNotAllowedException {
 	if message == "" {
 		message = "Method Not Allowed"

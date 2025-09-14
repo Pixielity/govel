@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"govel/packages/application/builders"
+	"govel/application/builders"
 	"govel/container"
 )
 
@@ -52,7 +52,7 @@ func BenchmarkAppBuilderConvenience(b *testing.B) {
 // BenchmarkAppBuilderWithContainer benchmarks builder with container
 func BenchmarkAppBuilderWithContainer(b *testing.B) {
 	customContainer := container.New()
-	
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		app := builders.NewApp().
@@ -70,7 +70,7 @@ func BenchmarkAppBuilderForEnvironments(b *testing.B) {
 		func(builder *builders.AppBuilder) *builders.AppBuilder { return builder.ForTesting() },
 		func(builder *builders.AppBuilder) *builders.AppBuilder { return builder.ForProduction() },
 	}
-	
+
 	for i := 0; i < b.N; i++ {
 		envMethod := environments[i%len(environments)]
 		app := envMethod(builders.NewApp()).
@@ -115,7 +115,7 @@ func BenchmarkAppBuilderBuild(b *testing.B) {
 		WithName("Build Test").
 		WithVersion("1.0.0").
 		ForProduction()
-	
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		app := builder.Build()

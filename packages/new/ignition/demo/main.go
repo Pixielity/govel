@@ -14,9 +14,9 @@ import (
 	"strconv"
 	"strings"
 
-	"govel/packages/ignition/config"
-	"govel/packages/ignition/models"
-	"govel/packages/ignition/renderer"
+	"govel/ignition/config"
+	"govel/ignition/models"
+	"govel/ignition/renderer"
 )
 
 func main() {

@@ -1,8 +1,8 @@
 package http
 
 import (
-	"govel/packages/exceptions/core/solution"
-	solutionInterface "govel/packages/exceptions/interfaces/solution"
+	"govel/exceptions/core/solution"
+	solutionInterface "govel/exceptions/interfaces/solution"
 )
 
 // UnauthorizedSolution provides specific guidance for 401 Unauthorized errors

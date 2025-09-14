@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"govel/packages/exceptions/core"
-	"govel/packages/exceptions/interfaces"
-	httpSolutions "govel/packages/exceptions/solutions/http"
+	"govel/exceptions/core"
+	"govel/exceptions/interfaces"
+	httpSolutions "govel/exceptions/solutions/http"
 )
 
 // TooManyRequestsException represents a 429 Too Many Requests error.
@@ -18,11 +18,13 @@ type TooManyRequestsException struct {
 // NewTooManyRequestsException creates a new 429 Too Many Requests exception.
 //
 // Parameters:
-//   message: Optional custom error message
-//   retryAfter: Optional retry-after value in seconds
+//
+//	message: Optional custom error message
+//	retryAfter: Optional retry-after value in seconds
 //
 // Example:
-//   err := http.NewTooManyRequestsException("Rate limit exceeded", 60)
+//
+//	err := http.NewTooManyRequestsException("Rate limit exceeded", 60)
 func NewTooManyRequestsException(message string, retryAfter ...int) *TooManyRequestsException {
 	if message == "" {
 		message = "Too Many Requests"

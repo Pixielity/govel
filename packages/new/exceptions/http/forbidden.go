@@ -3,9 +3,9 @@ package http
 import (
 	"net/http"
 
-	"govel/packages/exceptions/core"
-	"govel/packages/exceptions/interfaces"
-	httpSolutions "govel/packages/exceptions/solutions/http"
+	"govel/exceptions/core"
+	"govel/exceptions/interfaces"
+	httpSolutions "govel/exceptions/solutions/http"
 )
 
 // ForbiddenException represents a 403 Forbidden error.
@@ -17,10 +17,12 @@ type ForbiddenException struct {
 // NewForbiddenException creates a new 403 Forbidden exception.
 //
 // Parameters:
-//   message: Optional custom error message
+//
+//	message: Optional custom error message
 //
 // Example:
-//   err := http.NewForbiddenException("Access denied to this resource")
+//
+//	err := http.NewForbiddenException("Access denied to this resource")
 func NewForbiddenException(message ...string) *ForbiddenException {
 	msg := "Forbidden"
 	if len(message) > 0 && message[0] != "" {

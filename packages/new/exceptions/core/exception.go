@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"govel/packages/exceptions/interfaces"
-	solutionInterface "govel/packages/exceptions/interfaces/solution"
+	"govel/exceptions/interfaces"
+	solutionInterface "govel/exceptions/interfaces/solution"
 )
 
 // Exception is the base exception struct that implements ExceptionInterface.
@@ -45,14 +45,17 @@ type Exception struct {
 // NewException creates a new base exception with the given message and status code.
 //
 // Parameters:
-//   message: The error message
-//   statusCode: The HTTP status code (defaults to 500 if not provided)
+//
+//	message: The error message
+//	statusCode: The HTTP status code (defaults to 500 if not provided)
 //
 // Returns:
-//   *Exception: A new exception instance
+//
+//	*Exception: A new exception instance
 //
 // Example:
-//   err := core.NewException("Something went wrong", 500)
+//
+//	err := core.NewException("Something went wrong", 500)
 func NewException(message string, statusCode ...int) *Exception {
 	code := http.StatusInternalServerError
 	if len(statusCode) > 0 && statusCode[0] > 0 {

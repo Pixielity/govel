@@ -1,0 +1,56 @@
+# 🔧 GolangCI-Lint Configuration for Package
+# This configuration provides comprehensive linting for this specific package
+
+run:
+  timeout: 5m
+  tests: true
+  modules-download-mode: readonly
+
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
+linters:
+  enable:
+    - errcheck      # Check for unchecked errors
+    - gosimple      # Simplify code
+    - govet         # Go vet
+    - ineffassign   # Detect ineffectual assignments
+    - staticcheck   # Static analysis
+    - typecheck     # Type checking
+    - unused        # Unused code
+    - gocritic      # Go critic
+    - gocyclo       # Cyclomatic complexity
+    - gofmt         # Format checking
+    - goimports     # Import checking
+    - gosec         # Security issues
+    - misspell      # Misspellings
+    - revive        # Revive linter
+    - unconvert     # Unnecessary conversions
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+  
+  gocyclo:
+    min-complexity: 15
+  
+  gosec:
+    excludes:
+      - G104 # Audit errors not checked (too noisy for some packages)
+  
+  revive:
+    rules:
+      - name: var-naming
+      - name: package-comments
+      - name: exported
+      - name: error-return
+      - name: error-naming
+      - name: if-return
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  exclude-use-default: false

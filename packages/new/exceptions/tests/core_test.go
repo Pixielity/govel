@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"testing"
 
-	"govel/packages/exceptions/core"
-	"govel/packages/exceptions/helpers"
-	httpExceptions "govel/packages/exceptions/http"
-	"govel/packages/exceptions/interfaces"
+	"govel/exceptions/core"
+	"govel/exceptions/helpers"
+	httpExceptions "govel/exceptions/http"
+	"govel/exceptions/interfaces"
 )
 
 // TestCoreExceptionCreation tests basic exception creation

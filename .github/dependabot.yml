@@ -1,0 +1,267 @@
+# 🤖 GoVel Framework - Dependabot Configuration
+#
+# This configuration enables automated dependency updates for the GoVel framework.
+# It manages Go modules, GitHub Actions, and other dependencies across all packages
+# to ensure security and up-to-date dependencies.
+#
+# Features:
+# - 📦 Go module updates for all packages
+# - 🔄 GitHub Actions workflow updates  
+# - 🔒 Security-focused update strategy
+# - 📅 Scheduled updates to minimize noise
+# - 🏷️ Automated labeling and grouping
+# - 👥 Automatic reviewer assignment
+#
+# Documentation: https://docs.github.com/en/code-security/dependabot
+# Author: GoVel Framework Team
+# Version: 1.0.0
+
+version: 2
+updates:
+  # 📦 Go module updates for main packages
+  - package-ecosystem: "gomod"
+    directory: "/packages/application"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "govel-maintainers"
+    assignees:
+      - "govel-lead"
+    labels:
+      - "dependencies"
+      - "go-modules"
+      - "application"
+    commit-message:
+      prefix: "🤖"
+      include: "scope"
+    rebase-strategy: "auto"
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    groups:
+      security-updates:
+        patterns:
+          - "golang.org/x/*"
+          - "*security*"
+        update-types:
+          - "patch"
+          - "minor"
+      minor-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # 🗂️ Container package
+  - package-ecosystem: "gomod"
+    directory: "/packages/container"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "govel-maintainers"
+    labels:
+      - "dependencies"
+      - "go-modules"
+      - "container"
+    commit-message:
+      prefix: "🤖"
+      include: "scope"
+
+  # 🔧 Config package
+  - package-ecosystem: "gomod"
+    directory: "/packages/config"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "govel-maintainers"
+    labels:
+      - "dependencies"
+      - "go-modules"
+      - "config"
+    commit-message:
+      prefix: "🤖"
+      include: "scope"
+
+  # 🔐 Encryption package
+  - package-ecosystem: "gomod"
+    directory: "/packages/encryption"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "govel-maintainers"
+      - "security-team"
+    labels:
+      - "dependencies"
+      - "go-modules"
+      - "encryption"
+      - "security"
+    commit-message:
+      prefix: "🔒"
+      include: "scope"
+    allow:
+      - dependency-type: "direct"
+
+  # 🔑 Hashing package
+  - package-ecosystem: "gomod"
+    directory: "/packages/hashing"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "govel-maintainers"
+      - "security-team"
+    labels:
+      - "dependencies"
+      - "go-modules"
+      - "hashing"
+      - "security"
+    commit-message:
+      prefix: "🔒"
+      include: "scope"
+
+  # 📝 Logger package
+  - package-ecosystem: "gomod"
+    directory: "/packages/logger"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "govel-maintainers"
+    labels:
+      - "dependencies"
+      - "go-modules"
+      - "logger"
+    commit-message:
+      prefix: "🤖"
+      include: "scope"
+
+  # 🚰 Pipeline package
+  - package-ecosystem: "gomod"
+    directory: "/packages/pipeline"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "govel-maintainers"
+    labels:
+      - "dependencies"
+      - "go-modules"
+      - "pipeline"
+    commit-message:
+      prefix: "🤖"
+      include: "scope"
+
+  # 🛠️ Support package
+  - package-ecosystem: "gomod"
+    directory: "/packages/support"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "govel-maintainers"
+    labels:
+      - "dependencies"
+      - "go-modules"
+      - "support"
+    commit-message:
+      prefix: "🤖"
+      include: "scope"
+
+  # 🍪 Cookie package
+  - package-ecosystem: "gomod"
+    directory: "/packages/cookie"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "govel-maintainers"
+    labels:
+      - "dependencies"
+      - "go-modules"
+      - "cookie"
+    commit-message:
+      prefix: "🤖"
+      include: "scope"
+
+  # 🔄 GitHub Actions updates
+  - package-ecosystem: "github-actions"
+    directory: "/.github/workflows"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "10:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "govel-maintainers"
+      - "devops-team"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "ci-cd"
+    commit-message:
+      prefix: "🔄"
+      include: "scope"
+    groups:
+      actions-security:
+        patterns:
+          - "actions/checkout"
+          - "actions/setup-*"
+          - "github/codeql-action"
+          - "codecov/codecov-action"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
+
+  # 🐳 Docker updates (if any Dockerfiles exist)
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "10:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 2
+    reviewers:
+      - "govel-maintainers"
+      - "devops-team"
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "🐳"
+      include: "scope"
+

@@ -81,7 +81,7 @@
 //	    "time"
 //
 //	    "govel/application"
-//	    "govel/packages/application/builders"
+//	    "govel/application/builders"
 //	)
 //
 //	func main() {

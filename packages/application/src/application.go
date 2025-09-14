@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"govel/packages/application/concerns"
-	"govel/packages/application/core/maintenance"
-	coreProviders "govel/packages/application/core/providers"
-	"govel/packages/application/core/shutdown"
+	"govel/application/concerns"
+	"govel/application/core/maintenance"
+	coreProviders "govel/application/core/providers"
+	"govel/application/core/shutdown"
 	"govel/application/providers"
-	"govel/packages/application/traits"
-	configTraits "govel/packages/config/traits"
-	containerTraits "govel/packages/container/traits"
-	loggerTraits "govel/packages/logger/traits"
+	"govel/application/traits"
+	configTraits "govel/config/traits"
+	containerTraits "govel/container/traits"
+	loggerTraits "govel/logger/traits"
 	applicationInterfaces "govel/types/interfaces/application/base"
 	"os"
 	"sync"
@@ -44,6 +44,16 @@ type Application struct {
 	 * HasTiming provides timing management (start time, uptime)
 	 */
 	*concerns.HasTiming
+
+	/**
+	 * HasInfo provides application info management
+	 */
+	*concerns.HasInfo
+
+	/**
+	 * HasBootstrap provides application bootstrap management
+	 */
+	*concerns.HasBootstrap
 
 	// Core trait embeddings - these provide all the specialized functionality
 
@@ -117,6 +127,8 @@ func New() *Application {
 	identityTrait := concerns.NewIdentity()
 	runtimeTrait := concerns.NewRuntime()
 	timingTrait := concerns.NewTiming()
+	hasInfoTrait := concerns.NewInfo()
+	hasBootstrapTrait := concerns.NewBootstrap()
 
 	// Create core trait instances
 	directoriesTrait := traits.NewDirectable(basePath)
@@ -154,6 +166,8 @@ func New() *Application {
 		HasIdentity:     identityTrait,
 		HasRuntime:      runtimeTrait,
 		HasTiming:       timingTrait,
+		HasInfo:         hasInfoTrait,
+		HasBootstrap:    hasBootstrapTrait,
 		Directable:      directoriesTrait,
 		Localizable:     localeTrait,
 		Environmentable: environmentTrait,
@@ -170,9 +184,11 @@ func New() *Application {
 
 	application := &Application{
 		// Embed ISP traits for specialized functionality
-		HasIdentity: identityTrait,
-		HasRuntime:  runtimeTrait,
-		HasTiming:   timingTrait,
+		HasIdentity:  identityTrait,
+		HasRuntime:   runtimeTrait,
+		HasTiming:    timingTrait,
+		HasInfo:      hasInfoTrait,
+		HasBootstrap: hasBootstrapTrait,
 
 		// Embed core traits anonymously for method promotion
 		Directable:      directoriesTrait,
@@ -186,6 +202,9 @@ func New() *Application {
 		Loggable:        hasLoggerTrait,
 		Configurable:    hasConfigTrait,
 	}
+
+	// Set application reference for bootstrap concern
+	hasBootstrapTrait.SetApplicationRef(application)
 
 	return application
 }
@@ -232,6 +251,36 @@ func (a *Application) GetApplicationInfo() map[string]interface{} {
 	}
 
 	return info
+}
+
+// RegisterDefaultBootstrappers returns the default bootstrap classes for the application.
+// This method overrides the base implementation to provide the standard bootstrappers
+// needed for GoVel application initialization in the correct order.
+//
+// Returns:
+//   []interface{}: List of default bootstrap class instances
+//
+// Example:
+//   bootstrappers := app.RegisterDefaultBootstrappers()
+//   app.SetBootstrappers(bootstrappers)
+//   app.Bootstrap()
+//
+// Bootstrap Order:
+//   1. LoadEnvironmentVariables - Load .env files
+//   2. LoadConfiguration - Load configuration files  
+//   3. RegisterFacades - Register facade aliases
+//   Additional bootstrappers can be added here as needed.
+func (a *Application) RegisterDefaultBootstrappers() []interface{} {
+	// Return empty slice by default - can be customized per application
+	// Applications can override this method to return their specific bootstrappers:
+	//
+	// return []interface{}{
+	//     bootstrappers.NewLoadEnvironmentVariables(),
+	//     bootstrappers.NewLoadConfiguration(), 
+	//     bootstrappers.NewRegisterFacades(),
+	// }
+	
+	return []interface{}{}
 }
 
 // Compile-time interface compliance check

@@ -1,0 +1,2159 @@
+{
+  "version": "1.0.0",
+  "packages": {
+    "@govel/application": {
+      "name": "@govel/application",
+      "version": "1.0.0",
+      "description": "Core application framework with lifecycle management and service container integration for GoVel",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "application",
+        "lifecycle",
+        "bootstrap",
+        "service-provider",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/application"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/application#readme",
+      "dependencies": {
+        "@govel/container": "^1.0.0",
+        "@govel/logger": "^1.0.0",
+        "@govel/packages/application/builders": "^1.0.0",
+        "@govel/packages/application/concerns": "^1.0.0",
+        "@govel/packages/application/core/maintenance": "^1.0.0",
+        "@govel/packages/application/core/shutdown": "^1.0.0",
+        "@govel/packages/application/helpers": "^1.0.0",
+        "@govel/packages/application/traits": "^1.0.0"
+      },
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "core",
+        "providers": [
+          "ApplicationServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/application",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/config": {
+      "name": "@govel/config",
+      "version": "1.0.0",
+      "description": "Configuration management system with support for multiple formats and environment-based loading for GoVel",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "config",
+        "configuration",
+        "environment",
+        "settings",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/config"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/config#readme",
+      "dependencies": {
+        "@govel/packages/application/helpers": "^1.0.0"
+      },
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "core",
+        "providers": [
+          "ConfigServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/config",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/container": {
+      "name": "@govel/container",
+      "version": "1.0.0",
+      "description": "Dependency injection container with service binding and resolution capabilities for GoVel",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "container",
+        "dependency-injection",
+        "service-binding",
+        "ioc",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/container"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/container#readme",
+      "dependencies": {},
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "core",
+        "providers": [
+          "ContainerServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/container",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/cookie": {
+      "name": "@govel/cookie",
+      "version": "1.0.0",
+      "description": "Laravel-compatible cookie management package for GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "cookie",
+        "http",
+        "web",
+        "csrf",
+        "security",
+        "encryption",
+        "samesite",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/cookie"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/cookie#readme",
+      "dependencies": {
+        "@govel/support/symbol": "^1.0.0"
+      },
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "web",
+        "providers": [
+          "CookieServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/cookie",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/encryption": {
+      "name": "@govel/encryption",
+      "version": "1.0.0",
+      "description": "Encryption and decryption services with multiple cipher support for GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "encryption",
+        "decryption",
+        "security",
+        "aes",
+        "cipher",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/encryption"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/encryption#readme",
+      "dependencies": {},
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "security",
+        "providers": [
+          "EncryptionServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/encryption",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/hashing": {
+      "name": "@govel/hashing",
+      "version": "1.0.0",
+      "description": "Password hashing and verification utilities with multiple algorithms for GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "hashing",
+        "password",
+        "bcrypt",
+        "argon2",
+        "security",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/hashing"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/hashing#readme",
+      "dependencies": {
+        "github.com/google/uuid": "^1.6.0"
+      },
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "security",
+        "providers": [
+          "HashingServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/hashing",
+      "is_active": true,
+      "is_installed": true,
+      "installed_at": "2025-09-13T23:04:22.011177+04:00",
+      "updated_at": "2025-09-13T23:04:22.014911+04:00"
+    },
+    "@govel/logger": {
+      "name": "@govel/logger",
+      "version": "1.0.0",
+      "description": "Logging infrastructure with multiple channels and formatters for GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "logging",
+        "logger",
+        "infrastructure",
+        "monitoring",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/logger"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/logger#readme",
+      "dependencies": {
+        "@govel/types/interfaces/logger": "^1.0.0"
+      },
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "infrastructure",
+        "providers": [
+          "LoggerServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/logger",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/new/bus": {
+      "name": "@govel/new/bus",
+      "version": "1.0.0",
+      "description": "Command bus pattern implementation with queuing support for GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "bus",
+        "command",
+        "queue",
+        "architecture",
+        "pattern",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/new/bus"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/bus#readme",
+      "dependencies": {},
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "architecture",
+        "providers": [
+          "BusServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/new/bus",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/new/cache": {
+      "name": "@govel/new/cache",
+      "version": "1.0.0",
+      "description": "Caching system with multiple drivers and Laravel compatibility for GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "cache",
+        "caching",
+        "storage",
+        "performance",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/new/cache"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/cache#readme",
+      "dependencies": {},
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "infrastructure",
+        "providers": [
+          "CacheServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/new/cache",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/new/exceptions": {
+      "name": "@govel/new/exceptions",
+      "version": "1.0.0",
+      "description": "Exception handling and error management for GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "exceptions",
+        "error",
+        "handling",
+        "debug",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/new/exceptions"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/exceptions#readme",
+      "dependencies": {},
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "infrastructure",
+        "providers": null
+      },
+      "path": "/Users/akouta/Projects/govel/packages/new/exceptions",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/new/filesystem": {
+      "name": "@govel/new/filesystem",
+      "version": "1.0.0",
+      "description": "File system operations and storage abstraction for GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "filesystem",
+        "storage",
+        "file",
+        "disk",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/new/filesystem"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/filesystem#readme",
+      "dependencies": {},
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "infrastructure",
+        "providers": [
+          "FilesystemServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/new/filesystem",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/new/health_check": {
+      "name": "@govel/new/health_check",
+      "version": "1.0.0",
+      "description": "Health check monitoring system for GoVel applications",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "health",
+        "monitoring",
+        "check",
+        "status",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/new/health_check"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/health_check#readme",
+      "dependencies": {
+        "@govel/healthcheck/checks": "^1.0.0",
+        "@govel/healthcheck/enums": "^1.0.0",
+        "@govel/healthcheck/http/controllers": "^1.0.0",
+        "@govel/healthcheck/interfaces": "^1.0.0",
+        "@govel/healthcheck/registry": "^1.0.0",
+        "@govel/healthcheck/types": "^1.0.0"
+      },
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "monitoring",
+        "providers": [
+          "HealthCheckServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/new/health_check",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/new/ignition": {
+      "name": "@govel/new/ignition",
+      "version": "1.0.0",
+      "description": "Debug and error page utilities for GoVel framework development",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "ignition",
+        "debug",
+        "error-page",
+        "development",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/new/ignition"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/ignition#readme",
+      "dependencies": {},
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "development",
+        "providers": null
+      },
+      "path": "/Users/akouta/Projects/govel/packages/new/ignition",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/new/middleware": {
+      "name": "@govel/new/middleware",
+      "version": "1.0.0",
+      "description": "HTTP middleware collection for GoVel web applications",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "middleware",
+        "http",
+        "web",
+        "request",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/new/middleware"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/middleware#readme",
+      "dependencies": {
+        "@govel/middleware/interfaces": "^1.0.0",
+        "@govel/middleware/types": "^1.0.0"
+      },
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "web",
+        "providers": [
+          "MiddlewareServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/new/middleware",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/new/redis": {
+      "name": "@govel/new/redis",
+      "version": "1.0.0",
+      "description": "Redis client and utilities for GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "redis",
+        "cache",
+        "storage",
+        "nosql",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/new/redis"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/redis#readme",
+      "dependencies": {},
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "infrastructure",
+        "providers": [
+          "RedisServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/new/redis",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/new/routing": {
+      "name": "@govel/new/routing",
+      "version": "1.0.0",
+      "description": "HTTP routing system with Laravel-compatible features for GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "routing",
+        "http",
+        "web",
+        "router",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/new/routing"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/routing#readme",
+      "dependencies": {
+        "@govel/webserver/enums": "^1.0.0",
+        "@govel/webserver/interfaces": "^1.0.0"
+      },
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "web",
+        "providers": [
+          "RoutingServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/new/routing",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/new/session": {
+      "name": "@govel/new/session",
+      "version": "1.0.0",
+      "description": "Session management with multiple storage drivers for GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "session",
+        "web",
+        "state",
+        "storage",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/new/session"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/session#readme",
+      "dependencies": {},
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "web",
+        "providers": [
+          "SessionServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/new/session",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/new/translation": {
+      "name": "@govel/new/translation",
+      "version": "1.0.0",
+      "description": "Internationalization and localization system for GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "translation",
+        "i18n",
+        "localization",
+        "language",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/new/translation"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/translation#readme",
+      "dependencies": {},
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "localization",
+        "providers": [
+          "TranslationServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/new/translation",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/new/webserver": {
+      "name": "@govel/new/webserver",
+      "version": "1.0.0",
+      "description": "Web server abstraction with multiple adapter support for GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "webserver",
+        "http",
+        "server",
+        "web",
+        "fiber",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/new/webserver"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/new/webserver#readme",
+      "dependencies": {
+        "@govel/application/providers": "^1.0.0",
+        "@govel/routing": "^1.0.0"
+      },
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "web",
+        "providers": [
+          "WebserverServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/new/webserver",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/package_manager": {
+      "name": "@govel/package_manager",
+      "version": "1.0.0",
+      "description": "Complete package management system for GoVel framework with dependency resolution, hooks execution, and CLI interface",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "package-manager",
+        "dependency-manager",
+        "cli",
+        "composer",
+        "npm",
+        "laravel",
+        "govel",
+        "framework",
+        "module",
+        "installer",
+        "dependencies",
+        "hooks"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/package_manager"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/package_manager#readme",
+      "dependencies": {},
+      "scripts": {
+        "build": "go build -o bin/govel-pkg ./src/main.go",
+        "build:all": "GOOS=darwin go build -o bin/govel-pkg-darwin ./src/main.go \u0026\u0026 GOOS=linux go build -o bin/govel-pkg-linux ./src/main.go \u0026\u0026 GOOS=windows go build -o bin/govel-pkg-windows.exe ./src/main.go",
+        "clean": "go clean -cache -testcache -modcache \u0026\u0026 rm -rf bin/",
+        "fmt": "go fmt ./...",
+        "install": "go build -o bin/govel-pkg ./src/main.go \u0026\u0026 sudo cp bin/govel-pkg /usr/local/bin/",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download",
+          "go build -o bin/govel-pkg ./src/main.go"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download",
+          "go build -o bin/govel-pkg ./src/main.go"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run",
+          "go build -o bin/govel-pkg ./src/main.go"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "bin/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "infrastructure",
+        "providers": [
+          "PackageManagerServiceProvider"
+        ],
+        "commands": [
+          "install",
+          "uninstall",
+          "list",
+          "activate",
+          "deactivate",
+          "status",
+          "update",
+          "search",
+          "info",
+          "run"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/package_manager",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/pipeline": {
+      "name": "@govel/pipeline",
+      "version": "1.0.0",
+      "description": "Pipeline processing system for middleware and data transformation in GoVel framework",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "pipeline",
+        "middleware",
+        "processing",
+        "chain",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/pipeline"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/pipeline#readme",
+      "dependencies": {},
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "core",
+        "providers": [
+          "PipelineServiceProvider"
+        ]
+      },
+      "path": "/Users/akouta/Projects/govel/packages/pipeline",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/support": {
+      "name": "@govel/support",
+      "version": "1.0.0",
+      "description": "Core utility functions and helpers for GoVel framework development",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "utility",
+        "helpers",
+        "support",
+        "common",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/support"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/support#readme",
+      "dependencies": {
+        "@govel/hashing/exceptions": "^1.0.0"
+      },
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "utility",
+        "providers": null
+      },
+      "path": "/Users/akouta/Projects/govel/packages/support",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    "@govel/types": {
+      "name": "@govel/types",
+      "version": "1.0.0",
+      "description": "Type definitions and interfaces for GoVel framework components",
+      "author": "GoVel Framework Team",
+      "license": "MIT",
+      "keywords": [
+        "go",
+        "golang",
+        "types",
+        "interfaces",
+        "definitions",
+        "contracts",
+        "laravel",
+        "govel",
+        "framework",
+        "module"
+      ],
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/govel-framework/govel.git",
+        "directory": "packages/types"
+      },
+      "bugs": {
+        "url": "https://github.com/govel-framework/govel/issues"
+      },
+      "homepage": "https://github.com/govel-framework/govel/tree/main/packages/types#readme",
+      "dependencies": {
+        "@govel/support/symbol": "^1.0.0"
+      },
+      "scripts": {
+        "build": "go build ./...",
+        "clean": "go clean -cache -testcache -modcache",
+        "fmt": "go fmt ./...",
+        "lint": "golangci-lint run",
+        "mod:tidy": "go mod tidy",
+        "mod:verify": "go mod verify",
+        "test": "go test -v ./...",
+        "test:coverage": "go test -v -cover ./...",
+        "test:race": "go test -v -race ./...",
+        "vet": "go vet ./..."
+      },
+      "hooks": {
+        "pre-install": null,
+        "post-install": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-update": null,
+        "post-update": [
+          "go mod tidy",
+          "go mod download"
+        ],
+        "pre-build": [
+          "go fmt ./...",
+          "go vet ./..."
+        ],
+        "post-build": null,
+        "pre-test": [
+          "go mod verify"
+        ],
+        "post-test": null,
+        "pre-publish": [
+          "go test ./...",
+          "go fmt ./...",
+          "go vet ./...",
+          "golangci-lint run"
+        ],
+        "post-publish": null
+      },
+      "engines": {
+        "go": "\u003e=1.19"
+      },
+      "files": [
+        "src/",
+        "README.md",
+        "LICENSE",
+        "go.mod",
+        "go.sum"
+      ],
+      "govel": {
+        "type": "package",
+        "category": "core",
+        "providers": null
+      },
+      "path": "/Users/akouta/Projects/govel/packages/types",
+      "is_active": false,
+      "is_installed": false,
+      "installed_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  },
+  "active_count": 1,
+  "total_count": 23,
+  "updated_at": "2025-09-13T23:04:22.014917+04:00"
+}

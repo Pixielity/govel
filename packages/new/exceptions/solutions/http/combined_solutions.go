@@ -3,8 +3,8 @@ package http
 import (
 	"strconv"
 
-	"govel/packages/exceptions/core/solution"
-	solutionInterface "govel/packages/exceptions/interfaces/solution"
+	"govel/exceptions/core/solution"
+	solutionInterface "govel/exceptions/interfaces/solution"
 )
 
 // MethodNotAllowedSolution provides specific guidance for 405 Method Not Allowed errors
@@ -17,11 +17,11 @@ type MethodNotAllowedSolution struct {
 // NewMethodNotAllowedSolution creates a solution specifically for method not allowed errors
 func NewMethodNotAllowedSolution(usedMethod string, allowedMethods []string) *MethodNotAllowedSolution {
 	description := "The HTTP method you're using is not allowed for this endpoint.\n\n"
-	
+
 	if usedMethod != "" {
 		description += "• You used: " + usedMethod + "\n"
 	}
-	
+
 	if len(allowedMethods) > 0 {
 		description += "• Allowed methods: "
 		for i, method := range allowedMethods {
@@ -32,9 +32,9 @@ func NewMethodNotAllowedSolution(usedMethod string, allowedMethods []string) *Me
 		}
 		description += "\n"
 	}
-	
+
 	description += "\nCheck your route definitions and HTTP client configuration."
-	
+
 	base := solution.NewBaseSolution("HTTP Method Not Allowed").
 		SetSolutionDescription(description).
 		AddDocumentationLink("HTTP 405 Reference", "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/405").
@@ -94,11 +94,11 @@ type TooManyRequestsSolution struct {
 // NewTooManyRequestsSolution creates a solution specifically for rate limiting errors
 func NewTooManyRequestsSolution(retryAfter, rateLimit int) *TooManyRequestsSolution {
 	description := "You've exceeded the rate limit. Solutions:\n\n• Wait before making more requests\n• Implement exponential backoff\n• Check if you can upgrade your rate limit\n• Cache responses to reduce API calls"
-	
+
 	if retryAfter > 0 {
 		description += "\n• Retry after " + strconv.Itoa(retryAfter) + " seconds"
 	}
-	
+
 	base := solution.NewBaseSolution("Rate Limit Exceeded").
 		SetSolutionDescription(description).
 		AddDocumentationLink("HTTP 429 Reference", "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429").
@@ -152,11 +152,11 @@ type ServiceUnavailableSolution struct {
 // NewServiceUnavailableSolution creates a solution specifically for 503 errors
 func NewServiceUnavailableSolution(retryAfter int) *ServiceUnavailableSolution {
 	description := "The service is temporarily unavailable. This might be due to:\n\n• Scheduled maintenance\n• Server overload\n• Database connectivity issues\n• External service dependencies\n• Resource exhaustion"
-	
+
 	if retryAfter > 0 {
 		description += "\n\nTry again after " + strconv.Itoa(retryAfter) + " seconds."
 	}
-	
+
 	base := solution.NewBaseSolution("Service Temporarily Unavailable").
 		SetSolutionDescription(description).
 		AddDocumentationLink("HTTP 503 Reference", "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503").

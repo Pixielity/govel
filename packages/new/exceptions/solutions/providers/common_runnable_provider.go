@@ -4,8 +4,8 @@ import (
 	"os"
 	"strings"
 
-	solutionInterface "govel/packages/exceptions/interfaces/solution"
-	"govel/packages/exceptions/solutions/runnable"
+	solutionInterface "govel/exceptions/interfaces/solution"
+	"govel/exceptions/solutions/runnable"
 )
 
 // CommonRunnableSolutionsProvider provides runnable solutions for common development issues
@@ -19,7 +19,7 @@ func NewCommonRunnableSolutionsProvider() *CommonRunnableSolutionsProvider {
 // CanSolve determines if this provider can provide a solution for the given error
 func (p *CommonRunnableSolutionsProvider) CanSolve(err error) bool {
 	message := err.Error()
-	
+
 	// Check for common development issues
 	return contains(message, "app key", "encryption key", "missing key") ||
 		contains(message, "permission denied", "access denied") ||
@@ -31,11 +31,11 @@ func (p *CommonRunnableSolutionsProvider) CanSolve(err error) bool {
 func (p *CommonRunnableSolutionsProvider) GetSolutions(err error) []solutionInterface.Solution {
 	message := err.Error()
 	var solutions []solutionInterface.Solution
-	
+
 	if contains(message, "app key", "encryption key", "missing key") {
 		solutions = append(solutions, runnable.NewGenerateAppKeySolution())
 	}
-	
+
 	if contains(message, "storage", "logs", "directory") && contains(message, "not found", "no such file") {
 		// Common directories that might be missing
 		commonDirs := []string{"storage/logs", "storage/app", "storage/framework", "bootstrap/cache"}
@@ -45,11 +45,11 @@ func (p *CommonRunnableSolutionsProvider) GetSolutions(err error) []solutionInte
 			}
 		}
 	}
-	
+
 	if contains(message, "go.mod", "module") && contains(message, "not found") {
 		solutions = append(solutions, runnable.NewInstallDependencySolution("go modules", "go mod tidy"))
 	}
-	
+
 	if contains(message, "permission", "chmod") && contains(message, "denied", "failed") {
 		// Common permission fixes
 		commonPaths := []string{"storage", "bootstrap/cache", "logs"}
@@ -59,7 +59,7 @@ func (p *CommonRunnableSolutionsProvider) GetSolutions(err error) []solutionInte
 			}
 		}
 	}
-	
+
 	return solutions
 }
 

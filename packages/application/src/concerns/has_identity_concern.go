@@ -3,7 +3,7 @@ package concerns
 import (
 	"sync"
 
-	"govel/packages/application/helpers"
+	"govel/application/helpers"
 	concernsInterfaces "govel/types/interfaces/application/concerns"
 )
 

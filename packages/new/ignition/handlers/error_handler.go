@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"govel/packages/ignition/config"
-	"govel/packages/ignition/interfaces"
-	"govel/packages/ignition/models"
-	"govel/packages/ignition/renderer"
+	"govel/ignition/config"
+	"govel/ignition/interfaces"
+	"govel/ignition/models"
+	"govel/ignition/renderer"
 )
 
 // ErrorHandler handles errors and creates reports

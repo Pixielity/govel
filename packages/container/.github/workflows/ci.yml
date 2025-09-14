@@ -1,0 +1,163 @@
+# 🎯 container Package CI Pipeline
+#
+# This workflow provides continuous integration for the container package.
+# It runs tests, linting, security scans, and quality checks.
+
+name: 🧪 container CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '/Users/akouta/Projects/govel/packages/container/**'
+      - '.github/workflows/ci.yml'
+  
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - '/Users/akouta/Projects/govel/packages/container/**'
+      - '.github/workflows/ci.yml'
+  
+  workflow_dispatch:
+
+# 🔒 Security: Ensure minimal permissions
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+
+# 🚫 Cancel in-progress runs for same PR/branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PACKAGE_PATH: /Users/akouta/Projects/govel/packages/container
+  GO_VERSION: '1.23'
+  COVERAGE_THRESHOLD: 80
+
+jobs:
+  test:
+    name: 🧪 Test container
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐹 Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: 📦 Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('/Users/akouta/Projects/govel/packages/container/**/go.sum', '/Users/akouta/Projects/govel/packages/container/**/go.mod') }}
+
+      - name: 📥 Download dependencies
+        working-directory: ${{ env.PACKAGE_PATH }}
+        run: |
+          echo "📥 Downloading dependencies for container..."
+          # Handle both src and non-src directory structures
+          if [[ -f "src/go.mod" ]]; then
+            cd src && go mod download
+          else
+            go mod download
+          fi
+
+      - name: 🔨 Build package
+        working-directory: ${{ env.PACKAGE_PATH }}
+        run: |
+          echo "🔨 Building container..."
+          if [[ -f "src/go.mod" ]]; then
+            cd src && go build -v ./...
+          else
+            go build -v ./...
+          fi
+
+      - name: 🧪 Run tests
+        working-directory: ${{ env.PACKAGE_PATH }}
+        run: |
+          echo "🧪 Running tests for container..."
+          mkdir -p coverage
+          if [[ -f "src/go.mod" ]]; then
+            cd src && go test -v -race -coverprofile=../coverage/coverage.out -covermode=atomic ./...
+            cd .. && go tool cover -func=coverage/coverage.out
+          else
+            go test -v -race -coverprofile=coverage/coverage.out -covermode=atomic ./...
+            go tool cover -func=coverage/coverage.out
+          fi
+
+      - name: 🔍 Run go vet
+        working-directory: ${{ env.PACKAGE_PATH }}
+        run: |
+          echo "🔍 Running go vet for container..."
+          if [[ -f "src/go.mod" ]]; then
+            cd src && go vet ./...
+          else
+            go vet ./...
+          fi
+
+      - name: 🎨 Check formatting
+        working-directory: ${{ env.PACKAGE_PATH }}
+        run: |
+          echo "🎨 Checking formatting for container..."
+          if [[ -f "src/go.mod" ]]; then
+            unformatted=$(cd src && gofmt -l .)
+          else
+            unformatted=$(gofmt -l .)
+          fi
+          
+          if [[ -n "$unformatted" ]]; then
+            echo "❌ Unformatted files:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: 📊 Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./${{ env.PACKAGE_PATH }}/coverage/coverage.out
+          flags: container
+          name: container-coverage
+          fail_ci_if_error: false
+
+  security:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐹 Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: 🔍 Run govulncheck
+        working-directory: ${{ env.PACKAGE_PATH }}
+        run: |
+          echo "🔍 Installing govulncheck..."
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          
+          echo "🔍 Scanning container for vulnerabilities..."
+          if [[ -f "src/go.mod" ]]; then
+            cd src && govulncheck ./...
+          else
+            govulncheck ./...
+          fi
+
+      - name: 🔒 Run gosec
+        uses: securecodewarrior/github-action-gosec@master
+        with:
+          args: '-fmt sarif -out gosec-container.sarif ${{ env.PACKAGE_PATH }}/...'
+
+      - name: 🛡️ Upload SARIF file
+        if: always()
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: gosec-container.sarif

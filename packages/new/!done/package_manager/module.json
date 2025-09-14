@@ -1,0 +1,111 @@
+{
+  "name": "@govel/package_manager",
+  "version": "1.0.0",
+  "description": "Complete package management system for GoVel framework with dependency resolution, hooks execution, and CLI interface",
+  "author": "GoVel Framework Team",
+  "license": "MIT",
+  "keywords": [
+    "go", 
+    "golang", 
+    "package-manager",
+    "dependency-manager",
+    "cli",
+    "composer",
+    "npm",
+    "laravel", 
+    "govel", 
+    "framework", 
+    "module",
+    "installer",
+    "dependencies",
+    "hooks"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/govel-framework/govel.git",
+    "directory": "packages/package_manager"
+  },
+  "bugs": {
+    "url": "https://github.com/govel-framework/govel/issues"
+  },
+  "homepage": "https://github.com/govel-framework/govel/tree/main/packages/package_manager#readme",
+  "dependencies": {},
+  "bin": {
+    "govel-pkg": "./bin/govel-pkg"
+  },
+  "scripts": {
+    "test": "go test -v ./...",
+    "test:coverage": "go test -v -cover ./...",
+    "test:race": "go test -v -race ./...",
+    "build": "go build -o bin/govel-pkg ./src/main.go",
+    "build:all": "GOOS=darwin go build -o bin/govel-pkg-darwin ./src/main.go && GOOS=linux go build -o bin/govel-pkg-linux ./src/main.go && GOOS=windows go build -o bin/govel-pkg-windows.exe ./src/main.go",
+    "install": "go build -o bin/govel-pkg ./src/main.go && sudo cp bin/govel-pkg /usr/local/bin/",
+    "lint": "golangci-lint run",
+    "fmt": "go fmt ./...",
+    "vet": "go vet ./...",
+    "mod:tidy": "go mod tidy",
+    "mod:verify": "go mod verify",
+    "clean": "go clean -cache -testcache -modcache && rm -rf bin/"
+  },
+  "hooks": {
+    "pre-install": [],
+    "post-install": [
+      "go mod tidy",
+      "go mod download",
+      "go build -o bin/govel-pkg ./src/main.go"
+    ],
+    "pre-update": [],
+    "post-update": [
+      "go mod tidy",
+      "go mod download",
+      "go build -o bin/govel-pkg ./src/main.go"
+    ],
+    "pre-build": [
+      "go fmt ./...",
+      "go vet ./..."
+    ],
+    "post-build": [],
+    "pre-test": [
+      "go mod verify"
+    ],
+    "post-test": [],
+    "pre-publish": [
+      "go test ./...",
+      "go fmt ./...",
+      "go vet ./...",
+      "golangci-lint run",
+      "go build -o bin/govel-pkg ./src/main.go"
+    ],
+    "post-publish": []
+  },
+  "engines": {
+    "go": ">=1.19"
+  },
+  "files": [
+    "src/",
+    "bin/",
+    "README.md",
+    "LICENSE",
+    "go.mod",
+    "go.sum"
+  ],
+  "govel": {
+    "type": "package",
+    "category": "infrastructure",
+    "providers": [
+      "PackageManagerServiceProvider"
+    ],
+    "commands": [
+      "install",
+      "uninstall",
+      "list",
+      "activate",
+      "deactivate",
+      "status",
+      "update",
+      "search",
+      "info",
+      "run"
+    ]
+  }
+}

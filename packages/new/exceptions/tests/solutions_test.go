@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"govel/packages/exceptions"
-	"govel/packages/exceptions/solutions"
+	"govel/exceptions"
+	"govel/exceptions/solutions"
 )
 
 // Test BaseSolution implementation
@@ -263,8 +263,8 @@ func TestHTTPExceptionProvider(t *testing.T) {
 	provider := solutions.NewHTTPExceptionProvider()
 
 	testCases := []struct {
-		error      error
-		canSolve   bool
+		error        error
+		canSolve     bool
 		numSolutions int
 	}{
 		{fmt.Errorf("404 not found"), true, 1},
@@ -331,8 +331,8 @@ func TestCommonRunnableSolutionsProvider(t *testing.T) {
 	provider := solutions.NewCommonRunnableSolutionsProvider()
 
 	testCases := []struct {
-		error        error
-		canSolve     bool
+		error          error
+		canSolve       bool
 		expectRunnable bool
 	}{
 		{fmt.Errorf("app key missing"), true, true},
@@ -378,7 +378,7 @@ func TestExceptionProvidesSolution(t *testing.T) {
 	}
 
 	solutionsFound := repo.GetSolutionsForError(exc)
-	
+
 	// Should get both the exception's own solution and provider solutions
 	if len(solutionsFound) < 1 {
 		t.Error("Should find at least the exception's own solution")

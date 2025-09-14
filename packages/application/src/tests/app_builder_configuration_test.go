@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"govel/packages/application/builders"
+	"govel/application/builders"
 )
 
 // TestAppBuilderConfiguration tests all configuration methods
@@ -17,7 +17,7 @@ func TestAppBuilderConfiguration(t *testing.T) {
 	testTimezone := "Europe/Paris"
 	testBasePath := "/opt/myapp"
 	testTimeout := 45 * time.Second
-	
+
 	app := builders.NewApp().
 		WithName(testName).
 		WithVersion(testVersion).
@@ -29,36 +29,36 @@ func TestAppBuilderConfiguration(t *testing.T) {
 		WithShutdownTimeout(testTimeout).
 		WithDebug(false).
 		Build()
-	
+
 	// Test that all configurations were applied
 	if app.GetName() != testName {
 		t.Errorf("Expected name %s, got %s", testName, app.GetName())
 	}
-	
+
 	if app.GetVersion() != testVersion {
 		t.Errorf("Expected version %s, got %s", testVersion, app.GetVersion())
 	}
-	
+
 	if app.GetEnvironment() != testEnv {
 		t.Errorf("Expected environment %s, got %s", testEnv, app.GetEnvironment())
 	}
-	
+
 	if app.GetLocale() != testLocale {
 		t.Errorf("Expected locale %s, got %s", testLocale, app.GetLocale())
 	}
-	
+
 	if app.GetFallbackLocale() != testFallbackLocale {
 		t.Errorf("Expected fallback locale %s, got %s", testFallbackLocale, app.GetFallbackLocale())
 	}
-	
+
 	if app.GetTimezone() != testTimezone {
 		t.Errorf("Expected timezone %s, got %s", testTimezone, app.GetTimezone())
 	}
-	
+
 	if app.IsDebug() != false {
 		t.Error("Expected debug to be false")
 	}
-	
+
 	if app.GetShutdownTimeout() != testTimeout {
 		t.Errorf("Expected shutdown timeout %v, got %v", testTimeout, app.GetShutdownTimeout())
 	}
@@ -70,30 +70,30 @@ func TestAppBuilderRuntimeModes(t *testing.T) {
 	consoleApp := builders.NewApp().
 		InConsole().
 		Build()
-	
+
 	if !consoleApp.IsRunningInConsole() {
 		t.Error("Expected application to be running in console mode")
 	}
-	
+
 	// Test InTesting
 	testApp := builders.NewApp().
 		InTesting().
 		Build()
-	
+
 	if !testApp.IsRunningUnitTests() {
 		t.Error("Expected application to be running in testing mode")
 	}
-	
+
 	// Test both together
 	bothApp := builders.NewApp().
 		InConsole().
 		InTesting().
 		Build()
-	
+
 	if !bothApp.IsRunningInConsole() {
 		t.Error("Expected application to be running in console mode")
 	}
-	
+
 	if !bothApp.IsRunningUnitTests() {
 		t.Error("Expected application to be running in testing mode")
 	}
@@ -106,7 +106,7 @@ func TestAppBuilderDebugAutomaticDisable(t *testing.T) {
 		WithDebug(true).
 		WithEnvironment("production").
 		Build()
-	
+
 	// Debug should be automatically disabled in production
 	if app.IsDebug() {
 		t.Error("Expected debug to be automatically disabled in production environment")
@@ -120,7 +120,7 @@ func TestAppBuilderWithContainer(t *testing.T) {
 	app := builders.NewApp().
 		WithContainer(nil). // Passing nil to test the method exists
 		Build()
-	
+
 	if app == nil {
 		t.Error("Expected Build() to succeed even with nil container")
 	}

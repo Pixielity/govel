@@ -4,7 +4,7 @@ import (
 	"strings"
 	"sync"
 
-	"govel/packages/application/helpers"
+	"govel/application/helpers"
 	traitInterfaces "govel/types/interfaces/application/traits"
 )
 

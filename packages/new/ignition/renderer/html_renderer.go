@@ -5,9 +5,9 @@ import (
 	"html/template"
 	"net/http"
 
-	"govel/packages/ignition/config"
-	"govel/packages/ignition/models"
-	"govel/packages/ignition/views"
+	"govel/ignition/config"
+	"govel/ignition/models"
+	"govel/ignition/views"
 )
 
 // HTMLRenderer handles rendering error pages to HTML

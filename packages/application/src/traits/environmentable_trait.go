@@ -3,7 +3,7 @@ package traits
 import (
 	"sync"
 
-	"govel/packages/application/helpers"
+	"govel/application/helpers"
 	enums "govel/types/enums/application"
 	traitInterfaces "govel/types/interfaces/application/traits"
 )

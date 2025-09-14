@@ -1,11 +1,11 @@
 package solutions
 
 import (
-	coreSolution "govel/packages/exceptions/core/solution"
-	solutionInterfaces "govel/packages/exceptions/interfaces/solution"
-	httpSolutions "govel/packages/exceptions/solutions/http"
-	"govel/packages/exceptions/solutions/providers"
-	"govel/packages/exceptions/solutions/runnable"
+	coreSolution "govel/exceptions/core/solution"
+	solutionInterfaces "govel/exceptions/interfaces/solution"
+	httpSolutions "govel/exceptions/solutions/http"
+	"govel/exceptions/solutions/providers"
+	"govel/exceptions/solutions/runnable"
 )
 
 // Re-export core types

@@ -1,6 +1,6 @@
 package solution
 
-import "govel/packages/exceptions/interfaces/solution"
+import "govel/exceptions/interfaces/solution"
 
 // BaseSolution provides a basic implementation of the Solution interface.
 // This is inspired by Laravel's Spatie\ErrorSolutions\Interfaces\BaseSolution class.

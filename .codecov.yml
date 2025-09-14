@@ -1,0 +1,212 @@
+# 📊 GoVel Framework - Codecov Configuration
+#
+# This configuration defines code coverage reporting and quality gates
+# for the GoVel framework. It ensures high-quality code through
+# comprehensive coverage analysis and automated quality checks.
+#
+# Features:
+# - 📈 Coverage thresholds and quality gates
+# - 📦 Per-package coverage requirements
+# - 🎯 Pull request status checks
+# - 📊 Coverage trend analysis
+# - 🚫 Proper path ignoring for generated/test files
+#
+# Documentation: https://docs.codecov.io/docs/codecov-yaml
+# Author: GoVel Framework Team
+# Version: 1.0.0
+
+# 🎯 Coverage configuration
+coverage:
+  # 📊 Precision for coverage percentage (2 decimal places)
+  precision: 2
+  
+  # 🎯 Rounding mode: down, up, nearest
+  round: nearest
+  
+  # 📈 Coverage range for color coding (red to green)
+  range: "60...90"
+  
+  # 📋 Status checks configuration
+  status:
+    # 🔍 Project-wide coverage requirements
+    project:
+      default:
+        # 🎯 Target coverage percentage
+        target: 80%
+        
+        # 📉 Allowed coverage drop threshold
+        threshold: 2%
+        
+        # 📊 Base for comparison (auto, parent, pr)
+        base: auto
+        
+        # 🚫 Only post status if coverage changes
+        if_no_uploads: error
+        
+        # 🎛️ Only run on these branches
+        branches:
+          - main
+          - develop
+          
+        # 📦 Path-based coverage (focus on source code)
+        paths:
+          - "packages/*/src"
+          - "packages/*/*.go"
+        
+    # 🔄 Patch coverage (new code in PRs)
+    patch:
+      default:
+        # 🎯 New code must be well tested
+        target: 85%
+        
+        # 📉 Strict threshold for new code
+        threshold: 3%
+        
+        # 📊 Base comparison
+        base: auto
+        
+        # 🔍 Only analyze changed files
+        only_pulls: true
+        
+        # 📦 Focus on source code changes
+        paths:
+          - "packages/*/src"
+          - "packages/*/*.go"
+
+  # 📋 Individual package coverage requirements
+  flags:
+    # 🔐 Core packages require higher coverage
+    core-packages:
+      paths:
+        - packages/application
+        - packages/container  
+        - packages/config
+        - packages/logger
+      target: 85%
+      
+    # 🛡️ Security-critical packages
+    security-packages:
+      paths:
+        - packages/encryption
+        - packages/hashing
+      target: 90%
+      
+    # 🔧 Utility packages
+    utility-packages:
+      paths:
+        - packages/support
+        - packages/cookie
+        - packages/pipeline
+      target: 80%
+
+# 💬 Comment configuration for pull requests
+comment:
+  # 📊 Layout of the coverage comment
+  layout: "reach,diff,flags,tree,betaprofiling"
+  
+  # 🎯 Behavior settings
+  behavior: default
+  
+  # 📉 Require coverage changes to post comment
+  require_changes: true
+  
+  # 📝 Show file-level coverage in comments
+  require_base: no
+  require_head: yes
+  
+  # 📋 Branch settings for comments
+  branches:
+    - main
+    - develop
+
+# 📂 Path ignoring configuration
+ignore:
+  # 🧪 Test files and test utilities
+  - "**/tests/**"
+  - "**/test/**"
+  - "**/*_test.go"
+  - "**/mocks/**"
+  - "**/mock_*.go"
+  - "**/*_mock.go"
+  
+  # 📄 Documentation and examples
+  - "**/docs/**"
+  - "**/examples/**"
+  - "**/demo/**"
+  - "**/*.md"
+  
+  # 🔧 Generated and vendor code
+  - "**/vendor/**"
+  - "**/*.pb.go"
+  - "**/*.gen.go"
+  - "**/generated/**"
+  
+  # 🏗️ Build and tooling
+  - "**/scripts/**"
+  - "**/tools/**"
+  - "**/build/**"
+  - "**/dist/**"
+  - "Makefile"
+  - "**/*.yml"
+  - "**/*.yaml"
+  - "**/go.mod"
+  - "**/go.sum"
+  
+  # 📦 Package-specific ignores
+  - "packages/new/**"          # New/experimental packages
+  - "**/cmd/**"               # Command-line tools
+  - "**/main.go"              # Main entry points
+
+# 🚨 Notification configuration
+github_checks:
+  # ✅ Enable GitHub status checks
+  annotations: true
+
+# 🔧 Parsing configuration
+parsers:
+  go:
+    # 📊 Go coverage report parsing
+    branch_detection:
+      conditional: true
+      loop: true
+      method: false
+      macro: false
+  
+  gcov:
+    # 🎯 Branch coverage settings
+    branch_detection:
+      conditional: true
+      loop: true
+      method: false
+      macro: false
+
+# 📈 Profiling and analytics
+profiling:
+  # 🔍 Critical files that need high attention
+  critical_files_paths:
+    - packages/application/application.go
+    - packages/container/container.go
+    - packages/encryption/src/*.go
+    - packages/hashing/src/*.go
+    - packages/logger/logger.go
+
+# 🎛️ Advanced configuration
+codecov:
+  # 🔒 Security and validation
+  require_ci_to_pass: true
+  
+  # 📊 Archive settings
+  archive:
+    uploads: true
+    
+  # 🕒 Upload timeout
+  max_report_age: 24  # hours
+  
+  # 📧 Notification settings
+  notify:
+    # 📥 After N uploads
+    after_n_builds: 2
+    
+    # ⏰ Wait time before sending notifications  
+    wait_for_ci: true
+

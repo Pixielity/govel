@@ -20,6 +20,7 @@ import (
 
 	"govel/logger"
 	constants "govel/types/constants/application"
+	applicationInterfaces "govel/types/interfaces/application/base"
 	providerInterfaces "govel/types/interfaces/application/providers"
 	types "govel/types/types/application"
 )
@@ -215,7 +216,7 @@ func (sm *ShutdownManager) IsDraining() bool {
 // Parameters:
 //
 //	ctx: Context for controlling the shutdown process
-//	app: Application instance for provider termination
+//	application: Application instance for provider termination
 //
 // Returns:
 //
@@ -226,11 +227,11 @@ func (sm *ShutdownManager) IsDraining() bool {
 //	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 //	defer cancel()
 //
-//	if err := shutdownManager.GracefulShutdownWithApp(ctx, app); err != nil {
+//	if err := shutdownManager.GracefulShutdownWithApp(ctx, application); err != nil {
 //	    log.Printf("Graceful shutdown failed: %v", err)
 //	    shutdownManager.ForceShutdown()
 //	}
-func (sm *ShutdownManager) GracefulShutdownWithApp(ctx context.Context, app interface{}) error {
+func (sm *ShutdownManager) GracefulShutdownWithApp(ctx context.Context, application applicationInterfaces.ApplicationInterface) error {
 	sm.mutex.Lock()
 	if sm.shutdownStarted {
 		sm.mutex.Unlock()
@@ -239,7 +240,7 @@ func (sm *ShutdownManager) GracefulShutdownWithApp(ctx context.Context, app inte
 	sm.shutdownStarted = true
 	sm.mutex.Unlock()
 
-	sm.logger.Info("Initiating graceful shutdown with app")
+	sm.logger.Info("Initiating graceful shutdown with application")
 
 	// Execute shutdown callbacks first
 	sm.executeShutdownCallbacks(ctx)
@@ -260,7 +261,7 @@ func (sm *ShutdownManager) GracefulShutdownWithApp(ctx context.Context, app inte
 
 	// Terminate all terminatable service providers
 	sm.logger.Info("Terminating service providers")
-	terminationErrors := sm.terminateProviders(shutdownCtx, app)
+	terminationErrors := sm.terminateProviders(shutdownCtx, application)
 	if len(terminationErrors) > 0 {
 		sm.mutex.Lock()
 		sm.terminationErrors = append(sm.terminationErrors, terminationErrors...)
@@ -350,12 +351,12 @@ func (sm *ShutdownManager) waitForDrain(ctx context.Context) {
 
 // terminateProviders terminates all registered terminatable providers.
 // This method requires an application interface for provider termination.
-func (sm *ShutdownManager) terminateProviders(ctx context.Context, app interface{}) []error {
+func (sm *ShutdownManager) terminateProviders(ctx context.Context, application applicationInterfaces.ApplicationInterface) []error {
 	if sm.providerRepository == nil {
 		return []error{fmt.Errorf("provider repository is not available")}
 	}
 
-	// Try to cast the app to ApplicationInterface
+	// Try to cast the application to ApplicationInterface
 	return sm.providerRepository.TerminateProviders(ctx)
 }
 
@@ -589,7 +590,7 @@ func (sm *ShutdownManager) terminateProvidersInternal(ctx context.Context) []err
 		return []error{fmt.Errorf("provider repository is not available")}
 	}
 
-	// We need an app instance, but since we're in the manager, we'll need to handle this differently
+	// We need an application instance, but since we're in the manager, we'll need to handle this differently
 	// For now, return empty errors as provider termination should be handled at a higher level
 	return []error{}
 }

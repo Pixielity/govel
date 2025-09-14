@@ -3,9 +3,9 @@ package http
 import (
 	"net/http"
 
-	"govel/packages/exceptions/core"
-	"govel/packages/exceptions/interfaces"
-	httpSolutions "govel/packages/exceptions/solutions/http"
+	"govel/exceptions/core"
+	"govel/exceptions/interfaces"
+	httpSolutions "govel/exceptions/solutions/http"
 )
 
 // UnprocessableEntityException represents a 422 Unprocessable Entity error.
@@ -17,10 +17,12 @@ type UnprocessableEntityException struct {
 // NewUnprocessableEntityException creates a new 422 Unprocessable Entity exception.
 //
 // Parameters:
-//   message: Optional custom error message
+//
+//	message: Optional custom error message
 //
 // Example:
-//   err := http.NewUnprocessableEntityException("Validation failed")
+//
+//	err := http.NewUnprocessableEntityException("Validation failed")
 func NewUnprocessableEntityException(message ...string) *UnprocessableEntityException {
 	msg := "Unprocessable Entity"
 	if len(message) > 0 && message[0] != "" {

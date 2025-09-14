@@ -7,7 +7,7 @@ import (
 	"syscall"
 	"time"
 
-	"govel/packages/application/builders"
+	"govel/application/builders"
 )
 
 // Example service interfaces and implementations
@@ -303,17 +303,17 @@ func main() {
 
 	// Display comprehensive application information
 	fmt.Println("📊 Comprehensive Application Information:")
-	
+
 	// Use defer to catch any panics in GetApplicationInfo
 	func() {
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Printf("   ⚠️  GetApplicationInfo encountered an error: %v\n", r)
-				fmt.Printf("   📋 Basic info - Name: %s, Version: %s, Environment: %s\n", 
+				fmt.Printf("   📋 Basic info - Name: %s, Version: %s, Environment: %s\n",
 					app.GetName(), app.GetVersion(), app.GetEnvironment())
 			}
 		}()
-		
+
 		appInfo := app.GetApplicationInfo()
 		for key, value := range appInfo {
 			fmt.Printf("   %s: %v\n", key, value)

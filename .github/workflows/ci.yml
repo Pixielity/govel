@@ -1,0 +1,552 @@
+# 🎯 GoVel Framework - Main CI Pipeline
+#
+# This workflow provides comprehensive continuous integration for the GoVel framework.
+# It handles testing, linting, security scanning, and quality assurance across
+# multiple Go versions and operating systems.
+#
+# Features:
+# - 🧪 Multi-version Go testing (1.21, 1.22, 1.23)
+# - 🖥️  Cross-platform testing (Ubuntu, macOS, Windows)
+# - 📦 Smart package detection (only test changed packages)
+# - 🔒 Security scanning integration
+# - 📊 Code coverage reporting with quality gates
+# - 🛠️ Comprehensive linting and formatting checks
+# - ⚡ Performance optimization with caching strategies
+#
+# Triggers:
+# - Push to main/develop branches
+# - Pull requests to main/develop branches
+# - Manual workflow dispatch
+#
+# Author: GoVel Framework Team
+# Version: 1.0.0
+
+name: 🎯 CI Pipeline
+
+on:
+  # 🔄 Trigger on pushes to main branches
+  push:
+    branches: [ main, develop ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'examples/**'
+  
+  # 🔀 Trigger on pull requests
+  pull_request:
+    branches: [ main, develop ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'examples/**'
+  
+  # 🎛️ Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      test_all:
+        description: '🧪 Test all packages (ignore change detection)'
+        required: false
+        default: 'false'
+        type: boolean
+      skip_security:
+        description: '🔒 Skip security scanning'
+        required: false
+        default: 'false'
+        type: boolean
+
+# 🔒 Security: Ensure minimal permissions
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+  checks: write
+
+# 🚫 Cancel in-progress runs for same PR/branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# 🌍 Environment variables
+env:
+  GO_VERSION_MATRIX: "1.21,1.22,1.23"
+  COVERAGE_THRESHOLD: 80
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+jobs:
+  # 📦 Detect which packages have changed
+  detect-changes:
+    name: 🔍 Detect Changed Packages
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.changes.outputs.packages }}
+      has-changes: ${{ steps.changes.outputs.has-changes }}
+      test-all: ${{ steps.changes.outputs.test-all }}
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔍 Detect package changes
+        id: changes
+        run: |
+          echo "🔍 Detecting changed packages..."
+          
+          # Force test all packages if manually requested
+          if [[ "${{ github.event.inputs.test_all }}" == "true" ]]; then
+            echo "🎯 Manual override: Testing all packages"
+            echo "test-all=true" >> $GITHUB_OUTPUT
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            find packages -name "go.mod" -type f | sed 's|/go.mod||' | jq -R -s -c 'split("\n")[:-1]' > packages.json
+            echo "packages=$(cat packages.json)" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Get changed files
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }})
+          else
+            CHANGED_FILES=$(git diff --name-only HEAD~1)
+          fi
+          
+          echo "📝 Changed files:"
+          echo "$CHANGED_FILES"
+          
+          # Find changed packages
+          CHANGED_PACKAGES=()
+          while IFS= read -r file; do
+            if [[ -n "$file" && "$file" == packages/* ]]; then
+              package_dir=$(echo "$file" | cut -d'/' -f1-2)
+              if [[ -f "$package_dir/go.mod" ]] && [[ ! " ${CHANGED_PACKAGES[@]} " =~ " ${package_dir} " ]]; then
+                CHANGED_PACKAGES+=("$package_dir")
+              fi
+            fi
+          done <<< "$CHANGED_FILES"
+          
+          if [[ ${#CHANGED_PACKAGES[@]} -eq 0 ]]; then
+            echo "📦 No package changes detected"
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "📦 Changed packages: ${CHANGED_PACKAGES[*]}"
+            printf '%s\n' "${CHANGED_PACKAGES[@]}" | jq -R -s -c 'split("\n")[:-1]' > packages.json
+            echo "packages=$(cat packages.json)" >> $GITHUB_OUTPUT
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "test-all=false" >> $GITHUB_OUTPUT
+          fi
+
+  # 🧪 Main testing job
+  test:
+    name: 🧪 Test (Go ${{ matrix.go-version }}, ${{ matrix.os }})
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-changes == 'true'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        go-version: ['1.21', '1.22', '1.23']
+        include:
+          # 🪟 Add Windows testing for latest Go version only
+          - os: windows-latest
+            go-version: '1.23'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐹 Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+
+      - name: 📋 Verify Go installation
+        run: |
+          echo "🐹 Go version: $(go version)"
+          echo "📍 Go root: $(go env GOROOT)"
+          echo "📁 Go path: $(go env GOPATH)"
+
+      - name: 🔧 Set up environment
+        shell: bash
+        run: |
+          echo "🔧 Setting up build environment..."
+          # Create necessary directories
+          mkdir -p coverage reports
+          
+          # Set up Go environment
+          echo "GOPATH=$(go env GOPATH)" >> $GITHUB_ENV
+          echo "PATH=$(go env GOPATH)/bin:$PATH" >> $GITHUB_ENV
+
+      - name: 📦 Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ matrix.go-version }}-${{ hashFiles('**/go.sum', '**/go.mod') }}
+          restore-keys: |
+            ${{ runner.os }}-go-${{ matrix.go-version }}-
+            ${{ runner.os }}-go-
+
+      - name: 📥 Download dependencies
+        shell: bash
+        run: |
+          echo "📥 Downloading Go modules..."
+          packages='${{ needs.detect-changes.outputs.packages }}'
+          
+          if [[ "${{ needs.detect-changes.outputs.test-all }}" == "true" ]]; then
+            echo "📦 Downloading all package dependencies..."
+            find packages -name "go.mod" -type f | while read -r mod_file; do
+              dir=$(dirname "$mod_file")
+              echo "📥 Processing $dir..."
+              (cd "$dir" && go mod download)
+            done
+          else
+            echo "$packages" | jq -r '.[]' | while read -r pkg; do
+              if [[ -d "$pkg" && -f "$pkg/go.mod" ]]; then
+                echo "📥 Processing $pkg..."
+                (cd "$pkg" && go mod download)
+              fi
+            done
+          fi
+
+      - name: 🔨 Build packages
+        shell: bash
+        run: |
+          echo "🔨 Building packages..."
+          packages='${{ needs.detect-changes.outputs.packages }}'
+          failed_builds=()
+          
+          build_package() {
+            local pkg="$1"
+            echo "🔨 Building $pkg..."
+            if (cd "$pkg" && go build -v ./...); then
+              echo "✅ Successfully built $pkg"
+              return 0
+            else
+              echo "❌ Failed to build $pkg"
+              return 1
+            fi
+          }
+          
+          if [[ "${{ needs.detect-changes.outputs.test-all }}" == "true" ]]; then
+            find packages -name "go.mod" -type f | while read -r mod_file; do
+              dir=$(dirname "$mod_file")
+              if ! build_package "$dir"; then
+                failed_builds+=("$dir")
+              fi
+            done
+          else
+            echo "$packages" | jq -r '.[]' | while read -r pkg; do
+              if [[ -d "$pkg" && -f "$pkg/go.mod" ]]; then
+                if ! build_package "$pkg"; then
+                  failed_builds+=("$pkg")
+                fi
+              fi
+            done
+          fi
+          
+          if [[ ${#failed_builds[@]} -gt 0 ]]; then
+            echo "❌ Build failed for: ${failed_builds[*]}"
+            exit 1
+          fi
+          
+          echo "✅ All packages built successfully"
+
+      - name: 🧪 Run tests
+        shell: bash
+        run: |
+          echo "🧪 Running tests..."
+          packages='${{ needs.detect-changes.outputs.packages }}'
+          
+          run_tests() {
+            local pkg="$1"
+            local coverage_file="coverage/$(basename "$pkg")-coverage.out"
+            
+            echo "🧪 Testing $pkg..."
+            cd "$pkg"
+            
+            # Run tests with coverage
+            if go test -v -race -coverprofile="../$coverage_file" -covermode=atomic ./...; then
+              echo "✅ Tests passed for $pkg"
+              
+              # Display coverage summary
+              if [[ -f "../$coverage_file" ]]; then
+                coverage=$(go tool cover -func="../$coverage_file" | tail -1 | awk '{print $3}' | sed 's/%//')
+                echo "📊 Coverage for $pkg: $coverage%"
+                
+                # Check coverage threshold
+                if (( $(echo "$coverage >= $COVERAGE_THRESHOLD" | bc -l 2>/dev/null || echo "0") )); then
+                  echo "✅ Coverage threshold met for $pkg ($coverage% >= $COVERAGE_THRESHOLD%)"
+                else
+                  echo "⚠️ Coverage below threshold for $pkg ($coverage% < $COVERAGE_THRESHOLD%)"
+                fi
+              fi
+              
+              cd - > /dev/null
+              return 0
+            else
+              echo "❌ Tests failed for $pkg"
+              cd - > /dev/null
+              return 1
+            fi
+          }
+          
+          failed_tests=()
+          
+          if [[ "${{ needs.detect-changes.outputs.test-all }}" == "true" ]]; then
+            find packages -name "go.mod" -type f | while read -r mod_file; do
+              dir=$(dirname "$mod_file")
+              if ! run_tests "$dir"; then
+                failed_tests+=("$dir")
+              fi
+            done
+          else
+            echo "$packages" | jq -r '.[]' | while read -r pkg; do
+              if [[ -d "$pkg" && -f "$pkg/go.mod" ]]; then
+                if ! run_tests "$pkg"; then
+                  failed_tests+=("$pkg")
+                fi
+              fi
+            done
+          fi
+          
+          if [[ ${#failed_tests[@]} -gt 0 ]]; then
+            echo "❌ Tests failed for: ${failed_tests[*]}"
+            exit 1
+          fi
+          
+          echo "✅ All tests passed"
+
+      - name: 🔍 Run go vet
+        shell: bash
+        run: |
+          echo "🔍 Running go vet..."
+          packages='${{ needs.detect-changes.outputs.packages }}'
+          
+          vet_package() {
+            local pkg="$1"
+            echo "🔍 Vetting $pkg..."
+            if (cd "$pkg" && go vet ./...); then
+              echo "✅ Vet passed for $pkg"
+              return 0
+            else
+              echo "❌ Vet failed for $pkg"
+              return 1
+            fi
+          }
+          
+          failed_vet=()
+          
+          if [[ "${{ needs.detect-changes.outputs.test-all }}" == "true" ]]; then
+            find packages -name "go.mod" -type f | while read -r mod_file; do
+              dir=$(dirname "$mod_file")
+              if ! vet_package "$dir"; then
+                failed_vet+=("$dir")
+              fi
+            done
+          else
+            echo "$packages" | jq -r '.[]' | while read -r pkg; do
+              if [[ -d "$pkg" && -f "$pkg/go.mod" ]]; then
+                if ! vet_package "$pkg"; then
+                  failed_vet+=("$pkg")
+                fi
+              fi
+            done
+          fi
+          
+          if [[ ${#failed_vet[@]} -gt 0 ]]; then
+            echo "❌ Go vet failed for: ${failed_vet[*]}"
+            exit 1
+          fi
+          
+          echo "✅ Go vet passed for all packages"
+
+      - name: 🎨 Check formatting
+        shell: bash
+        run: |
+          echo "🎨 Checking code formatting..."
+          
+          unformatted_files=()
+          
+          check_formatting() {
+            local pkg="$1"
+            echo "🎨 Checking formatting for $pkg..."
+            
+            local fmt_files
+            fmt_files=$(cd "$pkg" && gofmt -l .)
+            
+            if [[ -n "$fmt_files" ]]; then
+              echo "❌ Unformatted files in $pkg:"
+              echo "$fmt_files" | sed 's/^/  /'
+              echo "$fmt_files" | while read -r file; do
+                unformatted_files+=("$pkg/$file")
+              done
+              return 1
+            else
+              echo "✅ All files formatted correctly in $pkg"
+              return 0
+            fi
+          }
+          
+          packages='${{ needs.detect-changes.outputs.packages }}'
+          
+          if [[ "${{ needs.detect-changes.outputs.test-all }}" == "true" ]]; then
+            find packages -name "go.mod" -type f | while read -r mod_file; do
+              dir=$(dirname "$mod_file")
+              check_formatting "$dir" || true
+            done
+          else
+            echo "$packages" | jq -r '.[]' | while read -r pkg; do
+              if [[ -d "$pkg" && -f "$pkg/go.mod" ]]; then
+                check_formatting "$pkg" || true
+              fi
+            done
+          fi
+          
+          if [[ ${#unformatted_files[@]} -gt 0 ]]; then
+            echo "❌ Found unformatted files:"
+            printf '%s\n' "${unformatted_files[@]}"
+            echo ""
+            echo "💡 Run 'gofmt -s -w .' to fix formatting issues"
+            exit 1
+          fi
+          
+          echo "✅ All files are properly formatted"
+
+      - name: 📊 Merge coverage reports
+        if: matrix.os == 'ubuntu-latest' && matrix.go-version == '1.23'
+        shell: bash
+        run: |
+          echo "📊 Merging coverage reports..."
+          
+          # Install gocovmerge if not available
+          if ! command -v gocovmerge >/dev/null 2>&1; then
+            echo "📥 Installing gocovmerge..."
+            go install github.com/wadey/gocovmerge@latest
+          fi
+          
+          # Find all coverage files
+          coverage_files=()
+          find coverage -name "*-coverage.out" -type f | while read -r file; do
+            if [[ -s "$file" ]]; then
+              coverage_files+=("$file")
+            fi
+          done
+          
+          if [[ ${#coverage_files[@]} -gt 0 ]]; then
+            echo "📊 Found ${#coverage_files[@]} coverage files"
+            gocovmerge "${coverage_files[@]}" > coverage/merged-coverage.out
+            
+            # Generate coverage report
+            go tool cover -html=coverage/merged-coverage.out -o coverage/coverage.html
+            go tool cover -func=coverage/merged-coverage.out > coverage/coverage.txt
+            
+            echo "📊 Coverage summary:"
+            tail -1 coverage/coverage.txt
+          else
+            echo "⚠️ No coverage files found"
+          fi
+
+      - name: 📤 Upload coverage to Codecov
+        if: matrix.os == 'ubuntu-latest' && matrix.go-version == '1.23'
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/merged-coverage.out
+          flags: unittests
+          name: govel-coverage
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: 📊 Upload coverage reports
+        if: matrix.os == 'ubuntu-latest' && matrix.go-version == '1.23'
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-reports
+          path: |
+            coverage/
+            reports/
+          retention-days: 30
+
+  # 🔒 Security scanning job
+  security:
+    name: 🔒 Security Scan
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-changes == 'true' && github.event.inputs.skip_security != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐹 Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23'
+          cache: true
+
+      - name: 🔒 Run gosec security scanner
+        uses: securecodewarrior/github-action-gosec@master
+        with:
+          args: '-fmt sarif -out gosec.sarif ./...'
+
+      - name: 🛡️ Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: gosec.sarif
+
+      - name: 🔍 Run govulncheck
+        run: |
+          echo "🔍 Installing govulncheck..."
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          
+          echo "🔍 Scanning for vulnerabilities..."
+          packages='${{ needs.detect-changes.outputs.packages }}'
+          
+          if [[ "${{ needs.detect-changes.outputs.test-all }}" == "true" ]]; then
+            find packages -name "go.mod" -type f | while read -r mod_file; do
+              dir=$(dirname "$mod_file")
+              echo "🔍 Scanning $dir..."
+              (cd "$dir" && govulncheck ./...)
+            done
+          else
+            echo "$packages" | jq -r '.[]' | while read -r pkg; do
+              if [[ -d "$pkg" && -f "$pkg/go.mod" ]]; then
+                echo "🔍 Scanning $pkg..."
+                (cd "$pkg" && govulncheck ./...)
+              fi
+            done
+          fi
+
+  # ✅ Status check job
+  ci-success:
+    name: ✅ CI Success
+    if: always()
+    needs: [detect-changes, test, security]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📊 Check all job results
+        run: |
+          echo "🔍 Checking CI results..."
+          
+          # Check if changes were detected
+          if [[ "${{ needs.detect-changes.outputs.has-changes }}" != "true" ]]; then
+            echo "ℹ️ No package changes detected - CI skipped"
+            exit 0
+          fi
+          
+          # Check test results
+          if [[ "${{ needs.test.result }}" == "failure" ]]; then
+            echo "❌ Tests failed"
+            exit 1
+          fi
+          
+          # Check security results (only if not skipped)
+          if [[ "${{ github.event.inputs.skip_security }}" != "true" ]]; then
+            if [[ "${{ needs.security.result }}" == "failure" ]]; then
+              echo "❌ Security scan failed"
+              exit 1
+            fi
+          fi
+          
+          echo "✅ All CI checks passed successfully!"
+

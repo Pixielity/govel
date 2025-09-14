@@ -3,9 +3,9 @@ package http
 import (
 	"net/http"
 
-	"govel/packages/exceptions/core"
-	"govel/packages/exceptions/interfaces"
-	httpSolutions "govel/packages/exceptions/solutions/http"
+	"govel/exceptions/core"
+	"govel/exceptions/interfaces"
+	httpSolutions "govel/exceptions/solutions/http"
 )
 
 // BadRequestException represents a 400 Bad Request error.
@@ -17,10 +17,12 @@ type BadRequestException struct {
 // NewBadRequestException creates a new 400 Bad Request exception.
 //
 // Parameters:
-//   message: Optional custom error message
+//
+//	message: Optional custom error message
 //
 // Example:
-//   err := http.NewBadRequestException("Invalid JSON format")
+//
+//	err := http.NewBadRequestException("Invalid JSON format")
 func NewBadRequestException(message ...string) *BadRequestException {
 	msg := "Bad Request"
 	if len(message) > 0 && message[0] != "" {

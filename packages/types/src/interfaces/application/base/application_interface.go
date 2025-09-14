@@ -32,5 +32,6 @@ type ApplicationInterface interface {
 	concernsInterfaces.HasTimingInterface
 	concernsInterfaces.HasRuntimeInterface
 	concernsInterfaces.HasIdentityInterface
+	concernsInterfaces.HasBootstrapInterface
 	concernsInterfaces.ApplicationProviderInterface
 }

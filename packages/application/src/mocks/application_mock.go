@@ -461,6 +461,60 @@ func (m *MockApplication) GetBootedProviders() []string {
 	return []string{}
 }
 
+// HasBootstrapInterface methods
+func (m *MockApplication) Bootstrap() error {
+	if m.ShouldFailBoot {
+		return &MockError{Message: "bootstrap failed"}
+	}
+	return nil
+}
+
+func (m *MockApplication) BootstrapWith(bootstrappers []interface{}) error {
+	if m.ShouldFailBoot {
+		return &MockError{Message: "bootstrap with failed"}
+	}
+	return nil
+}
+
+func (m *MockApplication) BootstrapWithoutProviders() error {
+	if m.ShouldFailBoot {
+		return &MockError{Message: "bootstrap without providers failed"}
+	}
+	return nil
+}
+
+func (m *MockApplication) HasBeenBootstrapped() bool {
+	return true // Mock returns true for simplicity
+}
+
+func (m *MockApplication) SetBootstrapped(bootstrapped bool) {
+	// Mock implementation - no-op
+}
+
+func (m *MockApplication) GetBootstrappers() []interface{} {
+	return []interface{}{}
+}
+
+func (m *MockApplication) SetBootstrappers(bootstrappers []interface{}) {
+	// Mock implementation - no-op
+}
+
+func (m *MockApplication) AddBootstrapper(bootstrapper interface{}) {
+	// Mock implementation - no-op
+}
+
+func (m *MockApplication) RemoveBootstrapper(bootstrapper interface{}) bool {
+	return true // Mock returns true for simplicity
+}
+
+func (m *MockApplication) ClearBootstrappers() {
+	// Mock implementation - no-op
+}
+
+func (m *MockApplication) RegisterDefaultBootstrappers() []interface{} {
+	return []interface{}{} // Mock returns empty slice
+}
+
 /**
  * SetFailureMode sets whether various operations should fail
  */

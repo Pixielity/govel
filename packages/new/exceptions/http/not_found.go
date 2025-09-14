@@ -3,9 +3,9 @@ package http
 import (
 	"net/http"
 
-	"govel/packages/exceptions/core"
-	"govel/packages/exceptions/interfaces"
-	httpSolutions "govel/packages/exceptions/solutions/http"
+	"govel/exceptions/core"
+	"govel/exceptions/interfaces"
+	httpSolutions "govel/exceptions/solutions/http"
 )
 
 // NotFoundException represents a 404 Not Found error.
@@ -17,10 +17,12 @@ type NotFoundException struct {
 // NewNotFoundException creates a new 404 Not Found exception.
 //
 // Parameters:
-//   message: Optional custom error message
+//
+//	message: Optional custom error message
 //
 // Example:
-//   err := http.NewNotFoundException("User not found")
+//
+//	err := http.NewNotFoundException("User not found")
 func NewNotFoundException(message ...string) *NotFoundException {
 	msg := "Not Found"
 	if len(message) > 0 && message[0] != "" {

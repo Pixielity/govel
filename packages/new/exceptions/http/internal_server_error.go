@@ -3,9 +3,9 @@ package http
 import (
 	"net/http"
 
-	"govel/packages/exceptions/core"
-	"govel/packages/exceptions/interfaces"
-	httpSolutions "govel/packages/exceptions/solutions/http"
+	"govel/exceptions/core"
+	"govel/exceptions/interfaces"
+	httpSolutions "govel/exceptions/solutions/http"
 )
 
 // InternalServerErrorException represents a 500 Internal Server Error.
@@ -17,10 +17,12 @@ type InternalServerErrorException struct {
 // NewInternalServerErrorException creates a new 500 Internal Server Error exception.
 //
 // Parameters:
-//   message: Optional custom error message
+//
+//	message: Optional custom error message
 //
 // Example:
-//   err := http.NewInternalServerErrorException("Database connection failed")
+//
+//	err := http.NewInternalServerErrorException("Database connection failed")
 func NewInternalServerErrorException(message ...string) *InternalServerErrorException {
 	msg := "Internal Server Error"
 	if len(message) > 0 && message[0] != "" {

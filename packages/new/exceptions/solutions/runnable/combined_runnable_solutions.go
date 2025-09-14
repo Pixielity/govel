@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/exec"
 
-	"govel/packages/exceptions/core/solution"
-	solutionInterface "govel/packages/exceptions/interfaces/solution"
+	"govel/exceptions/core/solution"
+	solutionInterface "govel/exceptions/interfaces/solution"
 )
 
 // CreateDirectorySolution provides a runnable solution for creating missing directories
@@ -87,15 +87,15 @@ func (s *InstallDependencySolution) GetRunButtonText() string {
 func (s *InstallDependencySolution) Run(parameters map[string]interface{}) error {
 	// Parse command into parts
 	parts := []string{"sh", "-c", s.command}
-	
+
 	cmd := exec.Command(parts[0], parts[1:]...)
 	cmd.Dir = "." // Run in current directory
-	
+
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("failed to install dependency '%s': %s\nOutput: %s", s.packageName, err.Error(), string(output))
 	}
-	
+
 	return nil
 }
 

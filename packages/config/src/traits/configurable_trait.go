@@ -3,7 +3,7 @@ package traits
 import (
 	"sync"
 
-	"govel/packages/application/helpers"
+	"govel/application/helpers"
 	"govel/config"
 	interfaces "govel/types/interfaces/config"
 )

@@ -10,84 +10,84 @@ import (
 
 // CompleteStackFrame represents a complete stack frame with all required fields
 type CompleteStackFrame struct {
-	File            string            `json:"file"`
-	LineNumber      int               `json:"line_number"`
-	Method          string            `json:"method"`
-	Class           interface{}       `json:"class"`
-	CodeSnippet     map[string]string `json:"code_snippet"`
-	Arguments       []interface{}     `json:"arguments"`
-	ApplicationFrame bool             `json:"application_frame"`
+	File             string            `json:"file"`
+	LineNumber       int               `json:"line_number"`
+	Method           string            `json:"method"`
+	Class            interface{}       `json:"class"`
+	CodeSnippet      map[string]string `json:"code_snippet"`
+	Arguments        []interface{}     `json:"arguments"`
+	ApplicationFrame bool              `json:"application_frame"`
 }
 
 // CompleteReport represents the full error report structure
 type CompleteReport struct {
-	Notifier            string                   `json:"notifier"`
-	Language            string                   `json:"language"`
-	FrameworkVersion    string                   `json:"framework_version"`
-	LanguageVersion     string                   `json:"language_version"`
-	ExceptionClass      string                   `json:"exception_class"`
-	SeenAt              int64                    `json:"seen_at"`
-	Message             string                   `json:"message"`
-	Glows               []interface{}            `json:"glows"`
-	Solutions           []Solution               `json:"solutions"`
-	DocumentationLinks  []string                 `json:"documentation_links"`
-	Stacktrace          []CompleteStackFrame     `json:"stacktrace"`
-	Context             CompleteErrorContext     `json:"context"`
-	Stage               string                   `json:"stage"`
-	MessageLevel        interface{}              `json:"message_level"`
-	OpenFrameIndex      interface{}              `json:"open_frame_index"`
-	ApplicationPath     string                   `json:"application_path"`
-	ApplicationVersion  interface{}              `json:"application_version"`
-	TrackingUuid        string                   `json:"tracking_uuid"`
-	Handled             interface{}              `json:"handled"`
-	OverriddenGrouping  interface{}              `json:"overridden_grouping"`
+	Notifier           string               `json:"notifier"`
+	Language           string               `json:"language"`
+	FrameworkVersion   string               `json:"framework_version"`
+	LanguageVersion    string               `json:"language_version"`
+	ExceptionClass     string               `json:"exception_class"`
+	SeenAt             int64                `json:"seen_at"`
+	Message            string               `json:"message"`
+	Glows              []interface{}        `json:"glows"`
+	Solutions          []Solution           `json:"solutions"`
+	DocumentationLinks []string             `json:"documentation_links"`
+	Stacktrace         []CompleteStackFrame `json:"stacktrace"`
+	Context            CompleteErrorContext `json:"context"`
+	Stage              string               `json:"stage"`
+	MessageLevel       interface{}          `json:"message_level"`
+	OpenFrameIndex     interface{}          `json:"open_frame_index"`
+	ApplicationPath    string               `json:"application_path"`
+	ApplicationVersion interface{}          `json:"application_version"`
+	TrackingUuid       string               `json:"tracking_uuid"`
+	Handled            interface{}          `json:"handled"`
+	OverriddenGrouping interface{}          `json:"overridden_grouping"`
 }
 
 // ShareableReport represents the shareable version of the report (may have filtered data)
 type ShareableReport struct {
-	Notifier            string                   `json:"notifier"`
-	Language            string                   `json:"language"`
-	FrameworkVersion    string                   `json:"framework_version"`
-	LanguageVersion     string                   `json:"language_version"`
-	ExceptionClass      string                   `json:"exception_class"`
-	SeenAt              int64                    `json:"seen_at"`
-	Message             string                   `json:"message"`
-	Glows               []interface{}            `json:"glows"`
-	Solutions           []Solution               `json:"solutions"`
-	DocumentationLinks  []string                 `json:"documentation_links"`
-	Stacktrace          []CompleteStackFrame     `json:"stacktrace"`
-	Context             CompleteErrorContext     `json:"context"`
-	Stage               string                   `json:"stage"`
-	MessageLevel        interface{}              `json:"message_level"`
-	OpenFrameIndex      interface{}              `json:"open_frame_index"`
-	ApplicationPath     string                   `json:"application_path"`
-	ApplicationVersion  interface{}              `json:"application_version"`
-	TrackingUuid        string                   `json:"tracking_uuid"`
-	Handled             interface{}              `json:"handled"`
-	OverriddenGrouping  interface{}              `json:"overridden_grouping"`
+	Notifier           string               `json:"notifier"`
+	Language           string               `json:"language"`
+	FrameworkVersion   string               `json:"framework_version"`
+	LanguageVersion    string               `json:"language_version"`
+	ExceptionClass     string               `json:"exception_class"`
+	SeenAt             int64                `json:"seen_at"`
+	Message            string               `json:"message"`
+	Glows              []interface{}        `json:"glows"`
+	Solutions          []Solution           `json:"solutions"`
+	DocumentationLinks []string             `json:"documentation_links"`
+	Stacktrace         []CompleteStackFrame `json:"stacktrace"`
+	Context            CompleteErrorContext `json:"context"`
+	Stage              string               `json:"stage"`
+	MessageLevel       interface{}          `json:"message_level"`
+	OpenFrameIndex     interface{}          `json:"open_frame_index"`
+	ApplicationPath    string               `json:"application_path"`
+	ApplicationVersion interface{}          `json:"application_version"`
+	TrackingUuid       string               `json:"tracking_uuid"`
+	Handled            interface{}          `json:"handled"`
+	OverriddenGrouping interface{}          `json:"overridden_grouping"`
 }
 
 // CompleteIgnitionData represents the full Ignition data structure
 type CompleteIgnitionData struct {
-	Report                CompleteReport  `json:"report"`
-	ShareableReport       ShareableReport `json:"shareableReport"`
-	Config                ConfigData      `json:"config"`
-	Solutions             []Solution      `json:"solutions"`
-	UpdateConfigEndpoint  string          `json:"updateConfigEndpoint"`
+	Report               CompleteReport  `json:"report"`
+	ShareableReport      ShareableReport `json:"shareableReport"`
+	Config               ConfigData      `json:"config"`
+	Solutions            []Solution      `json:"solutions"`
+	UpdateConfigEndpoint string          `json:"updateConfigEndpoint"`
 }
 
 // ConfigData represents the configuration data for Ignition
 type ConfigData struct {
-	Editor                  string                           `json:"editor"`
-	Theme                   string                           `json:"theme"`
-	HideSolutions          bool                             `json:"hideSolutions"`
-	RemoteSitesPath        string                           `json:"remoteSitesPath"`
-	LocalSitesPath         string                           `json:"localSitesPath"`
-	EnableShareButton      bool                             `json:"enableShareButton"`
-	EnableRunnableSolutions bool                            `json:"enableRunnableSolutions"`
-	DirectorySeparator     string                           `json:"directorySeparator"`
-	EditorOptions          map[string]EditorOption          `json:"editorOptions"`
-	ShareEndpoint          string                           `json:"shareEndpoint"`
+	Editor                  string                  `json:"editor"`
+	Theme                   string                  `json:"theme"`
+	HideSolutions           bool                    `json:"hideSolutions"`
+	RemoteSitesPath         string                  `json:"remoteSitesPath"`
+	LocalSitesPath          string                  `json:"localSitesPath"`
+	EnableShareButton       bool                    `json:"enableShareButton"`
+	EnableRunnableSolutions bool                    `json:"enableRunnableSolutions"`
+	DirectorySeparator      string                  `json:"directorySeparator"`
+	EditorOptions           map[string]EditorOption `json:"editorOptions"`
+	ShareEndpoint           string                  `json:"shareEndpoint"`
 }
 
 // EditorOption represents editor configuration options
@@ -100,47 +100,47 @@ type EditorOption struct {
 // CreateCompleteReport creates a complete report from ErrorReport and HTTP request
 func CreateCompleteReport(errorReport *ErrorReport, req *http.Request, applicationPath string) *CompleteReport {
 	context := NewCompleteErrorContext(req)
-	
+
 	// Convert stack frames
 	stackFrames := make([]CompleteStackFrame, 0, len(errorReport.GetStack()))
 	for _, frame := range errorReport.GetStack() {
 		stackFrames = append(stackFrames, CompleteStackFrame{
-			File:            ensureString(frame.GetFile()),
-			LineNumber:      frame.GetLine(),
-			Method:          ensureString(frame.GetFunction()),
-			Class:           nil,
-			CodeSnippet:     frame.GetCode(),
-			Arguments:       []interface{}{},
+			File:             ensureString(frame.GetFile()),
+			LineNumber:       frame.GetLine(),
+			Method:           ensureString(frame.GetFunction()),
+			Class:            nil,
+			CodeSnippet:      frame.GetCode(),
+			Arguments:        []interface{}{},
 			ApplicationFrame: isApplicationFrame(frame.GetFile()),
 		})
 	}
 
 	now := time.Now()
 	return &CompleteReport{
-		Notifier:            "GoVel Client",
-		Language:            "Go",
-		FrameworkVersion:    "1.0.0",
-		LanguageVersion:     runtime.Version(),
-		ExceptionClass:      errorReport.GetType(),
-		SeenAt:              now.Unix(),
-		Message:             errorReport.GetMessage(),
-		Glows:               []interface{}{},
-		Solutions:           ensureSolutionsArray(errorReport.GetSolutions()),
-		DocumentationLinks:  []string{
+		Notifier:         "GoVel Client",
+		Language:         "Go",
+		FrameworkVersion: "1.0.0",
+		LanguageVersion:  runtime.Version(),
+		ExceptionClass:   errorReport.GetType(),
+		SeenAt:           now.Unix(),
+		Message:          errorReport.GetMessage(),
+		Glows:            []interface{}{},
+		Solutions:        ensureSolutionsArray(errorReport.GetSolutions()),
+		DocumentationLinks: []string{
 			"https://golang.org/doc/",
 			"https://golang.org/pkg/",
 			"https://gobyexample.com/",
 		},
-		Stacktrace:          stackFrames,
-		Context:             *context,
-		Stage:               "local",
-		MessageLevel:        nil,
-		OpenFrameIndex:      nil,
-		ApplicationPath:     applicationPath,
-		ApplicationVersion:  nil,
-		TrackingUuid:        generateUUID(),
-		Handled:             nil,
-		OverriddenGrouping:  nil,
+		Stacktrace:         stackFrames,
+		Context:            *context,
+		Stage:              "local",
+		MessageLevel:       nil,
+		OpenFrameIndex:     nil,
+		ApplicationPath:    applicationPath,
+		ApplicationVersion: nil,
+		TrackingUuid:       generateUUID(),
+		Handled:            nil,
+		OverriddenGrouping: nil,
 	}
 }
 
@@ -149,26 +149,26 @@ func CreateShareableReport(report *CompleteReport) *ShareableReport {
 	// For now, shareable report is identical to the main report
 	// In production, you might want to filter sensitive information
 	return &ShareableReport{
-		Notifier:            report.Notifier,
-		Language:            report.Language,
-		FrameworkVersion:    report.FrameworkVersion,
-		LanguageVersion:     report.LanguageVersion,
-		ExceptionClass:      report.ExceptionClass,
-		SeenAt:              report.SeenAt,
-		Message:             report.Message,
-		Glows:               report.Glows,
-		Solutions:           ensureSolutionsArray(report.Solutions),
-		DocumentationLinks:  report.DocumentationLinks,
-		Stacktrace:          report.Stacktrace,
-		Context:             report.Context,
-		Stage:               report.Stage,
-		MessageLevel:        report.MessageLevel,
-		OpenFrameIndex:      report.OpenFrameIndex,
-		ApplicationPath:     report.ApplicationPath,
-		ApplicationVersion:  report.ApplicationVersion,
-		TrackingUuid:        report.TrackingUuid,
-		Handled:             report.Handled,
-		OverriddenGrouping:  report.OverriddenGrouping,
+		Notifier:           report.Notifier,
+		Language:           report.Language,
+		FrameworkVersion:   report.FrameworkVersion,
+		LanguageVersion:    report.LanguageVersion,
+		ExceptionClass:     report.ExceptionClass,
+		SeenAt:             report.SeenAt,
+		Message:            report.Message,
+		Glows:              report.Glows,
+		Solutions:          ensureSolutionsArray(report.Solutions),
+		DocumentationLinks: report.DocumentationLinks,
+		Stacktrace:         report.Stacktrace,
+		Context:            report.Context,
+		Stage:              report.Stage,
+		MessageLevel:       report.MessageLevel,
+		OpenFrameIndex:     report.OpenFrameIndex,
+		ApplicationPath:    report.ApplicationPath,
+		ApplicationVersion: report.ApplicationVersion,
+		TrackingUuid:       report.TrackingUuid,
+		Handled:            report.Handled,
+		OverriddenGrouping: report.OverriddenGrouping,
 	}
 }
 
@@ -176,18 +176,18 @@ func CreateShareableReport(report *CompleteReport) *ShareableReport {
 func CreateCompleteIgnitionData(errorReport *ErrorReport, req *http.Request, applicationPath, editor, theme string) *CompleteIgnitionData {
 	report := CreateCompleteReport(errorReport, req, applicationPath)
 	shareableReport := CreateShareableReport(report)
-	
+
 	config := ConfigData{
 		Editor:                  editor,
 		Theme:                   theme,
-		HideSolutions:          false,
-		RemoteSitesPath:        applicationPath,
-		LocalSitesPath:         "",
-		EnableShareButton:      true,
+		HideSolutions:           false,
+		RemoteSitesPath:         applicationPath,
+		LocalSitesPath:          "",
+		EnableShareButton:       true,
 		EnableRunnableSolutions: false,
-		DirectorySeparator:     "/",
-		EditorOptions:          getEditorOptions(),
-		ShareEndpoint:          "https://flareapp.io/api/public-reports",
+		DirectorySeparator:      "/",
+		EditorOptions:           getEditorOptions(),
+		ShareEndpoint:           "https://flareapp.io/api/public-reports",
 	}
 
 	return &CompleteIgnitionData{
@@ -217,9 +217,9 @@ func ensureSolutionsArray(solutions []Solution) []Solution {
 
 func isApplicationFrame(file string) bool {
 	// Consider a frame as application frame if it's not in Go runtime or standard library
-	return !strings.Contains(file, "runtime/") && 
-		   !strings.Contains(file, "/go/src/") &&
-		   !strings.Contains(file, "vendor/")
+	return !strings.Contains(file, "runtime/") &&
+		!strings.Contains(file, "/go") &&
+		!strings.Contains(file, "vendor/")
 }
 
 func generateUUID() string {

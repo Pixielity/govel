@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"govel/packages/ignition/constants"
-	"govel/packages/ignition/interfaces"
+	"govel/ignition/constants"
+	"govel/ignition/interfaces"
 )
 
 // StackFrame represents a single frame in the stack trace

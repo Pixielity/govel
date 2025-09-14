@@ -4,8 +4,8 @@ import (
 	"runtime"
 	"strings"
 
-	"govel/packages/ignition/enums"
-	"govel/packages/ignition/interfaces"
+	"govel/ignition/enums"
+	"govel/ignition/interfaces"
 )
 
 // EnvContext holds environment information

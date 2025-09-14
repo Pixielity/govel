@@ -3,8 +3,8 @@ package providers
 import (
 	"strings"
 
-	solutionInterface "govel/packages/exceptions/interfaces/solution"
-	httpSolutions "govel/packages/exceptions/solutions/http"
+	solutionInterface "govel/exceptions/interfaces/solution"
+	httpSolutions "govel/exceptions/solutions/http"
 )
 
 // HTTPExceptionProvider provides solutions for common HTTP exceptions.
@@ -20,7 +20,7 @@ func NewHTTPExceptionProvider() *HTTPExceptionProvider {
 func (p *HTTPExceptionProvider) CanSolve(err error) bool {
 	// Check if this is an HTTP-related exception by looking for HTTP status codes in the message
 	message := strings.ToLower(err.Error())
-	
+
 	// Check for common HTTP errors
 	return strings.Contains(message, "404") || strings.Contains(message, "not found") ||
 		strings.Contains(message, "401") || strings.Contains(message, "unauthorized") ||
@@ -38,47 +38,47 @@ func (p *HTTPExceptionProvider) CanSolve(err error) bool {
 func (p *HTTPExceptionProvider) GetSolutions(err error) []solutionInterface.Solution {
 	message := strings.ToLower(err.Error())
 	var solutions []solutionInterface.Solution
-	
+
 	if strings.Contains(message, "404") || strings.Contains(message, "not found") {
 		solutions = append(solutions, httpSolutions.NewNotFoundSolution(""))
 	}
-	
+
 	if strings.Contains(message, "401") || strings.Contains(message, "unauthorized") {
 		solutions = append(solutions, httpSolutions.NewUnauthorizedSolution())
 	}
-	
+
 	if strings.Contains(message, "403") || strings.Contains(message, "forbidden") {
 		solutions = append(solutions, httpSolutions.NewForbiddenSolution(""))
 	}
-	
+
 	if strings.Contains(message, "400") || strings.Contains(message, "bad request") {
 		solutions = append(solutions, httpSolutions.NewBadRequestSolution())
 	}
-	
+
 	if strings.Contains(message, "500") || strings.Contains(message, "internal server") {
 		solutions = append(solutions, httpSolutions.NewInternalServerErrorSolution())
 	}
-	
+
 	if strings.Contains(message, "422") || strings.Contains(message, "unprocessable") {
 		solutions = append(solutions, httpSolutions.NewValidationErrorSolution(nil))
 	}
-	
+
 	if strings.Contains(message, "405") || strings.Contains(message, "method not allowed") {
 		solutions = append(solutions, httpSolutions.NewMethodNotAllowedSolution("", nil))
 	}
-	
+
 	if strings.Contains(message, "429") || strings.Contains(message, "too many requests") {
 		solutions = append(solutions, httpSolutions.NewTooManyRequestsSolution(0, 0))
 	}
-	
+
 	if strings.Contains(message, "503") || strings.Contains(message, "service unavailable") {
 		solutions = append(solutions, httpSolutions.NewServiceUnavailableSolution(0))
 	}
-	
+
 	if strings.Contains(message, "409") || strings.Contains(message, "conflict") {
 		solutions = append(solutions, httpSolutions.NewConflictSolution())
 	}
-	
+
 	return solutions
 }
 
